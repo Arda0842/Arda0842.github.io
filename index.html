@@ -9,10 +9,14 @@
         .container { border: 1px solid #333; padding: 2.5rem; border-radius: 20px; background: #1e1e1e; box-shadow: 0 15px 35px rgba(0,0,0,0.6); max-width: 800px; width: 100%; }
         h1 { color: #00d4ff; margin-bottom: 0.5rem; font-size: 2.5rem; }
         .subtitle { color: #00ff88; font-weight: bold; margin-bottom: 2rem; display: block; letter-spacing: 1px; }
-        p.intro { color: #bbb; margin-bottom: 30px; font-size: 1.1rem; }
+        p.intro { color: #bbb; margin-bottom: 10px; font-size: 1.1rem; }
         
+        /* Link Tasarımı */
+        .linkedin-link { color: #00d4ff; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .linkedin-link:hover { color: #ffffff; text-decoration: underline; }
+
         /* Proje Kartları Düzeni */
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
         .project-card { border: 1px solid #444; padding: 20px; border-radius: 12px; background: #252525; transition: 0.3s; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
         .project-card:hover { border-color: #00d4ff; transform: translateY(-5px); }
         .project-card h3 { color: #00d4ff; margin-top: 0; font-size: 1.2rem; }
@@ -28,13 +32,19 @@
         <h1>Hoşgeldiniz</h1>
         <span class="subtitle">Oyunlarımız</span>
         <p class="intro">Tamamen eğlence amaçlı geliştirildi.</p>
-        <p class="intro">Linkedin Hesabı için:https://www.linkedin.com/in/arda-akçay/</p>
+        
+        <p class="intro">
+            Linkedin Hesabı için: 
+            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="linkedin-link">
+                Profilime Git ↗
+            </a>
+        </p>
 
         <div class="projects-grid">
             <div class="project-card">
                 <h3>🎮 Kayseri Boğası Oyunu</h3>
                 <p>Strateji ve hız gerektiren eğlenceli bir oyun.</p>
-                <a href="https://github.com/Arda0842/Arda0842.github.io/blob/main/KayseriBoğası.rar" class="btn">Oyunu İndir (.rar)</a>
+                <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/KayseriBoğası.rar" class="btn">Oyunu İndir (.rar)</a>
             </div>
 
             <div class="project-card">
