@@ -8,16 +8,35 @@
     <style>
         /* Genel Ayarlar & Smooth Scroll */
         html { scroll-behavior: smooth; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0f0f0f; color: #ffffff; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding-top: 80px; /* Menü payı */ }
-        
-        /* --- NAVİGASYON ÇUBUĞU (YENİ) --- */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #0f0f0f; 
+            color: #ffffff; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+
+        /* --- ARKA PLAN CANVAS (AĞ ANİMASYONU) --- */
+        #networkCanvas {
+            position: fixed; /* Sayfa kaydırılsa bile sabit kalsın */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* En arkada dursun */
+            background-color: #0f0f0f; /* Canvas yüklenmezse görünecek renk */
+        }
+
+        /* --- NAVİGASYON ÇUBUĞU --- */
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            background: rgba(15, 15, 15, 0.9); /* Yarı saydam arka plan */
-            backdrop-filter: blur(10px); /* Buzlu cam efekti */
+            background: rgba(15, 15, 15, 0.85); /* Biraz daha şeffaf */
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid #333;
             padding: 15px 0;
             z-index: 1000;
@@ -35,34 +54,51 @@
             position: relative;
         }
         .nav-link:hover { color: #00d4ff; }
-        /* Alt çizgi animasyonu */
         .nav-link::after {
             content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
             background-color: #00d4ff; transition: width 0.3s;
         }
         .nav-link:hover::after { width: 100%; }
 
+        /* --- ANA İÇERİK SARMALAYICI --- */
+        /* İçeriği ortalamak ve menü altında kalmasını engellemek için */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px; /* Menü payı */
+            width: 100%;
+            position: relative;
+            z-index: 1; /* Canvas'ın üzerinde dursun */
+        }
+
         /* Header Alanı */
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
-        h1 { color: #00d4ff; margin: 0; font-size: 2.8rem; letter-spacing: -1px; }
-        .role { color: #00ff88; font-weight: bold; font-size: 1.1rem; margin-top: 10px; display: block; }
-        .bio { color: #aaa; margin-top: 15px; line-height: 1.6; font-size: 1.05rem; }
-
+        h1 { color: #00d4ff; margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+        .role { color: #00ff88; font-weight: bold; font-size: 1.2rem; margin-top: 10px; display: block; }
+        
         /* Yetenek Etiketleri */
-        .skills { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .skill-tag { background: #1f1f1f; border: 1px solid #333; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; color: #ddd; display: flex; align-items: center; gap: 8px; }
+        .skills { margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .skill-tag { 
+            background: rgba(31, 31, 31, 0.8); /* Yarı saydam */
+            border: 1px solid #333; padding: 8px 18px; border-radius: 20px; 
+            font-size: 0.9rem; color: #ddd; display: flex; align-items: center; gap: 8px; 
+            backdrop-filter: blur(5px);
+        }
         .skill-tag i { color: #00d4ff; }
 
         /* Hakkında Kutusu */
         .about-section { 
-            background: #1a1a1a; 
+            background: rgba(26, 26, 26, 0.9); /* Yarı saydam */
             padding: 30px; 
             border-radius: 15px; 
             border-left: 4px solid #00d4ff; 
             text-align: left; 
-            margin: 30px auto;
+            margin: 40px auto;
             max-width: 800px;
             width: 90%;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .about-section h2 { margin-top: 0; color: #fff; }
         .about-section p { color: #ccc; line-height: 1.6; }
@@ -74,12 +110,16 @@
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         
         /* Kart Tasarımı */
-        .project-card { background: #1a1a1a; border-radius: 15px; overflow: hidden; border: 1px solid #333; transition: 0.3s; display: flex; flex-direction: column; }
-        .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15); border-color: #00d4ff; }
+        .project-card { 
+            background: rgba(26, 26, 26, 0.95); 
+            border-radius: 15px; overflow: hidden; border: 1px solid #333; 
+            transition: 0.3s; display: flex; flex-direction: column; 
+            backdrop-filter: blur(5px);
+        }
+        .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); border-color: #00d4ff; }
         
         .card-image { width: 100%; height: 160px; background: linear-gradient(45deg, #2b2b2b, #1a1a1a); display: flex; align-items: center; justify-content: center; color: #555; font-size: 3rem; }
-        .card-image img { width: 100%; height: 100%; object-fit: cover; }
-
+        
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .card-content h3 { margin: 0 0 10px 0; color: #fff; }
         .card-content p { color: #bbb; font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
@@ -89,12 +129,14 @@
 
         /* İletişim / Footer Alanı */
         .contact-section { 
-            background: #111; 
+            background: rgba(17, 17, 17, 0.95); 
             width: 100%; 
             padding: 50px 20px; 
             text-align: center; 
             border-top: 1px solid #333; 
             margin-top: auto; 
+            position: relative;
+            z-index: 1;
         }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
         .social-btn { color: #fff; font-size: 2rem; transition: 0.3s; opacity: 0.7; }
@@ -105,77 +147,89 @@
 </head>
 <body>
 
+    <canvas id="networkCanvas"></canvas>
+
     <nav class="navbar">
         <a href="#home" class="nav-link">Ana Sayfa</a>
         <a href="#about" class="nav-link">Hakkında</a>
         <a href="#contact" class="nav-link">İletişim</a>
     </nav>
 
-    <header id="home">
-        <h1>Hoşgeldiniz</h1>
-        <span class="role"></span>
-        <p class="bio">
-        </p>
-    </header>
+    <div class="main-wrapper">
 
-    <div id="about" class="about-section">
-        <h2>Hakkımda</h2>
-        <p>
-            Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği eğitimi alıyorum. 
-        </p>
-        <p>
-        </p>
-    </div>
-
-    <div class="container">
-        <h2 class="section-title">🎮 Oyun Projelerim</h2>
-
-        <div class="projects-grid">
-            <div class="project-card">
-                <div class="card-image">
-                    <i class="fas fa-bullhorn"></i> 
-                </div>
-                <div class="card-content">
-                    <h3>Kayseri Boğası</h3>
-                    <p>Refleks ve strateji gerektiren, yerel motiflerle süslenmiş eğlenceli bir WinForms oyunu.</p>
-                    <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/KayseriBoğası.rar" class="btn-download">
-                        <i class="fas fa-download"></i> İndir (.rar)
-                    </a>
-                </div>
-            </div>
-
-            <div class="project-card">
-                <div class="card-image">
-                    <i class="fas fa-bomb"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Dinamik Mayın Tarlası</h3>
-                    <p>Hücre yoğunluğuna göre değişen zorluk algoritmasıyla geliştirilmiş strateji oyunu.</p>
-                    <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/MayinTarlasiOyunu.rar" class="btn-download">
-                        <i class="fas fa-download"></i> İndir (.rar)
-                    </a>
-                </div>
-            </div>
+        <header id="home">
+            <h1>Arda</h1>
+            <span class="role">Bilgisayar Mühendisliği Öğrencisi & GDG Team Lead</span>
             
-            <div class="project-card" style="border-color: #ffe600;">
-                <div class="card-image">
-                    <i class="fas fa-car-side" style="color: #ffe600;"></i>
-                </div>
-                <div class="card-content">
-                    <h3 style="color: #ffe600;">Dag Yarışı</h3>
-                    <p>Godot Engine ile geliştirilen fizik tabanlı araç simülasyonu. (Geliştirme Aşamasında)</p>
-                    <button class="btn-download" style="background: #333; color: #777; cursor: not-allowed;">
-                        🚧 Yakında
-                    </button>
-                </div>
+            <div class="skills">
+                <div class="skill-tag"><i class="fas fa-code"></i> C# & .NET</div>
+                <div class="skill-tag"><i class="fas fa-chart-line"></i> Algoritmik Ticaret</div>
+                <div class="skill-tag"><i class="fas fa-gamepad"></i> Game Dev</div>
+                <div class="skill-tag"><i class="fas fa-users"></i> GDG Liderlik</div>
             </div>
+        </header>
 
+        <div id="about" class="about-section">
+            <h2>Hakkımda</h2>
+            <p>
+                Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği eğitimi alıyorum. 
+                Yazılım dünyasında özellikle <strong>Oyun Geliştirme (Unity/Godot)</strong> ve <strong>Finansal Teknolojiler (Algoritmik Ticaret)</strong> üzerine yoğunlaşıyorum.
+            </p>
+            <p>
+                Aynı zamanda GDG (Google Developer Groups) Teknik Ekip Lideri olarak topluluk projelerinde aktif rol alıyorum. 
+                Aşağıda geliştirdiğim oyunları inceleyebilir ve indirebilirsiniz.
+            </p>
         </div>
-    </div>
 
-    <div id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">🎮 Oyun Projelerim</h2>
+
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="card-image">
+                        <i class="fas fa-bullhorn"></i> 
+                    </div>
+                    <div class="card-content">
+                        <h3>Kayseri Boğası</h3>
+                        <p>Refleks ve strateji gerektiren, yerel motiflerle süslenmiş eğlenceli bir WinForms oyunu.</p>
+                        <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/KayseriBoğası.rar" class="btn-download">
+                            <i class="fas fa-download"></i> İndir (.rar)
+                        </a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-image">
+                        <i class="fas fa-bomb"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Dinamik Mayın Tarlası</h3>
+                        <p>Hücre yoğunluğuna göre değişen zorluk algoritmasıyla geliştirilmiş strateji oyunu.</p>
+                        <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/MayinTarlasiOyunu.rar" class="btn-download">
+                            <i class="fas fa-download"></i> İndir (.rar)
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="project-card" style="border-color: #ffe600;">
+                    <div class="card-image">
+                        <i class="fas fa-car-side" style="color: #ffe600;"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 style="color: #ffe600;">Dağ Yarışı</h3>
+                        <p>Godot Engine ile geliştirilen fizik tabanlı araç simülasyonu. (Geliştirme Aşamasında)</p>
+                        <button class="btn-download" style="background: #333; color: #777; cursor: not-allowed;">
+                            🚧 Yakında
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div> <div id="contact" class="contact-section">
         <h2 style="color: #fff;">İletişim</h2>
-        <p style="color: #aaa;"></p>
+        <p style="color: #aaa;">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         
         <div class="social-links">
             <a href="https://github.com/Arda0842" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
@@ -184,9 +238,139 @@
         </div>
 
         <footer>
-            &copy;2026 | Tüm hakları saklıdır.
+            &copy; 2026 Arda | Tüm hakları saklıdır.
         </footer>
     </div>
 
+    <script>
+        const canvas = document.getElementById('networkCanvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+        
+        // Canvas boyutunu pencereye eşitle
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mouse = {
+            x: null,
+            y: null,
+            radius: (canvas.height / 80) * (canvas.width / 80)
+        };
+
+        // Fare hareketini takip et
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        // Pencere boyutu değişince güncelle
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            mouse.radius = (canvas.height / 80) * (canvas.width / 80);
+            init();
+        });
+
+        // Parçacık Sınıfı
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = '#00d4ff'; // Nokta rengi (Mavi)
+                ctx.fill();
+            }
+            update() {
+                // Sınırlardan sekme
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
+                }
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+
+                // Fare etkileşimi
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                
+                if (distance < mouse.radius + this.size){
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                        this.x += 10;
+                    }
+                    if (mouse.x > this.x && this.x > this.size * 10) {
+                        this.x -= 10;
+                    }
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                        this.y += 10;
+                    }
+                    if (mouse.y > this.y && this.y > this.size * 10) {
+                        this.y -= 10;
+                    }
+                }
+
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1; // Nokta boyutu
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 2) - 1; // Hız
+                let directionY = (Math.random() * 2) - 1;
+                let color = '#ffffff';
+
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        // Noktaları birleştirme (Çizgi çekme)
+        function connect() {
+            let opacityValue = 1;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    
+                    if (distance < (canvas.width/7) * (canvas.height/7)) {
+                        opacityValue = 1 - (distance/20000);
+                        ctx.strokeStyle = 'rgba(0, 212, 255,' + opacityValue + ')'; // Çizgi rengi (Mavi)
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connect();
+        }
+
+        // Başlat
+        init();
+        animate();
+    </script>
 </body>
 </html>
