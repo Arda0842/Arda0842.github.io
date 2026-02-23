@@ -6,148 +6,228 @@
     <title>Arda | Yazılım & Oyun Portfolyosu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* --- CSS DEĞİŞKENLERİ (RENK PALETİ) --- */
+        :root {
+            /* Varsayılan (Karanlık Mod) */
+            --bg-color: #0f0f0f;
+            --text-color: #ffffff;
+            --text-muted: #ccc;
+            --accent-color: #00d4ff; /* Mavi */
+            --accent-hover: #00b8e6;
+            --secondary-accent: #00ff88; /* Yeşil */
+            --nav-bg: rgba(15, 15, 15, 0.85);
+            --card-bg: rgba(26, 26, 26, 0.95);
+            --border-color: #333;
+            --shadow: rgba(0, 212, 255, 0.2);
+            --card-img-bg: linear-gradient(45deg, #2b2b2b, #1a1a1a);
+        }
+
+        /* Aydınlık Mod Değişkenleri */
+        body.light-mode {
+            --bg-color: #f0f2f5;
+            --text-color: #333333;
+            --text-muted: #555555;
+            --accent-color: #0077b6; /* Daha koyu mavi */
+            --accent-hover: #005f91;
+            --secondary-accent: #00994d; /* Daha koyu yeşil */
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --card-img-bg: linear-gradient(45deg, #e0e0e0, #ffffff);
+        }
+
         /* Genel Ayarlar & Smooth Scroll */
         html { scroll-behavior: smooth; }
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            background-color: #0f0f0f; 
-            color: #ffffff; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
             margin: 0; 
             padding: 0; 
             min-height: 100vh; 
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         /* --- ARKA PLAN CANVAS (AĞ ANİMASYONU) --- */
         #networkCanvas {
-            position: fixed; /* Sayfa kaydırılsa bile sabit kalsın */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* En arkada dursun */
-            background-color: #0f0f0f; /* Canvas yüklenmezse görünecek renk */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
         }
+
+        /* --- TEMA DEĞİŞTİRME BUTONU (SAĞ ÜST) --- */
+        .theme-switch-wrapper {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+        }
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
+        }
+        .theme-switch input { display:none; }
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        }
+        /* Yuvarlak buton kısmı */
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* İkonlar */
+        .fa-moon { color: #f1c40f; margin-left: auto; font-size: 14px; padding-right: 5px;}
+        .fa-sun { color: #f39c12; margin-right: auto; font-size: 14px; padding-left: 5px;}
+
+        input:checked + .slider { background-color: var(--secondary-accent); }
+        input:checked + .slider:before { transform: translateX(26px); }
 
         /* --- NAVİGASYON ÇUBUĞU --- */
         .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(15, 15, 15, 0.85); /* Biraz daha şeffaf */
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: var(--nav-bg);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
             padding: 15px 0;
             z-index: 1000;
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: flex; justify-content: center; gap: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: background 0.3s, border-color 0.3s;
         }
         .nav-link {
-            color: #ccc;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.05rem;
-            transition: 0.3s;
-            position: relative;
+            color: var(--text-muted);
+            text-decoration: none; font-weight: 600; font-size: 1.05rem;
+            transition: 0.3s; position: relative;
         }
-        .nav-link:hover { color: #00d4ff; }
+        .nav-link:hover { color: var(--accent-color); }
         .nav-link::after {
             content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
-            background-color: #00d4ff; transition: width 0.3s;
+            background-color: var(--accent-color); transition: width 0.3s;
         }
         .nav-link:hover::after { width: 100%; }
 
-        /* --- ANA İÇERİK SARMALAYICI --- */
-        /* İçeriği ortalamak ve menü altında kalmasını engellemek için */
+        /* --- ANA İÇERİK --- */
         .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 100px; /* Menü payı */
-            width: 100%;
-            position: relative;
-            z-index: 1; /* Canvas'ın üzerinde dursun */
+            display: flex; flex-direction: column; align-items: center;
+            padding-top: 100px; width: 100%; position: relative; z-index: 1;
         }
 
-        /* Header Alanı */
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
-        h1 { color: #00d4ff; margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-        .role { color: #00ff88; font-weight: bold; font-size: 1.2rem; margin-top: 10px; display: block; }
+        h1 { color: var(--accent-color); margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
         
-        /* Yetenek Etiketleri */
+        /* Daktilo Efekti İçin */
+        #typewriter {
+            color: var(--secondary-accent);
+            font-weight: bold; font-size: 1.2rem; margin-top: 10px;
+            border-right: 3px solid var(--accent-color);
+            padding-right: 5px;
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink { 0% { border-color: transparent; } 50% { border-color: var(--accent-color); } 100% { border-color: transparent; } }
+
         .skills { margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
         .skill-tag { 
-            background: rgba(31, 31, 31, 0.8); /* Yarı saydam */
-            border: 1px solid #333; padding: 8px 18px; border-radius: 20px; 
-            font-size: 0.9rem; color: #ddd; display: flex; align-items: center; gap: 8px; 
+            background: var(--card-bg);
+            border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; 
+            font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; 
             backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px var(--shadow);
+            transition: 0.3s;
         }
-        .skill-tag i { color: #00d4ff; }
+        .skill-tag i { color: var(--accent-color); }
 
         /* Hakkında Kutusu */
         .about-section { 
-            background: rgba(26, 26, 26, 0.9); /* Yarı saydam */
-            padding: 30px; 
-            border-radius: 15px; 
-            border-left: 4px solid #00d4ff; 
-            text-align: left; 
-            margin: 40px auto;
-            max-width: 800px;
-            width: 90%;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: var(--card-bg);
+            padding: 30px; border-radius: 15px; border-left: 4px solid var(--accent-color); 
+            text-align: left; margin: 40px auto; max-width: 800px; width: 90%;
+            backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: background 0.3s;
         }
-        .about-section h2 { margin-top: 0; color: #fff; }
-        .about-section p { color: #ccc; line-height: 1.6; }
+        .about-section h2 { margin-top: 0; color: var(--text-color); }
+        .about-section p { color: var(--text-muted); line-height: 1.6; }
 
-        /* Proje Izgarası */
+        /* Projeler */
         .container { width: 90%; max-width: 1000px; padding: 20px; margin-bottom: 50px; }
-        .section-title { border-left: 4px solid #00ff88; padding-left: 15px; font-size: 1.8rem; margin-bottom: 30px; text-align: left; color: #fff; }
+        .section-title { border-left: 4px solid var(--secondary-accent); padding-left: 15px; font-size: 1.8rem; margin-bottom: 30px; text-align: left; color: var(--text-color); }
         
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         
-        /* Kart Tasarımı */
         .project-card { 
-            background: rgba(26, 26, 26, 0.95); 
-            border-radius: 15px; overflow: hidden; border: 1px solid #333; 
+            background: var(--card-bg);
+            border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); 
             transition: 0.3s; display: flex; flex-direction: column; 
             backdrop-filter: blur(5px);
         }
-        .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2); border-color: #00d4ff; }
+        .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px var(--shadow); border-color: var(--accent-color); }
         
-        .card-image { width: 100%; height: 160px; background: linear-gradient(45deg, #2b2b2b, #1a1a1a); display: flex; align-items: center; justify-content: center; color: #555; font-size: 3rem; }
+        .card-image { width: 100%; height: 160px; background: var(--card-img-bg); display: flex; align-items: center; justify-content: center; color: #555; font-size: 3rem; }
         
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-content h3 { margin: 0 0 10px 0; color: #fff; }
-        .card-content p { color: #bbb; font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        .card-content h3 { margin: 0 0 10px 0; color: var(--text-color); }
+        .card-content p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
 
-        .btn-download { background: #00d4ff; color: #000; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
-        .btn-download:hover { background: #00b8e6; transform: scale(1.02); }
+        .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
+        .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
 
-        /* İletişim / Footer Alanı */
+        /* İletişim / Footer */
         .contact-section { 
-            background: rgba(17, 17, 17, 0.95); 
-            width: 100%; 
-            padding: 50px 20px; 
-            text-align: center; 
-            border-top: 1px solid #333; 
-            margin-top: auto; 
-            position: relative;
-            z-index: 1;
+            background: var(--card-bg);
+            width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); 
+            margin-top: auto; position: relative; z-index: 1;
+            transition: background 0.3s;
         }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
-        .social-btn { color: #fff; font-size: 2rem; transition: 0.3s; opacity: 0.7; }
-        .social-btn:hover { color: #00d4ff; opacity: 1; transform: translateY(-5px); }
+        .social-btn { color: var(--text-color); font-size: 2rem; transition: 0.3s; opacity: 0.7; }
+        .social-btn:hover { color: var(--accent-color); opacity: 1; transform: translateY(-5px); }
 
-        footer { margin-top: 30px; color: #555; font-size: 0.8rem; }
+        footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <canvas id="networkCanvas"></canvas>
+
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </div>
+        </label>
+    </div>
 
     <nav class="navbar">
         <a href="#home" class="nav-link">Ana Sayfa</a>
@@ -158,14 +238,22 @@
     <div class="main-wrapper">
 
         <header id="home">
-            <h1>Hoşgeldiniz</h1>
-            <span class="role"></span>
+            <h1>Arda</h1>
+            <span class="role">Ben bir <span id="typewriter"></span></span>
+            
+            <div class="skills">
+                <div class="skill-tag"><i class="fas fa-code"></i> C# & .NET</div>
+                <div class="skill-tag"><i class="fas fa-chart-line"></i> Algoritmik Ticaret</div>
+                <div class="skill-tag"><i class="fas fa-gamepad"></i> Game Dev</div>
+                <div class="skill-tag"><i class="fas fa-users"></i> GDG Liderlik</div>
+            </div>
         </header>
 
         <div id="about" class="about-section">
             <h2>Hakkımda</h2>
             <p>
                 Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. 
+                Oyun geliştirme, .NET teknolojileri ve algoritmik ticaret sistemleri üzerine çalışıyorum.
             </p>
         </div>
 
@@ -174,9 +262,7 @@
 
             <div class="projects-grid">
                 <div class="project-card">
-                    <div class="card-image">
-                        <i class="fas fa-bullhorn"></i> 
-                    </div>
+                    <div class="card-image"><i class="fas fa-bullhorn"></i></div>
                     <div class="card-content">
                         <h3>Kayseri Boğası</h3>
                         <p>Refleks ve strateji gerektiren, yerel motiflerle süslenmiş eğlenceli bir WinForms oyunu.</p>
@@ -187,22 +273,18 @@
                 </div>
 
                 <div class="project-card">
-                    <div class="card-image">
-                        <i class="fas fa-bomb"></i>
-                    </div>
+                    <div class="card-image"><i class="fas fa-bomb"></i></div>
                     <div class="card-content">
                         <h3>Dinamik Mayın Tarlası</h3>
                         <p>Hücre yoğunluğuna göre değişen zorluk algoritmasıyla geliştirilmiş strateji oyunu.</p>
                         <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/MayinSetup.exe" class="btn-download">
-                            <i class="fas fa-download"></i> İndir (.exe)
+                            <i class="fas fa-download"></i> Hemen Kur (.exe)
                         </a>
                     </div>
                 </div>
                 
                 <div class="project-card" style="border-color: #ffe600;">
-                    <div class="card-image">
-                        <i class="fas fa-car-side" style="color: #ffe600;"></i>
-                    </div>
+                    <div class="card-image"><i class="fas fa-car-side" style="color: #ffe600;"></i></div>
                     <div class="card-content">
                         <h3 style="color: #ffe600;">Dağ Yarışı</h3>
                         <p>Godot Engine ile geliştirilen fizik tabanlı araç simülasyonu. (Geliştirme Aşamasında)</p>
@@ -216,8 +298,8 @@
         </div>
 
     </div> <div id="contact" class="contact-section">
-        <h2 style="color: #fff;">İletişim</h2>
-        <p style="color: #aaa;">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
+        <h2 style="color: var(--text-color);">İletişim</h2>
+        <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         
         <div class="social-links">
             <a href="https://github.com/Arda0842" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
@@ -231,27 +313,82 @@
     </div>
 
     <script>
+        // --- DAKTİLO EFEKTİ ---
+        const textElement = document.getElementById('typewriter');
+        const phrases = ["Bilgisayar Müh. Öğrencisiyim.", "Oyun Geliştiriciyim.", "GDG Lideriyim.", "Trader Adayıyım."];
+        let phraseIndex = 0, charIndex = 0, isDeleting = false;
+
+        function type() {
+            const currentPhrase = phrases[phraseIndex];
+            if (isDeleting) {
+                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentPhrase.length) {
+                isDeleting = true; typeSpeed = 2000;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500;
+            }
+            setTimeout(type, typeSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', type);
+
+
+        // --- TEMA DEĞİŞTİRME MANTIĞI ---
+        const toggleSwitch = document.querySelector('#checkbox');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+            if (currentTheme === 'light-mode') {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        toggleSwitch.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark-mode');
+            }
+            updateCanvasColors(); // Tema değişince canvas renklerini de güncelle
+        });
+
+
+        // --- CANVAS (AĞ ANİMASYONU) ---
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
         let particlesArray;
-        
-        // Canvas boyutunu pencereye eşitle
+
+        // Tema renklerini JS içinde tanımla
+        let particleColor = '#00d4ff'; 
+        let lineColor = '0, 212, 255'; 
+
+        function updateCanvasColors() {
+            if (document.body.classList.contains('light-mode')) {
+                particleColor = '#0077b6'; // Aydınlık modda koyu mavi noktalar
+                lineColor = '0, 119, 182';
+            } else {
+                particleColor = '#00d4ff'; // Karanlık modda açık mavi noktalar
+                lineColor = '0, 212, 255';
+            }
+        }
+        updateCanvasColors(); // Başlangıçta ayarla
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        let mouse = {
-            x: null,
-            y: null,
-            radius: (canvas.height / 80) * (canvas.width / 80)
-        };
+        let mouse = { x: null, y: null, radius: (canvas.height / 80) * (canvas.width / 80) };
 
-        // Fare hareketini takip et
-        window.addEventListener('mousemove', function(event) {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        });
-
-        // Pencere boyutu değişince güncelle
+        window.addEventListener('mousemove', function(event) { mouse.x = event.x; mouse.y = event.y; });
         window.addEventListener('resize', function() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -259,53 +396,28 @@
             init();
         });
 
-        // Parçacık Sınıfı
         class Particle {
             constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
+                this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color;
             }
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = '#00d4ff'; // Nokta rengi (Mavi)
+                ctx.fillStyle = particleColor; // Değişken rengi kullan
                 ctx.fill();
             }
             update() {
-                // Sınırlardan sekme
-                if (this.x > canvas.width || this.x < 0) {
-                    this.directionX = -this.directionX;
-                }
-                if (this.y > canvas.height || this.y < 0) {
-                    this.directionY = -this.directionY;
-                }
-
-                // Fare etkileşimi
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
                 let distance = Math.sqrt(dx*dx + dy*dy);
-                
                 if (distance < mouse.radius + this.size){
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
-                        this.x += 10;
-                    }
-                    if (mouse.x > this.x && this.x > this.size * 10) {
-                        this.x -= 10;
-                    }
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
-                        this.y += 10;
-                    }
-                    if (mouse.y > this.y && this.y > this.size * 10) {
-                        this.y -= 10;
-                    }
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 10;
+                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 10;
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 10;
+                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 10;
                 }
-
-                this.x += this.directionX;
-                this.y += this.directionY;
+                this.x += this.directionX; this.y += this.directionY;
                 this.draw();
             }
         }
@@ -314,28 +426,23 @@
             particlesArray = [];
             let numberOfParticles = (canvas.height * canvas.width) / 9000;
             for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 2) + 1; // Nokta boyutu
+                let size = (Math.random() * 2) + 1;
                 let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
                 let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 2) - 1; // Hız
+                let directionX = (Math.random() * 2) - 1;
                 let directionY = (Math.random() * 2) - 1;
-                let color = '#ffffff';
-
-                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, particleColor));
             }
         }
 
-        // Noktaları birleştirme (Çizgi çekme)
         function connect() {
             let opacityValue = 1;
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
-                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                    + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-                    
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
                     if (distance < (canvas.width/7) * (canvas.height/7)) {
                         opacityValue = 1 - (distance/20000);
-                        ctx.strokeStyle = 'rgba(0, 212, 255,' + opacityValue + ')'; // Çizgi rengi (Mavi)
+                        ctx.strokeStyle = 'rgba(' + lineColor + ',' + opacityValue + ')'; // Değişken rengi kullan
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
@@ -349,14 +456,12 @@
         function animate() {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, innerWidth, innerHeight);
-
             for (let i = 0; i < particlesArray.length; i++) {
                 particlesArray[i].update();
             }
             connect();
         }
 
-        // Başlat
         init();
         animate();
     </script>
