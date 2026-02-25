@@ -8,7 +8,6 @@
     <style>
         /* --- CSS DEĞİŞKENLERİ --- */
         :root {
-            /* Dark Mode (Varsayılan) */
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
             --text-muted: #ccc;
@@ -44,49 +43,55 @@
             color: var(--text-color); 
             margin: 0; padding: 0; 
             min-height: 100vh; overflow-x: hidden;
-            /* Arkaplan geçişini kapattık, patlama efekti halledecek */
         }
 
-        /* --- PATLAMA EFEKTİ KATMANI --- */
+        /* --- GİRİŞ ANİMASYONLARI (FADE IN UP) --- */
+        /* Tüm animasyonlu elementlerin ortak başlangıcı */
+        .animate-on-load {
+            opacity: 0; /* Başlangıçta görünmez */
+            transform: translateY(30px); /* Biraz aşağıda */
+            animation: fadeInUp 0.8s ease-out forwards; /* Yukarı kayarak gel */
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* GECİKMELER (ŞELALE EFEKTİ) */
+        /* Her eleman bir öncekinden 0.2 saniye sonra gelir */
+        .delay-1 { animation-delay: 0.2s; } /* İsim */
+        .delay-2 { animation-delay: 0.4s; } /* Rol */
+        .delay-3 { animation-delay: 0.6s; } /* Yetenekler */
+        .delay-4 { animation-delay: 0.8s; } /* Hakkında */
+        .delay-5 { animation-delay: 1.0s; } /* Projeler Başlık */
+        .delay-6 { animation-delay: 1.2s; } /* Kart 1 */
+        .delay-7 { animation-delay: 1.4s; } /* Kart 2 */
+        .delay-8 { animation-delay: 1.6s; } /* Kart 3 */
+        .delay-9 { animation-delay: 1.8s; } /* İletişim */
+
+
+        /* --- DİĞER STİLLER --- */
         #transition-layer {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            width: 20px; height: 20px; /* Başlangıç boyutu */
-            transform: translate(-50%, -50%) scale(0);
-            /* Transition JS ile kontrol edilecek */
+            position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+            width: 20px; height: 20px; transform: translate(-50%, -50%) scale(0);
         }
 
-        /* --- DÜŞEN BUTON STİLLERİ --- */
         .theme-switch-wrapper {
-            position: fixed; 
-            top: 15px; /* Biraz daha yukarıda */
-            right: 20px; 
-            z-index: 10001;
-            display: flex; align-items: center;
-            transition: transform 0.3s;
+            position: fixed; top: 15px; right: 20px; z-index: 10001;
+            display: flex; align-items: center; transition: transform 0.3s;
         }
         
-        /* Düşme Animasyonu: 0.8s sürer, hızlanarak düşer (ease-in) */
-        .theme-switch-wrapper.falling {
-            animation: fallToBottom 0.8s ease-in forwards;
-        }
+        .theme-switch-wrapper.falling { animation: fallToBottom 0.8s ease-in forwards; }
 
         @keyframes fallToBottom {
-            0% { 
-                transform: translateY(0) rotate(0deg); 
-            }
-            100% { 
-                /* Ekranın en altına, buton boyunu hesaba katarak düş */
-                transform: translateY(calc(100vh - 50px)) rotate(720deg); /* 2 tam tur atar */
-                opacity: 1;
-            }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(calc(100vh - 50px)) rotate(720deg); opacity: 1; }
         }
 
-        .theme-switch {
-            display: inline-block; height: 34px; position: relative; width: 60px;
-        }
+        .theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
         .theme-switch input { display:none; }
         .slider {
             background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0;
@@ -102,7 +107,6 @@
         input:checked + .slider { background-color: var(--secondary-accent); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* --- DİĞER CSS --- */
         #networkCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         
         #scrollTopBtn {
@@ -187,16 +191,18 @@
 
     <div class="main-wrapper">
         <header id="home">
-            <h1>Arda</h1>
-            <span class="role">Ben bir <span id="typewriter"></span></span>
-            <div class="skills">
+            <h1 class="animate-on-load delay-1">Arda</h1>
+            
+            <span class="role animate-on-load delay-2">Ben bir <span id="typewriter"></span></span>
+            
+            <div class="skills animate-on-load delay-3">
                 <div class="skill-tag"><i class="fas fa-code"></i> C# & .NET</div>
                 <div class="skill-tag"><i class="fas fa-chart-line"></i> Algoritmik Ticaret</div>
                 <div class="skill-tag"><i class="fas fa-gamepad"></i> Game Dev</div>
             </div>
         </header>
 
-        <div id="about" class="about-section">
+        <div id="about" class="about-section animate-on-load delay-4">
             <h2>Hakkımda</h2>
             <p>
                 Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. 
@@ -205,9 +211,10 @@
         </div>
 
         <div class="container">
-            <h2 class="section-title">🎮 Oyun Projelerim</h2>
+            <h2 class="section-title animate-on-load delay-5">🎮 Oyun Projelerim</h2>
+            
             <div class="projects-grid">
-                <div class="project-card">
+                <div class="project-card animate-on-load delay-6">
                     <div class="card-image"><i class="fas fa-bullhorn"></i></div>
                     <div class="card-content">
                         <h3>Kayseri Boğası</h3>
@@ -218,7 +225,7 @@
                     </div>
                 </div>
 
-                <div class="project-card">
+                <div class="project-card animate-on-load delay-7">
                     <div class="card-image"><i class="fas fa-bomb"></i></div>
                     <div class="card-content">
                         <h3>Dinamik Mayın Tarlası</h3>
@@ -229,7 +236,7 @@
                     </div>
                 </div>
                 
-                <div class="project-card" style="border-color: #ffe600;">
+                <div class="project-card animate-on-load delay-8" style="border-color: #ffe600;">
                     <div class="card-image"><i class="fas fa-car-side" style="color: #ffe600;"></i></div>
                     <div class="card-content">
                         <h3 style="color: #ffe600;">Dağ Yarışı</h3>
@@ -243,7 +250,7 @@
         </div>
     </div> 
 
-    <div id="contact" class="contact-section">
+    <div id="contact" class="contact-section animate-on-load delay-9">
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         <div class="social-links">
@@ -289,56 +296,42 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- PROFESYONEL TEMA GEÇİŞ ANİMASYONU (Sequence Timer) ---
+        // --- TEMA GEÇİŞ ANİMASYONU ---
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
         const transitionLayer = document.getElementById('transition-layer');
         const body = document.body;
-        let isAnimating = false; // Animasyon sırasında tıklamayı engellemek için kilit
+        let isAnimating = false;
 
-        // Başlangıç temasını yükle
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme) {
             body.classList.add(currentTheme);
             if (currentTheme === 'light-mode') toggleSwitch.checked = true;
         }
 
-        // Tıklama Olayı
         themeWrapper.addEventListener('click', function(e) {
-            e.preventDefault(); // Checkbox'ın otomatik değişmesini engelle
-            if (isAnimating) return; // Animasyon bitmeden tekrar basılamaz
+            e.preventDefault();
+            if (isAnimating) return;
             isAnimating = true;
 
-            // Hedef durumu belirle
             const isCurrentlyLight = body.classList.contains('light-mode');
             const targetIsLight = !isCurrentlyLight;
 
-            // 1. ADIM: DÜŞÜŞ BAŞLASIN
             themeWrapper.classList.add('falling');
-
-            // Butonun yatay konumunu al
             const rect = themeWrapper.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
 
-            // 2. ADIM: DÜŞÜŞÜN BİTMESİNİ BEKLE (0.8s CSS süresi)
             setTimeout(() => {
-                
-                // Patlama rengini ve konumunu ayarla (Ekranın en altı)
                 const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
                 transitionLayer.style.left = `${centerX}px`;
                 transitionLayer.style.top = `${window.innerHeight}px`; 
                 transitionLayer.style.backgroundColor = nextBg;
                 
-                // Patlama efekti başlasın (Daha yavaş ve dramatik: 0.8s)
                 transitionLayer.style.transition = 'transform 0.8s ease-out';
-                
-                // Ekranı kaplayacak devasa boyut
                 const maxDim = Math.max(window.innerWidth, window.innerHeight);
                 const scale = (maxDim / 10) * 5; 
                 transitionLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
 
-                // 3. ADIM: PATLAMA EKRANI KAPLADIĞINDA TEMAYI GİZLİCE DEĞİŞTİR
-                // Patlama başladıktan 0.5s sonra (henüz bitmeden) tema değişir
                 setTimeout(() => {
                     if (targetIsLight) {
                         body.classList.add('light-mode');
@@ -349,28 +342,21 @@
                         localStorage.setItem('theme', 'dark-mode');
                         toggleSwitch.checked = false;
                     }
-                    updateCanvasColors(); // Ağ animasyonunu güncelle
+                    updateCanvasColors();
 
-                    // 4. ADIM: TEMİZLİK VE RESET (Patlama animasyonu bittikten hemen sonra)
                     setTimeout(() => {
-                        // Patlama katmanını anında (animasyonsuz) gizle
                         transitionLayer.style.transition = 'none';
                         transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-                        
-                        // Butonu yukarı geri getir
                         themeWrapper.classList.remove('falling');
-                        
-                        // Kilidi aç
                         isAnimating = false;
-                    }, 300); // Tema değişiminden kısa bir süre sonra
+                    }, 300);
 
-                }, 500); // Patlama başladıktan 500ms sonra asıl değişim
+                }, 500);
 
-            }, 800); // Düşüş süresi sonu
+            }, 800);
         });
 
-
-        // --- CANVAS (AĞ ANİMASYONU) ---
+        // --- CANVAS ---
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
         let particlesArray;
