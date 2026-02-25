@@ -44,35 +44,42 @@
             color: var(--text-color); 
             margin: 0; padding: 0; 
             min-height: 100vh; overflow-x: hidden;
-            /* Arkaplan geçişini kapattık çünkü patlama efektiyle yapacağız */
-            /* transition: background-color 0.3s; */ 
         }
 
-        /* --- GEÇİŞ EFEKTİ KATMANI (PATLAMA) --- */
+        /* --- PATLAMA EFEKTİ KATMANI --- */
         #transition-layer {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
             transform: translate(-50%, -50%) scale(0);
-            transition: transform 0.6s ease-in-out;
+            /* Transition JS ile kontrol edilecek */
         }
 
-        /* --- DÜŞEN BUTON ANİMASYONU --- */
+        /* --- DÜŞEN BUTON STİLLERİ --- */
         .theme-switch-wrapper {
-            position: fixed; top: 20px; right: 20px; z-index: 10001;
+            position: fixed; 
+            top: 10px; /* BİRAZ DAHA YUKARI ALINDI */
+            right: 20px; 
+            z-index: 10001;
             display: flex; align-items: center;
-            transition: transform 0.3s; /* Geri geliş animasyonu */
+            transition: transform 0.3s;
         }
         
-        /* Buton düşerken çalışacak class */
+        /* Düşme Animasyonu: Hızlanarak düşer (ease-in) ve döner */
         .theme-switch-wrapper.falling {
-            animation: fallDown 0.8s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045);
+            animation: fallToBottom 0.8s ease-in forwards;
         }
 
-        @keyframes fallDown {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(120deg); opacity: 0; }
+        @keyframes fallToBottom {
+            0% { 
+                transform: translateY(0) rotate(0deg); 
+            }
+            100% { 
+                /* Ekranın en altına kadar düş */
+                transform: translateY(90vh) rotate(1080deg); /* 3 tam tur atar */
+                opacity: 1;
+            }
         }
 
         .theme-switch {
@@ -93,7 +100,7 @@
         input:checked + .slider { background-color: var(--secondary-accent); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* --- DİĞER CSS (Aynı) --- */
+        /* --- DİĞER CSS --- */
         #networkCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         
         #scrollTopBtn {
@@ -181,6 +188,9 @@
             <h1>Arda</h1>
             <span class="role">Ben bir <span id="typewriter"></span></span>
             <div class="skills">
+                <div class="skill-tag"><i class="fas fa-code"></i> C# & .NET</div>
+                <div class="skill-tag"><i class="fas fa-chart-line"></i> Algoritmik Ticaret</div>
+                <div class="skill-tag"><i class="fas fa-gamepad"></i> Game Dev</div>
             </div>
         </header>
 
@@ -277,7 +287,7 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- GELİŞMİŞ TEMA ANİMASYONU ---
+        // --- ANİMASYONLU TEMA DEĞİŞİMİ (DÜŞÜŞ + PATLAMA) ---
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
         const transitionLayer = document.getElementById('transition-layer');
@@ -288,63 +298,68 @@
             if (currentTheme === 'light-mode') toggleSwitch.checked = true;
         }
 
-        toggleSwitch.addEventListener('change', function(e) {
-            // 1. Durumu belirle (Açık mı, koyu mu olacak?)
-            const isLight = e.target.checked;
-            
-            // 2. Butonun konumunu al
-            const rect = themeWrapper.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+        // Tıklamayı dinle
+        document.querySelector('.theme-switch').addEventListener('click', function(e) {
+            // Checkbox'ın doğal davranışını engelle (manuel yöneteceğiz)
+            e.preventDefault();
 
-            // 3. Geçiş katmanını konumlandır ve rengini ayarla
-            // Eğer light mode'a geçiyorsak patlayan renk açık olmalı (#f0f2f5), yoksa koyu (#0f0f0f)
-            const nextBg = isLight ? '#f0f2f5' : '#0f0f0f';
-            
-            transitionLayer.style.left = `${centerX}px`;
-            transitionLayer.style.top = `${centerY}px`;
-            transitionLayer.style.backgroundColor = nextBg;
-            transitionLayer.style.width = '10px';
-            transitionLayer.style.height = '10px';
-            transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-            
-            // 4. Butonu Düşür!
+            // Zaten düşüyorsa tekrar basılmasını engelle
+            if (themeWrapper.classList.contains('falling')) return;
+
+            // Şu anki durum ne? (Tıklanmadan önce)
+            const isCurrentlyLight = document.body.classList.contains('light-mode');
+            const targetModeLight = !isCurrentlyLight; // Hedeflenen mod
+
+            // 1. DÜŞÜŞ BAŞLASIN
             themeWrapper.classList.add('falling');
 
-            // 5. Patlama Efektini Başlat (Biraz bekleyip butona çarpınca patlasın)
+            // 2. BUTONUN X KOORDİNATINI AL (Patlama buradan hizalanacak)
+            const rect = themeWrapper.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+
+            // 3. DÜŞÜŞ SÜRESİ KADAR BEKLE (0.8s)
             setTimeout(() => {
-                // Ekranın köşegen uzunluğunu hesapla (tüm ekranı kaplaması için)
+                
+                // Patlama Rengi: Hedef moda göre ayarla
+                const nextBg = targetModeLight ? '#f0f2f5' : '#0f0f0f';
+                
+                // Patlama katmanını ekranın ALTINA konumlandır
+                transitionLayer.style.left = `${centerX}px`;
+                transitionLayer.style.top = `${window.innerHeight}px`; // Ekranın en altı
+                transitionLayer.style.backgroundColor = nextBg;
+                
+                // Patlama Başlasın
+                transitionLayer.style.transition = 'transform 0.6s ease-in-out';
+                
+                // Ekranı kaplayacak büyüklük hesabı
                 const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                const scale = (maxDim / 5) * 2.5; // Yeterince büyümesi için katsayı
-
+                const scale = (maxDim / 5) * 3; 
                 transitionLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
-            }, 200); // Buton biraz düştükten sonra patlar
 
-            // 6. Asıl temayı değiştir ve temizle
-            setTimeout(() => {
-                if (isLight) {
-                    document.body.classList.add('light-mode');
-                    localStorage.setItem('theme', 'light-mode');
-                } else {
-                    document.body.classList.remove('light-mode');
-                    localStorage.setItem('theme', 'dark-mode');
-                }
-                
-                updateCanvasColors(); // Ağ animasyonunun rengini güncelle
-
-                // Temizleme işlemleri
-                transitionLayer.style.transition = 'none'; // Animasyonsuz küçült
-                transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-                
-                // Transition'ı geri aç ki bir sonraki tıklamada çalışsın
+                // 4. PATLAMA EKRANI KAPLAYINCA TEMAYI DEĞİŞTİR (0.4s sonra)
                 setTimeout(() => {
-                    transitionLayer.style.transition = 'transform 0.6s ease-in-out';
-                }, 50);
+                    if (targetModeLight) {
+                        document.body.classList.add('light-mode');
+                        localStorage.setItem('theme', 'light-mode');
+                        toggleSwitch.checked = true;
+                    } else {
+                        document.body.classList.remove('light-mode');
+                        localStorage.setItem('theme', 'dark-mode');
+                        toggleSwitch.checked = false;
+                    }
+                    updateCanvasColors();
 
-                // Butonu geri getir
-                themeWrapper.classList.remove('falling');
-                
-            }, 800); // Patlama animasyonunun bitiş süresiyle senkronize
+                    // 5. TEMİZLİK VE RESET
+                    // Patlama katmanını gizle (animasyonsuz)
+                    transitionLayer.style.transition = 'none';
+                    transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
+                    
+                    // Butonu geri getir
+                    themeWrapper.classList.remove('falling');
+
+                }, 600); // Patlamanın yarısında tema değişsin
+
+            }, 750); // Düşüşün bitmesine çok az kala patlama başlasın
         });
 
 
