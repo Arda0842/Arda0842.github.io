@@ -45,50 +45,52 @@
             min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- GİRİŞ ANİMASYONLARI (FADE IN UP) --- */
-        /* Tüm animasyonlu elementlerin ortak başlangıcı */
+        /* --- PATLAMA KATMANI (RIPPLE) --- */
+        #ripple-layer {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999; /* En üstte olmalı */
+            width: 0; height: 0;
+            transform: translate(-50%, -50%);
+            /* Animasyon JS ile kontrol edilecek */
+        }
+
+        /* --- ŞELALE (WATERFALL) YAZI EFEKTİ --- */
         .animate-on-load {
-            opacity: 0; /* Başlangıçta görünmez */
-            transform: translateY(30px); /* Biraz aşağıda */
-            animation: fadeInUp 0.8s ease-out forwards; /* Yukarı kayarak gel */
+            opacity: 0; 
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
         @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* GECİKMELER (ŞELALE EFEKTİ) */
-        /* Her eleman bir öncekinden 0.2 saniye sonra gelir */
-        .delay-1 { animation-delay: 0.2s; } /* İsim */
-        .delay-2 { animation-delay: 0.4s; } /* Rol */
-        .delay-3 { animation-delay: 0.6s; } /* Yetenekler */
-        .delay-4 { animation-delay: 0.8s; } /* Hakkında */
-        .delay-5 { animation-delay: 1.0s; } /* Projeler Başlık */
-        .delay-6 { animation-delay: 1.2s; } /* Kart 1 */
-        .delay-7 { animation-delay: 1.4s; } /* Kart 2 */
-        .delay-8 { animation-delay: 1.6s; } /* Kart 3 */
-        .delay-9 { animation-delay: 1.8s; } /* İletişim */
+        /* Gecikmeler */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.3s; }
+        .delay-3 { animation-delay: 0.5s; }
+        .delay-4 { animation-delay: 0.7s; }
+        .delay-5 { animation-delay: 0.9s; }
+        .delay-6 { animation-delay: 1.1s; }
+        .delay-7 { animation-delay: 1.3s; }
+        .delay-8 { animation-delay: 1.5s; }
+        .delay-9 { animation-delay: 1.7s; }
 
-
-        /* --- DİĞER STİLLER --- */
-        #transition-layer {
-            position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
-            width: 20px; height: 20px; transform: translate(-50%, -50%) scale(0);
-        }
-
+        /* --- BUTON VE DİĞER STİLLER --- */
         .theme-switch-wrapper {
             position: fixed; top: 15px; right: 20px; z-index: 10001;
             display: flex; align-items: center; transition: transform 0.3s;
         }
         
-        .theme-switch-wrapper.falling { animation: fallToBottom 0.8s ease-in forwards; }
+        .theme-switch-wrapper.falling {
+            animation: gravityFall 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
 
-        @keyframes fallToBottom {
+        @keyframes gravityFall {
             0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(calc(100vh - 50px)) rotate(720deg); opacity: 1; }
+            100% { transform: translateY(calc(100vh - 40px)) rotate(720deg); opacity: 1; }
         }
 
         .theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
@@ -108,22 +110,14 @@
         input:checked + .slider:before { transform: translateX(26px); }
 
         #networkCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        
         #scrollTopBtn {
-            position: fixed; bottom: 30px; right: 30px;
-            background: var(--accent-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px;
-            font-size: 1.5rem; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000;
-            display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--shadow);
+            position: fixed; bottom: 30px; right: 30px; background: var(--accent-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px;
+            font-size: 1.5rem; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--shadow);
         }
         #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
 
-        .navbar {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background: var(--nav-bg); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color); padding: 15px 0; z-index: 1000;
-            display: flex; justify-content: center; gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; z-index: 1000; display: flex; justify-content: center; gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.05rem; transition: 0.3s; position: relative; }
         .nav-link:hover { color: var(--accent-color); }
         .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-color); transition: width 0.3s; }
@@ -165,7 +159,7 @@
 </head>
 <body>
 
-    <div id="transition-layer"></div>
+    <div id="ripple-layer"></div>
 
     <canvas id="networkCanvas"></canvas>
 
@@ -296,10 +290,10 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- TEMA GEÇİŞ ANİMASYONU ---
+        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ (RIPPLE EFFECT) ---
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
-        const transitionLayer = document.getElementById('transition-layer');
+        const rippleLayer = document.getElementById('ripple-layer');
         const body = document.body;
         let isAnimating = false;
 
@@ -317,21 +311,36 @@
             const isCurrentlyLight = body.classList.contains('light-mode');
             const targetIsLight = !isCurrentlyLight;
 
+            // 1. DÜŞÜŞ BAŞLASIN
             themeWrapper.classList.add('falling');
+
+            // Butonun merkez X koordinatını al (Patlama buradan yatay hizalanacak)
             const rect = themeWrapper.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
 
+            // 2. ÇARPIŞMA ANI (0.8s sonra)
             setTimeout(() => {
-                const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
-                transitionLayer.style.left = `${centerX}px`;
-                transitionLayer.style.top = `${window.innerHeight}px`; 
-                transitionLayer.style.backgroundColor = nextBg;
                 
-                transitionLayer.style.transition = 'transform 0.8s ease-out';
+                // Hedef rengi belirle
+                const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
+                
+                // Patlama katmanını pozisyonla (Ekranın en altı, butonun hizası)
+                rippleLayer.style.left = `${centerX}px`;
+                rippleLayer.style.top = `${window.innerHeight}px`; 
+                rippleLayer.style.backgroundColor = nextBg;
+                
+                // Patlama başlasın: 0 genişlikten devasa bir boyuta
+                // ease-in-out ile yavaş başla, hızlan, yavaş dur (doğal patlama hissi)
+                rippleLayer.style.transition = 'width 0.8s ease-in-out, height 0.8s ease-in-out';
+                
+                // Ekranın köşegenini hesapla ki tüm ekran dolsun
                 const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                const scale = (maxDim / 10) * 5; 
-                transitionLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                const size = maxDim * 2.5; 
+                
+                rippleLayer.style.width = `${size}px`;
+                rippleLayer.style.height = `${size}px`;
 
+                // 3. EKRAN KAPLANDIĞINDA TEMAYI DEĞİŞTİR (0.6s sonra)
                 setTimeout(() => {
                     if (targetIsLight) {
                         body.classList.add('light-mode');
@@ -344,19 +353,25 @@
                     }
                     updateCanvasColors();
 
+                    // 4. TEMİZLİK (Animasyon bitince)
                     setTimeout(() => {
-                        transitionLayer.style.transition = 'none';
-                        transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
+                        // Katmanı sıfırla (animasyonsuz)
+                        rippleLayer.style.transition = 'none';
+                        rippleLayer.style.width = '0';
+                        rippleLayer.style.height = '0';
+                        
+                        // Butonu geri getir
                         themeWrapper.classList.remove('falling');
                         isAnimating = false;
-                    }, 300);
+                    }, 200); // Ripple tamamen kapladıktan hemen sonra
 
-                }, 500);
+                }, 600); // Patlama başladıktan 600ms sonra asıl değişim
 
-            }, 800);
+            }, 800); // Düşüş süresi
         });
 
-        // --- CANVAS ---
+
+        // --- CANVAS (AĞ ANİMASYONU) ---
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
         let particlesArray;
