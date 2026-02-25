@@ -49,32 +49,7 @@
             min-height: 100vh; 
             overflow-x: hidden;
             transition: background-color 0.3s, color 0.3s;
-            cursor: none; /* Varsayılan imleci gizle */
-        }
-
-        /* Linkler ve butonlar için de özel imleç geçerli olsun */
-        a, button, input, label { cursor: none; }
-
-        /* --- ÖZEL GAMER İMLECİ --- */
-        .cursor-dot {
-            width: 8px; height: 8px; background-color: var(--secondary-accent);
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9999; pointer-events: none;
-            box-shadow: 0 0 10px var(--secondary-accent);
-        }
-        .cursor-outline {
-            width: 40px; height: 40px; border: 2px solid var(--accent-color);
-            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-            border-radius: 50%; z-index: 9998; pointer-events: none;
-            transition: width 0.2s, height 0.2s, background-color 0.2s;
-        }
-        /* Link üzerine gelince imleç büyüsün */
-        body:has(a:hover) .cursor-outline, 
-        body:has(button:hover) .cursor-outline,
-        body:has(.theme-switch:hover) .cursor-outline {
-            width: 60px; height: 60px;
-            background-color: rgba(0, 212, 255, 0.1);
-            border-color: var(--secondary-accent);
+            /* cursor: none; SİLİNDİ - Standart imleç geri geldi */
         }
 
         /* --- YUKARI ÇIK ROKETİ --- */
@@ -84,7 +59,7 @@
             border: none; border-radius: 50%;
             width: 50px; height: 50px;
             font-size: 1.5rem;
-            cursor: none; /* İmleç gizli */
+            cursor: pointer; /* Tıklanabilir el işareti */
             opacity: 0; pointer-events: none; /* Başlangıçta gizli */
             transition: 0.3s;
             z-index: 1000;
@@ -115,7 +90,7 @@
         }
         .theme-switch input { display:none; }
         .slider {
-            background-color: #ccc; bottom: 0; cursor: none; left: 0; position: absolute; right: 0; top: 0;
+            background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0;
             transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 5px;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         }
@@ -197,7 +172,7 @@
         .card-content h3 { margin: 0 0 10px 0; color: var(--text-color); }
         .card-content p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
 
-        .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: none; }
+        .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
 
         .contact-section { 
@@ -211,9 +186,6 @@
     </style>
 </head>
 <body>
-
-    <div class="cursor-dot" data-cursor-dot></div>
-    <div class="cursor-outline" data-cursor-outline></div>
 
     <canvas id="networkCanvas"></canvas>
 
@@ -314,25 +286,7 @@
     </div>
 
     <script>
-        // --- ÖZEL İMLEÇ MANTIĞI ---
-        const cursorDot = document.querySelector('[data-cursor-dot]');
-        const cursorOutline = document.querySelector('[data-cursor-outline]');
-
-        window.addEventListener('mousemove', function(e) {
-            const posX = e.clientX;
-            const posY = e.clientY;
-
-            // Nokta anında takip etsin
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-
-            // Halka biraz gecikmeli gelsin (Animation effect)
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
-        });
-
+        // --- ÖZEL İMLEÇ KODLARI TAMAMEN SİLİNDİ ---
 
         // --- YUKARI ÇIK BUTONU MANTIĞI ---
         const scrollTopBtn = document.getElementById("scrollTopBtn");
