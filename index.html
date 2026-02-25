@@ -6,15 +6,15 @@
     <title>Arda | Yazılım & Oyun Portfolyosu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- CSS DEĞİŞKENLERİ (RENK PALETİ) --- */
+        /* --- CSS DEĞİŞKENLERİ --- */
         :root {
-            /* Varsayılan (Karanlık Mod) */
+            /* Dark Mode (Varsayılan) */
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
             --text-muted: #ccc;
-            --accent-color: #00d4ff; /* Mavi */
+            --accent-color: #00d4ff;
             --accent-hover: #00b8e6;
-            --secondary-accent: #00ff88; /* Yeşil */
+            --secondary-accent: #00ff88;
             --nav-bg: rgba(15, 15, 15, 0.85);
             --card-bg: rgba(26, 26, 26, 0.95);
             --border-color: #333;
@@ -22,14 +22,13 @@
             --card-img-bg: linear-gradient(45deg, #2b2b2b, #1a1a1a);
         }
 
-        /* Aydınlık Mod Değişkenleri */
         body.light-mode {
             --bg-color: #f0f2f5;
             --text-color: #333333;
             --text-muted: #555555;
-            --accent-color: #0077b6; /* Daha koyu mavi */
+            --accent-color: #0077b6;
             --accent-hover: #005f91;
-            --secondary-accent: #00994d; /* Daha koyu yeşil */
+            --secondary-accent: #00994d;
             --nav-bg: rgba(255, 255, 255, 0.9);
             --card-bg: #ffffff;
             --border-color: #ddd;
@@ -37,54 +36,45 @@
             --card-img-bg: linear-gradient(45deg, #e0e0e0, #ffffff);
         }
 
-        /* Genel Ayarlar & Smooth Scroll */
         html { scroll-behavior: smooth; }
         
         body { 
             font-family: 'Segoe UI', sans-serif; 
             background-color: var(--bg-color); 
             color: var(--text-color); 
-            margin: 0; 
-            padding: 0; 
-            min-height: 100vh; 
-            overflow-x: hidden;
-            transition: background-color 0.3s, color 0.3s;
-            /* cursor: none; SİLİNDİ - Standart imleç geri geldi */
+            margin: 0; padding: 0; 
+            min-height: 100vh; overflow-x: hidden;
+            /* Arkaplan geçişini kapattık çünkü patlama efektiyle yapacağız */
+            /* transition: background-color 0.3s; */ 
         }
 
-        /* --- YUKARI ÇIK ROKETİ --- */
-        #scrollTopBtn {
-            position: fixed; bottom: 30px; right: 30px;
-            background: var(--accent-color); color: #000;
-            border: none; border-radius: 50%;
-            width: 50px; height: 50px;
-            font-size: 1.5rem;
-            cursor: pointer; /* Tıklanabilir el işareti */
-            opacity: 0; pointer-events: none; /* Başlangıçta gizli */
-            transition: 0.3s;
-            z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px var(--shadow);
-        }
-        #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
-        #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
-        #scrollTopBtn:active { transform: scale(0.9); }
-
-
-        /* --- ARKA PLAN CANVAS (AĞ ANİMASYONU) --- */
-        #networkCanvas {
+        /* --- GEÇİŞ EFEKTİ KATMANI (PATLAMA) --- */
+        #transition-layer {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.6s ease-in-out;
         }
 
-        /* --- TEMA DEĞİŞTİRME BUTONU (SAĞ ÜST) --- */
+        /* --- DÜŞEN BUTON ANİMASYONU --- */
         .theme-switch-wrapper {
-            position: fixed; top: 20px; right: 20px; z-index: 1001;
+            position: fixed; top: 20px; right: 20px; z-index: 10001;
             display: flex; align-items: center;
+            transition: transform 0.3s; /* Geri geliş animasyonu */
         }
+        
+        /* Buton düşerken çalışacak class */
+        .theme-switch-wrapper.falling {
+            animation: fallDown 0.8s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+
+        @keyframes fallDown {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(120deg); opacity: 0; }
+        }
+
         .theme-switch {
             display: inline-block; height: 34px; position: relative; width: 60px;
         }
@@ -103,55 +93,40 @@
         input:checked + .slider { background-color: var(--secondary-accent); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* --- NAVİGASYON --- */
+        /* --- DİĞER CSS (Aynı) --- */
+        #networkCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        
+        #scrollTopBtn {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--accent-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px;
+            font-size: 1.5rem; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--shadow);
+        }
+        #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
+
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
             background: var(--nav-bg); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 0; z-index: 1000;
-            display: flex; justify-content: center; gap: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: background 0.3s, border-color 0.3s;
+            border-bottom: 1px solid var(--border-color); padding: 15px 0; z-index: 1000;
+            display: flex; justify-content: center; gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .nav-link {
-            color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.05rem;
-            transition: 0.3s; position: relative;
-        }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.05rem; transition: 0.3s; position: relative; }
         .nav-link:hover { color: var(--accent-color); }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
-            background-color: var(--accent-color); transition: width 0.3s;
-        }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-color); transition: width 0.3s; }
         .nav-link:hover::after { width: 100%; }
 
-        /* --- İÇERİK --- */
-        .main-wrapper {
-            display: flex; flex-direction: column; align-items: center;
-            padding-top: 100px; width: 100%; position: relative; z-index: 1;
-        }
-
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; padding-top: 100px; width: 100%; position: relative; z-index: 1; }
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
         h1 { color: var(--accent-color); margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
-        
-        #typewriter {
-            color: var(--secondary-accent); font-weight: bold; font-size: 1.2rem; margin-top: 10px;
-            border-right: 3px solid var(--accent-color); padding-right: 5px; animation: blink 0.7s infinite;
-        }
+        #typewriter { color: var(--secondary-accent); font-weight: bold; font-size: 1.2rem; margin-top: 10px; border-right: 3px solid var(--accent-color); padding-right: 5px; animation: blink 0.7s infinite; }
         @keyframes blink { 0% { border-color: transparent; } 50% { border-color: var(--accent-color); } 100% { border-color: transparent; } }
 
         .skills { margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .skill-tag { 
-            background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; 
-            font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; 
-            backdrop-filter: blur(5px); box-shadow: 0 2px 10px var(--shadow); transition: 0.3s;
-        }
+        .skill-tag { background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); box-shadow: 0 2px 10px var(--shadow); }
         .skill-tag i { color: var(--accent-color); }
 
-        .about-section { 
-            background: var(--card-bg); padding: 30px; border-radius: 15px; border-left: 4px solid var(--accent-color); 
-            text-align: left; margin: 40px auto; max-width: 800px; width: 90%;
-            backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: background 0.3s;
-        }
+        .about-section { background: var(--card-bg); padding: 30px; border-radius: 15px; border-left: 4px solid var(--accent-color); text-align: left; margin: 40px auto; max-width: 800px; width: 90%; backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .about-section h2 { margin-top: 0; color: var(--text-color); }
         .about-section p { color: var(--text-muted); line-height: 1.6; }
 
@@ -159,26 +134,16 @@
         .section-title { border-left: 4px solid var(--secondary-accent); padding-left: 15px; font-size: 1.8rem; margin-bottom: 30px; text-align: left; color: var(--text-color); }
         
         .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        
-        .project-card { 
-            background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); 
-            transition: 0.3s; display: flex; flex-direction: column; backdrop-filter: blur(5px);
-        }
+        .project-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); transition: 0.3s; display: flex; flex-direction: column; backdrop-filter: blur(5px); }
         .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px var(--shadow); border-color: var(--accent-color); }
-        
         .card-image { width: 100%; height: 160px; background: var(--card-img-bg); display: flex; align-items: center; justify-content: center; color: #555; font-size: 3rem; }
-        
         .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
         .card-content h3 { margin: 0 0 10px 0; color: var(--text-color); }
         .card-content p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
-
         .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
 
-        .contact-section { 
-            background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); 
-            margin-top: auto; position: relative; z-index: 1; transition: background 0.3s;
-        }
+        .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
         .social-btn { color: var(--text-color); font-size: 2rem; transition: 0.3s; opacity: 0.7; }
         .social-btn:hover { color: var(--accent-color); opacity: 1; transform: translateY(-5px); }
@@ -187,13 +152,15 @@
 </head>
 <body>
 
+    <div id="transition-layer"></div>
+
     <canvas id="networkCanvas"></canvas>
 
     <button id="scrollTopBtn" onclick="scrollToTop()">
         <i class="fas fa-rocket"></i>
     </button>
 
-    <div class="theme-switch-wrapper">
+    <div class="theme-switch-wrapper" id="themeWrapper">
         <label class="theme-switch" for="checkbox">
             <input type="checkbox" id="checkbox" />
             <div class="slider round">
@@ -210,15 +177,10 @@
     </nav>
 
     <div class="main-wrapper">
-
         <header id="home">
             <h1>Arda</h1>
             <span class="role">Ben bir <span id="typewriter"></span></span>
-            
             <div class="skills">
-                <div class="skill-tag"><i class="fas fa-code"></i> C# & .NET</div>
-                <div class="skill-tag"><i class="fas fa-chart-line"></i> Algoritmik Ticaret</div>
-                <div class="skill-tag"><i class="fas fa-gamepad"></i> Game Dev</div>
             </div>
         </header>
 
@@ -232,7 +194,6 @@
 
         <div class="container">
             <h2 class="section-title">🎮 Oyun Projelerim</h2>
-
             <div class="projects-grid">
                 <div class="project-card">
                     <div class="card-image"><i class="fas fa-bullhorn"></i></div>
@@ -266,31 +227,24 @@
                         </a>
                     </div>
                 </div>
-
             </div>
         </div>
+    </div> 
 
-    </div> <div id="contact" class="contact-section">
+    <div id="contact" class="contact-section">
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
-        
         <div class="social-links">
             <a href="https://github.com/Arda0842" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn"><i class="fab fa-linkedin"></i></a>
             <a href="mailto:ardaakcay591@gmail.com" class="social-btn"><i class="fas fa-envelope"></i></a>
         </div>
-
-        <footer>
-            &copy; 2026 Arda | Tüm hakları saklıdır.
-        </footer>
+        <footer>&copy; 2026 Arda | Tüm hakları saklıdır.</footer>
     </div>
 
     <script>
-        // --- ÖZEL İMLEÇ KODLARI TAMAMEN SİLİNDİ ---
-
-        // --- YUKARI ÇIK BUTONU MANTIĞI ---
+        // --- YUKARI ÇIK ---
         const scrollTopBtn = document.getElementById("scrollTopBtn");
-
         window.onscroll = function() {
             if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
                 scrollTopBtn.classList.add("active");
@@ -298,17 +252,12 @@
                 scrollTopBtn.classList.remove("active");
             }
         };
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-
-        // --- DAKTİLO EFEKTİ ---
+        // --- DAKTİLO ---
         const textElement = document.getElementById('typewriter');
         const phrases = ["Bilgisayar Müh. Öğrencisiyim.", "Oyun Geliştiriciyim.", "Trader Adayıyım."];
         let phraseIndex = 0, charIndex = 0, isDeleting = false;
-
         function type() {
             const currentPhrase = phrases[phraseIndex];
             if (isDeleting) {
@@ -318,9 +267,7 @@
                 textElement.textContent = currentPhrase.substring(0, charIndex + 1);
                 charIndex++;
             }
-
             let typeSpeed = isDeleting ? 50 : 100;
-
             if (!isDeleting && charIndex === currentPhrase.length) {
                 isDeleting = true; typeSpeed = 2000;
             } else if (isDeleting && charIndex === 0) {
@@ -330,9 +277,10 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-
-        // --- TEMA DEĞİŞTİRME ---
+        // --- GELİŞMİŞ TEMA ANİMASYONU ---
         const toggleSwitch = document.querySelector('#checkbox');
+        const themeWrapper = document.getElementById('themeWrapper');
+        const transitionLayer = document.getElementById('transition-layer');
         const currentTheme = localStorage.getItem('theme');
 
         if (currentTheme) {
@@ -341,14 +289,62 @@
         }
 
         toggleSwitch.addEventListener('change', function(e) {
-            if (e.target.checked) {
-                document.body.classList.add('light-mode');
-                localStorage.setItem('theme', 'light-mode');
-            } else {
-                document.body.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark-mode');
-            }
-            updateCanvasColors();
+            // 1. Durumu belirle (Açık mı, koyu mu olacak?)
+            const isLight = e.target.checked;
+            
+            // 2. Butonun konumunu al
+            const rect = themeWrapper.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            // 3. Geçiş katmanını konumlandır ve rengini ayarla
+            // Eğer light mode'a geçiyorsak patlayan renk açık olmalı (#f0f2f5), yoksa koyu (#0f0f0f)
+            const nextBg = isLight ? '#f0f2f5' : '#0f0f0f';
+            
+            transitionLayer.style.left = `${centerX}px`;
+            transitionLayer.style.top = `${centerY}px`;
+            transitionLayer.style.backgroundColor = nextBg;
+            transitionLayer.style.width = '10px';
+            transitionLayer.style.height = '10px';
+            transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
+            
+            // 4. Butonu Düşür!
+            themeWrapper.classList.add('falling');
+
+            // 5. Patlama Efektini Başlat (Biraz bekleyip butona çarpınca patlasın)
+            setTimeout(() => {
+                // Ekranın köşegen uzunluğunu hesapla (tüm ekranı kaplaması için)
+                const maxDim = Math.max(window.innerWidth, window.innerHeight);
+                const scale = (maxDim / 5) * 2.5; // Yeterince büyümesi için katsayı
+
+                transitionLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            }, 200); // Buton biraz düştükten sonra patlar
+
+            // 6. Asıl temayı değiştir ve temizle
+            setTimeout(() => {
+                if (isLight) {
+                    document.body.classList.add('light-mode');
+                    localStorage.setItem('theme', 'light-mode');
+                } else {
+                    document.body.classList.remove('light-mode');
+                    localStorage.setItem('theme', 'dark-mode');
+                }
+                
+                updateCanvasColors(); // Ağ animasyonunun rengini güncelle
+
+                // Temizleme işlemleri
+                transitionLayer.style.transition = 'none'; // Animasyonsuz küçült
+                transitionLayer.style.transform = 'translate(-50%, -50%) scale(0)';
+                
+                // Transition'ı geri aç ki bir sonraki tıklamada çalışsın
+                setTimeout(() => {
+                    transitionLayer.style.transition = 'transform 0.6s ease-in-out';
+                }, 50);
+
+                // Butonu geri getir
+                themeWrapper.classList.remove('falling');
+                
+            }, 800); // Patlama animasyonunun bitiş süresiyle senkronize
         });
 
 
