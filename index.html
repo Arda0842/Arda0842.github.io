@@ -49,10 +49,10 @@
         #ripple-layer {
             position: fixed;
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            width: 1px; height: 1px;
-            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none; /* Tıklamayı engellememesi için */
+            z-index: 9999; 
+            width: 0; height: 0;
+            transform: translate(-50%, -50%);
         }
 
         /* --- ŞELALE YAZI EFEKTLERİ --- */
@@ -76,12 +76,14 @@
 
         /* --- BUTON STİLLERİ --- */
         .theme-switch-wrapper {
-            position: fixed; top: 15px; right: 20px; z-index: 10001;
+            position: fixed; top: 15px; right: 20px; z-index: 10001; /* Ripple'dan yukarıda olmalı */
             display: flex; align-items: center; transition: transform 0.3s;
+            cursor: pointer;
         }
         
         .theme-switch-wrapper.falling {
             animation: gravityFall 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+            pointer-events: none; /* Düşerken tekrar tıklanmasın */
         }
 
         @keyframes gravityFall {
@@ -89,7 +91,7 @@
             100% { transform: translateY(calc(100vh - 40px)) rotate(720deg); opacity: 1; }
         }
 
-        .theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
+        .theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; pointer-events: none; }
         .theme-switch input { display:none; }
         .slider {
             background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0;
@@ -151,28 +153,10 @@
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
         .social-btn { color: var(--text-color); font-size: 2rem; transition: 0.3s; opacity: 0.7; }
         
-        /* --- ÖZEL SOSYAL MEDYA RENKLERİ (HOVER) --- */
-        /* GitHub (Siyah/Beyaz) */
-        .social-btn.github:hover { 
-            color: #ffffff; 
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-            transform: translateY(-5px) scale(1.1);
-            opacity: 1;
-        }
-        /* LinkedIn (Mavi) */
-        .social-btn.linkedin:hover { 
-            color: #0077b5; 
-            text-shadow: 0 0 15px rgba(0, 119, 181, 0.6);
-            transform: translateY(-5px) scale(1.1);
-            opacity: 1;
-        }
-        /* Mail (Kırmızı) */
-        .social-btn.mail:hover { 
-            color: #ea4335; 
-            text-shadow: 0 0 15px rgba(234, 67, 53, 0.6);
-            transform: translateY(-5px) scale(1.1);
-            opacity: 1;
-        }
+        /* ÖZEL RENKLER */
+        .social-btn.github:hover { color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); transform: translateY(-5px) scale(1.1); opacity: 1; }
+        .social-btn.linkedin:hover { color: #0077b5; text-shadow: 0 0 15px rgba(0, 119, 181, 0.6); transform: translateY(-5px) scale(1.1); opacity: 1; }
+        .social-btn.mail:hover { color: #ea4335; text-shadow: 0 0 15px rgba(234, 67, 53, 0.6); transform: translateY(-5px) scale(1.1); opacity: 1; }
 
         footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
@@ -180,15 +164,11 @@
 <body>
 
     <div id="ripple-layer"></div>
-
     <canvas id="networkCanvas"></canvas>
-
-    <button id="scrollTopBtn" onclick="scrollToTop()">
-        <i class="fas fa-rocket"></i>
-    </button>
+    <button id="scrollTopBtn" onclick="scrollToTop()"><i class="fas fa-rocket"></i></button>
 
     <div class="theme-switch-wrapper" id="themeWrapper">
-        <label class="theme-switch" for="checkbox">
+        <label class="theme-switch">
             <input type="checkbox" id="checkbox" />
             <div class="slider round">
                 <i class="fas fa-sun"></i>
@@ -208,6 +188,7 @@
             <h1 class="animate-on-load delay-1">Arda</h1>
             <span class="role animate-on-load delay-2">Ben bir <span id="typewriter"></span></span>
             <div class="skills animate-on-load delay-3">
+               
             </div>
         </header>
 
@@ -282,9 +263,12 @@
         };
         function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
-        // --- DAKTİLO ---
+        // --- DAKTİLO (Burayı Düzenleyebilirsin) ---
         const textElement = document.getElementById('typewriter');
-        const phrases = ["Bilgisayar Müh. Öğrencisiyim.", "Oyun Geliştiriciyim."];
+        
+        // AŞAĞIDAKİ SATIRDAKİ YAZILARI DEĞİŞTİREBİLİRSİN
+        const phrases = ["Bilgisayar Müh. Öğrencisiyim.", "Oyun Geliştiriciyim.", "Trader Adayıyım."];
+        
         let phraseIndex = 0, charIndex = 0, isDeleting = false;
         function type() {
             const currentPhrase = phrases[phraseIndex];
@@ -305,7 +289,7 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ (RIPPLE EFFECT) ---
+        // --- TEMA GEÇİŞİ (Düzeltilmiş Versiyon) ---
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
         const rippleLayer = document.getElementById('ripple-layer');
@@ -319,7 +303,10 @@
         }
 
         themeWrapper.addEventListener('click', function(e) {
+            // Tıklamayı engelle (checkbox'ın kendi kendine değişmesini durdur)
             e.preventDefault();
+            e.stopPropagation();
+
             if (isAnimating) return;
             isAnimating = true;
 
@@ -351,11 +338,11 @@
                     if (targetIsLight) {
                         body.classList.add('light-mode');
                         localStorage.setItem('theme', 'light-mode');
-                        toggleSwitch.checked = true;
+                        toggleSwitch.checked = true; // Checkbox'ı manuel güncelle
                     } else {
                         body.classList.remove('light-mode');
                         localStorage.setItem('theme', 'dark-mode');
-                        toggleSwitch.checked = false;
+                        toggleSwitch.checked = false; // Checkbox'ı manuel güncelle
                     }
                     updateCanvasColors();
 
