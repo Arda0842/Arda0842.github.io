@@ -6,7 +6,6 @@
     <title>Arda | Yazılım & Oyun Portfolyosu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* --- CSS DEĞİŞKENLERİ --- */
         :root {
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
@@ -45,18 +44,15 @@
             min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- PATLAMA (RIPPLE) KATMANI --- */
         #ripple-layer {
             position: fixed;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9999; /* En üstte, her şeyi örter */
+            z-index: 9999;
             width: 1px; height: 1px;
             transform: translate(-50%, -50%) scale(0);
-            /* Transition JS ile dinamik yönetilecek */
         }
 
-        /* --- ŞELALE YAZI EFEKTLERİ --- */
         .animate-on-load {
             opacity: 0; 
             transform: translateY(30px);
@@ -75,7 +71,6 @@
         .delay-8 { animation-delay: 1.5s; }
         .delay-9 { animation-delay: 1.7s; }
 
-        /* --- BUTON STİLLERİ --- */
         .theme-switch-wrapper {
             position: fixed; top: 15px; right: 20px; z-index: 10001;
             display: flex; align-items: center; transition: transform 0.3s;
@@ -150,15 +145,42 @@
 
         .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
-        .social-btn { color: var(--text-color); font-size: 2rem; transition: 0.3s; opacity: 0.7; }
-        .social-btn:hover { color: var(--accent-color); opacity: 1; transform: translateY(-5px); }
+
+        /* --- SOSYAL MEDYA İKONLARI --- */
+        .social-btn {
+            color: var(--text-muted);
+            font-size: 2rem;
+            transition: color 0.3s, transform 0.3s, filter 0.3s;
+            opacity: 0.7;
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            opacity: 1;
+            transform: translateY(-6px) scale(1.15);
+        }
+
+        .social-btn.github:hover {
+            color: #ffffff;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+
+        .social-btn.linkedin:hover {
+            color: #0077b5;
+            filter: drop-shadow(0 0 10px rgba(0, 119, 181, 0.9));
+        }
+
+        .social-btn.email:hover {
+            color: #ea4335;
+            filter: drop-shadow(0 0 10px rgba(234, 67, 53, 0.9));
+        }
+
         footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div id="ripple-layer"></div>
-
     <canvas id="networkCanvas"></canvas>
 
     <button id="scrollTopBtn" onclick="scrollToTop()">
@@ -244,9 +266,15 @@
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         <div class="social-links">
-            <a href="https://github.com/Arda0842" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn"><i class="fab fa-linkedin"></i></a>
-            <a href="mailto:ardaakcay591@gmail.com" class="social-btn"><i class="fas fa-envelope"></i></a>
+            <a href="https://github.com/Arda0842" target="_blank" class="social-btn github">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email">
+                <i class="fas fa-envelope"></i>
+            </a>
         </div>
         <footer>&copy; 2026 Arda | Tüm hakları saklıdır.</footer>
     </div>
@@ -307,39 +335,25 @@
             const isCurrentlyLight = body.classList.contains('light-mode');
             const targetIsLight = !isCurrentlyLight;
 
-            // 1. ADIM: DÜŞÜŞ BAŞLASIN
             themeWrapper.classList.add('falling');
 
-            // Butonun X eksenini al (Yatay konum)
             const rect = themeWrapper.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
 
-            // 2. ADIM: BUTON YERE ÇARPTIĞINDA (0.8s sonra)
             setTimeout(() => {
-                
-                // Hedef rengi belirle
                 const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
                 
-                // Patlama merkezini ayarla: 
-                // X: Butonun yatay konumu
-                // Y: Ekranın en altı (Window Height)
                 rippleLayer.style.left = `${centerX}px`;
                 rippleLayer.style.top = `${window.innerHeight}px`; 
                 rippleLayer.style.backgroundColor = nextBg;
-                
-                // YAYILMA ANİMASYONU BAŞLASIN
-                // width ve height yerine scale kullanarak daha performanslı animasyon
                 rippleLayer.style.transition = 'transform 1s ease-in-out';
                 
-                // Ekranın köşegenini hesapla ki tüm ekranı kaplasın
                 const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                const scale = (maxDim / 1) * 2.5; // Yeterince büyük bir katsayı
+                const scale = (maxDim / 1) * 2.5;
                 
                 rippleLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
 
-                // 3. ADIM: EKRAN TAMAMEN KAPLANDIĞINDA TEMAYI DEĞİŞTİR (1s sonra)
                 setTimeout(() => {
-                    // Asıl tema değişimini burada yapıyoruz (Kullanıcı fark etmiyor çünkü ekran kapalı)
                     if (targetIsLight) {
                         body.classList.add('light-mode');
                         localStorage.setItem('theme', 'light-mode');
@@ -351,28 +365,22 @@
                     }
                     updateCanvasColors();
 
-                    // 4. ADIM: RIPPLE'I KALDIR VE HER ŞEYİ GÖRÜNÜR KIL
-                    // Opacity ile yavaşça yok et (Fade Out) - En yumuşak geçiş budur
                     rippleLayer.style.transition = 'opacity 0.5s ease';
                     rippleLayer.style.opacity = '0';
 
-                    // 5. ADIM: SİSTEMİ SIFIRLA (Animasyonlar bitince)
                     setTimeout(() => {
-                        // Ripple katmanını resetle
                         rippleLayer.style.transition = 'none';
                         rippleLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-                        rippleLayer.style.opacity = '1'; // Bir sonraki sefere hazır olsun
+                        rippleLayer.style.opacity = '1';
                         
-                        // Butonu geri getir
                         themeWrapper.classList.remove('falling');
                         isAnimating = false;
-                    }, 500); // Fade out süresi kadar bekle
+                    }, 500);
 
-                }, 1000); // Yayılma süresi kadar bekle
+                }, 1000);
 
-            }, 800); // Düşüş süresi kadar bekle
+            }, 800);
         });
-
 
         // --- CANVAS (AĞ ANİMASYONU) ---
         const canvas = document.getElementById('networkCanvas');
