@@ -1,2 +1,2 @@
 # Arda0842.github.io
-Kendi sitemi yapıyorum geliştiriyorum ve öğreniyorum.
+Arkadaşım (Sayinkaplan1) ile birlikte site  yapıyoruz oyun geliştiriyoruz ve en önemlisi öğreniyoruz.
