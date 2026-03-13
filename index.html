@@ -36,79 +36,31 @@
         }
 
         html { scroll-behavior: smooth; }
-        
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; padding: 0; 
-            min-height: 100vh; overflow-x: hidden;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
 
-        #ripple-layer {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            width: 1px; height: 1px;
-            transform: translate(-50%, -50%) scale(0);
-        }
+        #ripple-layer { position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999; width: 1px; height: 1px; transform: translate(-50%, -50%) scale(0); }
 
-        .animate-on-load {
-            opacity: 0; 
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-
+        .animate-on-load { opacity: 0; transform: translateY(30px); animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .delay-1{animation-delay:.1s}.delay-2{animation-delay:.3s}.delay-3{animation-delay:.5s}
+        .delay-4{animation-delay:.7s}.delay-5{animation-delay:.9s}.delay-6{animation-delay:1.1s}
+        .delay-7{animation-delay:1.3s}.delay-8{animation-delay:1.5s}.delay-9{animation-delay:1.7s}.delay-10{animation-delay:1.9s}
 
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.3s; }
-        .delay-3 { animation-delay: 0.5s; }
-        .delay-4 { animation-delay: 0.7s; }
-        .delay-5 { animation-delay: 0.9s; }
-        .delay-6 { animation-delay: 1.1s; }
-        .delay-7 { animation-delay: 1.3s; }
-        .delay-8 { animation-delay: 1.5s; }
-        .delay-9 { animation-delay: 1.7s; }
-
-        .theme-switch-wrapper {
-            position: fixed; top: 15px; right: 20px; z-index: 10001;
-            display: flex; align-items: center; transition: transform 0.3s;
-        }
-        
-        .theme-switch-wrapper.falling {
-            animation: gravityFall 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
-        }
-
-        @keyframes gravityFall {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(calc(100vh - 40px)) rotate(720deg); opacity: 1; }
-        }
+        .theme-switch-wrapper { position: fixed; top: 15px; right: 20px; z-index: 10001; display: flex; align-items: center; transition: transform 0.3s; }
+        .theme-switch-wrapper.falling { animation: gravityFall 0.8s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards; }
+        @keyframes gravityFall { 0%{transform:translateY(0) rotate(0deg)} 100%{transform:translateY(calc(100vh - 40px)) rotate(720deg);opacity:1} }
 
         .theme-switch { display: inline-block; height: 34px; position: relative; width: 60px; }
         .theme-switch input { display:none; }
-        .slider {
-            background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0;
-            transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 5px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-        }
-        .slider:before {
-            background-color: #fff; bottom: 4px; content: ""; height: 26px; left: 4px; position: absolute;
-            transition: .4s; width: 26px; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .fa-moon { color: #f1c40f; margin-left: auto; font-size: 14px; padding-right: 5px;}
-        .fa-sun { color: #f39c12; margin-right: auto; font-size: 14px; padding-left: 5px;}
+        .slider { background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 5px; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+        .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 26px; left: 4px; position: absolute; transition: .4s; width: 26px; border-radius: 50%; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .fa-moon{color:#f1c40f;margin-left:auto;font-size:14px;padding-right:5px}.fa-sun{color:#f39c12;margin-right:auto;font-size:14px;padding-left:5px}
         input:checked + .slider { background-color: var(--secondary-accent); }
         input:checked + .slider:before { transform: translateX(26px); }
 
         #networkCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-        
-        #scrollTopBtn {
-            position: fixed; bottom: 30px; right: 30px; background: var(--accent-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px;
-            font-size: 1.5rem; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--shadow);
-        }
-        #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        #scrollTopBtn { position: fixed; bottom: 30px; right: 30px; background: var(--accent-color); color: #000; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem; cursor: pointer; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--shadow); }
+        #scrollTopBtn.active { opacity: 1; pointer-events: all; }
         #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
 
         .navbar { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; z-index: 1000; display: flex; justify-content: center; gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
@@ -119,13 +71,9 @@
 
         .main-wrapper { display: flex; flex-direction: column; align-items: center; padding-top: 100px; width: 100%; position: relative; z-index: 1; }
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
-        h1 { color: var(--accent-color); margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+        h1 { color: var(--accent-color); margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0,212,255,0.3); }
         #typewriter { color: var(--secondary-accent); font-weight: bold; font-size: 1.2rem; margin-top: 10px; border-right: 3px solid var(--accent-color); padding-right: 5px; animation: blink 0.7s infinite; }
-        @keyframes blink { 0% { border-color: transparent; } 50% { border-color: var(--accent-color); } 100% { border-color: transparent; } }
-
-        .skills { margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-        .skill-tag { background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); box-shadow: 0 2px 10px var(--shadow); }
-        .skill-tag i { color: var(--accent-color); }
+        @keyframes blink { 0%{border-color:transparent}50%{border-color:var(--accent-color)}100%{border-color:transparent} }
 
         .about-section { background: var(--card-bg); padding: 30px; border-radius: 15px; border-left: 4px solid var(--accent-color); text-align: left; margin: 40px auto; max-width: 800px; width: 90%; backdrop-filter: blur(5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .about-section h2 { margin-top: 0; color: var(--text-color); }
@@ -133,8 +81,8 @@
 
         .container { width: 90%; max-width: 1000px; padding: 20px; margin-bottom: 50px; }
         .section-title { border-left: 4px solid var(--secondary-accent); padding-left: 15px; font-size: 1.8rem; margin-bottom: 30px; text-align: left; color: var(--text-color); }
-        
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
         .project-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); transition: 0.3s; display: flex; flex-direction: column; backdrop-filter: blur(5px); }
         .project-card:hover { transform: translateY(-7px); box-shadow: 0 10px 30px var(--shadow); border-color: var(--accent-color); }
         .card-image { width: 100%; height: 160px; background: var(--card-img-bg); display: flex; align-items: center; justify-content: center; color: #555; font-size: 3rem; }
@@ -144,49 +92,57 @@
         .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
 
+        /* ── Satranç Kartı ── */
+        .chess-card { border-color: #7a4a20 !important; }
+        .chess-card:hover { border-color: #d4a843 !important; box-shadow: 0 10px 35px rgba(212,168,67,0.3) !important; transform: translateY(-7px); }
+        .chess-card-image {
+            width: 100%; height: 160px;
+            background: linear-gradient(135deg, #1a0f07 0%, #2d1a0a 60%, #1a0f07 100%);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .chess-board-mini {
+            display: grid;
+            grid-template-columns: repeat(8, 14px);
+            grid-template-rows: repeat(5, 14px);
+            border: 2px solid #5a3a1a;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.7);
+            opacity: 0.9;
+        }
+        .ms { width: 14px; height: 14px; }
+        .ms.l { background: #f0d9b5; }
+        .ms.d { background: #b58863; }
+        .chess-float {
+            position: absolute;
+            font-size: 4rem;
+            color: #d4a843;
+            text-shadow: 0 0 30px rgba(212,168,67,0.7), 0 3px 10px rgba(0,0,0,0.9);
+            animation: float 3s ease-in-out infinite;
+            right: 28px;
+        }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .btn-chess {
+            background: linear-gradient(135deg, #b58863, #d4a843);
+            color: #1a0f07; text-decoration: none; padding: 10px; border-radius: 8px;
+            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
+        }
+        .btn-chess:hover { background: linear-gradient(135deg, #d4a843, #f0c060); transform: scale(1.02); box-shadow: 0 4px 15px rgba(212,168,67,0.4); }
+
         .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
-
-        /* --- SOSYAL MEDYA İKONLARI --- */
-        .social-btn {
-            color: var(--text-muted);
-            font-size: 2rem;
-            transition: color 0.3s, transform 0.3s, filter 0.3s;
-            opacity: 0.7;
-            text-decoration: none;
-        }
-
-        .social-btn:hover {
-            opacity: 1;
-            transform: translateY(-6px) scale(1.15);
-        }
-
-        .social-btn.github:hover {
-            color: #ffffff;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
-        }
-
-        .social-btn.linkedin:hover {
-            color: #0077b5;
-            filter: drop-shadow(0 0 10px rgba(0, 119, 181, 0.9));
-        }
-
-        .social-btn.email:hover {
-            color: #ea4335;
-            filter: drop-shadow(0 0 10px rgba(234, 67, 53, 0.9));
-        }
-
+        .social-btn { color: var(--text-muted); font-size: 2rem; transition: color 0.3s, transform 0.3s, filter 0.3s; opacity: 0.7; text-decoration: none; }
+        .social-btn:hover { opacity: 1; transform: translateY(-6px) scale(1.15); }
+        .social-btn.github:hover { color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+        .social-btn.linkedin:hover { color: #0077b5; filter: drop-shadow(0 0 10px rgba(0,119,181,0.9)); }
+        .social-btn.email:hover { color: #ea4335; filter: drop-shadow(0 0 10px rgba(234,67,53,0.9)); }
         footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
 </head>
 <body>
-
     <div id="ripple-layer"></div>
     <canvas id="networkCanvas"></canvas>
 
-    <button id="scrollTopBtn" onclick="scrollToTop()">
-        <i class="fas fa-rocket"></i>
-    </button>
+    <button id="scrollTopBtn" onclick="scrollToTop()"><i class="fas fa-rocket"></i></button>
 
     <div class="theme-switch-wrapper" id="themeWrapper">
         <label class="theme-switch" for="checkbox">
@@ -208,30 +164,23 @@
         <header id="home">
             <h1 class="animate-on-load delay-1">Hoşgeldiniz</h1>
             <span class="role animate-on-load delay-2">Ben bir <span id="typewriter"></span></span>
-            <div class="skills animate-on-load delay-3">
-            </div>
         </header>
 
         <div id="about" class="about-section animate-on-load delay-4">
             <h2>Hakkımda</h2>
-            <p>
-                Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. 
-                Oyun geliştirme, .NET teknolojileri ve algoritmik ticaret sistemleri üzerine çalışıyorum.
-            </p>
+            <p>Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. Oyun geliştirme, .NET teknolojileri ve algoritmik ticaret sistemleri üzerine çalışıyorum.</p>
         </div>
 
         <div class="container">
             <h2 class="section-title animate-on-load delay-5">🎮 Oyun Projelerim</h2>
-            
             <div class="projects-grid">
+
                 <div class="project-card animate-on-load delay-6">
                     <div class="card-image"><i class="fas fa-bullhorn"></i></div>
                     <div class="card-content">
                         <h3>Kayseri Boğası</h3>
                         <p>Refleks ve strateji gerektiren, yerel motiflerle süslenmiş eğlenceli bir WinForms oyunu.</p>
-                        <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/KayseriBoğası.rar" class="btn-download">
-                            <i class="fas fa-download"></i> İndir (.rar)
-                        </a>
+                        <a href="https://github.com/Arda0842/Arda0842.github.io/raw/main/KayseriBoğası.rar" class="btn-download"><i class="fas fa-download"></i> İndir (.rar)</a>
                     </div>
                 </div>
 
@@ -240,230 +189,125 @@
                     <div class="card-content">
                         <h3>Dinamik Mayın Tarlası</h3>
                         <p>Hücre yoğunluğuna göre değişen zorluk algoritmasıyla geliştirilmiş strateji oyunu.</p>
-                        <a href="https://github.com/Arda0842/Arda0842.github.io/blob/raw/MayinTarlasiOyunu.rar" class="btn-download">
-                            <i class="fas fa-download"></i> Hemen İndir (.rar)
-                        </a>
+                        <a href="https://github.com/Arda0842/Arda0842.github.io/blob/raw/MayinTarlasiOyunu.rar" class="btn-download"><i class="fas fa-download"></i> Hemen İndir (.rar)</a>
                     </div>
                 </div>
-                
-                <div class="project-card animate-on-load delay-8" style="border-color: #ffe600;">
-                    <div class="card-image"><i class="fas fa-car-side" style="color: #ffe600;"></i></div>
+
+                <div class="project-card animate-on-load delay-8" style="border-color:#ffe600">
+                    <div class="card-image"><i class="fas fa-car-side" style="color:#ffe600"></i></div>
                     <div class="card-content">
-                        <h3 style="color: #ffe600;">Dağ Yarışı</h3>
+                        <h3 style="color:#ffe600">Dağ Yarışı</h3>
                         <p>Godot Engine ile geliştirilen fizik tabanlı araç simülasyonu. (Geliştirme Aşamasında)</p>
-                        <a href="dagyarisi.html" class="btn-download" style="background: #ffe600; color: #000;">
-                            <i class="fas fa-eye"></i> İncele
-                        </a>
+                        <a href="dagyarisi.html" class="btn-download" style="background:#ffe600;color:#000"><i class="fas fa-eye"></i> İncele</a>
                     </div>
                 </div>
+
+                <!-- ── SATRANÇ ── -->
+                <div class="project-card chess-card animate-on-load delay-9">
+                    <div class="chess-card-image">
+                        <div class="chess-board-mini" id="miniBoard"></div>
+                        <span class="chess-float">♟</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 style="color:#d4a843">Satranç</h3>
+                        <p>Tarayıcıda oynanabilen tam özellikli satranç. Şah, mat, pat, en passant ve piyon terfisi destekli.</p>
+                        <a href="satranc.html" class="btn-chess"><i class="fas fa-chess"></i> Hemen Oyna</a>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div> 
+    </div>
 
-    <div id="contact" class="contact-section animate-on-load delay-9">
-        <h2 style="color: var(--text-color);">İletişim</h2>
-        <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
+    <div id="contact" class="contact-section animate-on-load delay-10">
+        <h2 style="color:var(--text-color)">İletişim</h2>
+        <p style="color:var(--text-muted)">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         <div class="social-links">
-            <a href="https://github.com/Arda0842" target="_blank" class="social-btn github">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email">
-                <i class="fas fa-envelope"></i>
-            </a>
+            <a href="https://github.com/Arda0842" target="_blank" class="social-btn github"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin"></i></a>
+            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email"><i class="fas fa-envelope"></i></a>
         </div>
         <footer>&copy; 2026 Arda | Tüm hakları saklıdır.</footer>
     </div>
 
     <script>
-        // --- YUKARI ÇIK ---
-        const scrollTopBtn = document.getElementById("scrollTopBtn");
-        window.onscroll = function() {
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-                scrollTopBtn.classList.add("active");
-            } else {
-                scrollTopBtn.classList.remove("active");
-            }
-        };
-        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        // Mini board
+        const mb = document.getElementById('miniBoard');
+        for (let r=0;r<5;r++) for(let c=0;c<8;c++){const s=document.createElement('div');s.className='ms '+((r+c)%2===0?'l':'d');mb.appendChild(s);}
 
-        // --- DAKTİLO ---
-        const textElement = document.getElementById('typewriter');
-        const phrases = ["Bilgisayar Müh. Öğrencisiyim."];
-        let phraseIndex = 0, charIndex = 0, isDeleting = false;
-        function type() {
-            const currentPhrase = phrases[phraseIndex];
-            if (isDeleting) {
-                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
-                charIndex++;
-            }
-            let typeSpeed = isDeleting ? 50 : 100;
-            if (!isDeleting && charIndex === currentPhrase.length) {
-                isDeleting = true; typeSpeed = 2000;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500;
-            }
-            setTimeout(type, typeSpeed);
+        // Scroll
+        const scrollTopBtn=document.getElementById("scrollTopBtn");
+        window.onscroll=function(){scrollTopBtn.classList.toggle("active",document.documentElement.scrollTop>300);};
+        function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+        // Typewriter
+        const textElement=document.getElementById('typewriter');
+        const phrases=["Bilgisayar Müh. Öğrencisiyim."];
+        let phraseIndex=0,charIndex=0,isDeleting=false;
+        function type(){
+            const cur=phrases[phraseIndex];
+            textElement.textContent=isDeleting?cur.substring(0,charIndex-1):cur.substring(0,charIndex+1);
+            isDeleting?charIndex--:charIndex++;
+            let speed=isDeleting?50:100;
+            if(!isDeleting&&charIndex===cur.length){isDeleting=true;speed=2000;}
+            else if(isDeleting&&charIndex===0){isDeleting=false;phraseIndex=(phraseIndex+1)%phrases.length;speed=500;}
+            setTimeout(type,speed);
         }
-        document.addEventListener('DOMContentLoaded', type);
+        document.addEventListener('DOMContentLoaded',type);
 
-        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ (RIPPLE EFFECT) ---
-        const toggleSwitch = document.querySelector('#checkbox');
-        const themeWrapper = document.getElementById('themeWrapper');
-        const rippleLayer = document.getElementById('ripple-layer');
-        const body = document.body;
-        let isAnimating = false;
+        // Theme
+        const toggleSwitch=document.querySelector('#checkbox'),themeWrapper=document.getElementById('themeWrapper'),rippleLayer=document.getElementById('ripple-layer'),body=document.body;
+        let isAnimating=false;
+        const ct=localStorage.getItem('theme');
+        if(ct){body.classList.add(ct);if(ct==='light-mode')toggleSwitch.checked=true;}
 
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            body.classList.add(currentTheme);
-            if (currentTheme === 'light-mode') toggleSwitch.checked = true;
-        }
-
-        themeWrapper.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (isAnimating) return;
-            isAnimating = true;
-
-            const isCurrentlyLight = body.classList.contains('light-mode');
-            const targetIsLight = !isCurrentlyLight;
-
+        themeWrapper.addEventListener('click',function(e){
+            e.preventDefault();if(isAnimating)return;isAnimating=true;
+            const toLight=!body.classList.contains('light-mode');
             themeWrapper.classList.add('falling');
-
-            const rect = themeWrapper.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-
-            setTimeout(() => {
-                const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
-                
-                rippleLayer.style.left = `${centerX}px`;
-                rippleLayer.style.top = `${window.innerHeight}px`; 
-                rippleLayer.style.backgroundColor = nextBg;
-                rippleLayer.style.transition = 'transform 1s ease-in-out';
-                
-                const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                const scale = (maxDim / 1) * 2.5;
-                
-                rippleLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
-
-                setTimeout(() => {
-                    if (targetIsLight) {
-                        body.classList.add('light-mode');
-                        localStorage.setItem('theme', 'light-mode');
-                        toggleSwitch.checked = true;
-                    } else {
-                        body.classList.remove('light-mode');
-                        localStorage.setItem('theme', 'dark-mode');
-                        toggleSwitch.checked = false;
-                    }
+            const rect=themeWrapper.getBoundingClientRect(),cx=rect.left+rect.width/2;
+            setTimeout(()=>{
+                rippleLayer.style.left=cx+'px';rippleLayer.style.top=window.innerHeight+'px';
+                rippleLayer.style.backgroundColor=toLight?'#f0f2f5':'#0f0f0f';
+                rippleLayer.style.transition='transform 1s ease-in-out';
+                rippleLayer.style.transform=`translate(-50%,-50%) scale(${Math.max(window.innerWidth,window.innerHeight)*2.5})`;
+                setTimeout(()=>{
+                    toLight?(body.classList.add('light-mode'),localStorage.setItem('theme','light-mode'),toggleSwitch.checked=true):(body.classList.remove('light-mode'),localStorage.setItem('theme','dark-mode'),toggleSwitch.checked=false);
                     updateCanvasColors();
-
-                    rippleLayer.style.transition = 'opacity 0.5s ease';
-                    rippleLayer.style.opacity = '0';
-
-                    setTimeout(() => {
-                        rippleLayer.style.transition = 'none';
-                        rippleLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-                        rippleLayer.style.opacity = '1';
-                        
-                        themeWrapper.classList.remove('falling');
-                        isAnimating = false;
-                    }, 500);
-
-                }, 1000);
-
-            }, 800);
+                    rippleLayer.style.transition='opacity 0.5s ease';rippleLayer.style.opacity='0';
+                    setTimeout(()=>{rippleLayer.style.transition='none';rippleLayer.style.transform='translate(-50%,-50%) scale(0)';rippleLayer.style.opacity='1';themeWrapper.classList.remove('falling');isAnimating=false;},500);
+                },1000);
+            },800);
         });
 
-        // --- CANVAS (AĞ ANİMASYONU) ---
-        const canvas = document.getElementById('networkCanvas');
-        const ctx = canvas.getContext('2d');
-        let particlesArray;
-        let particleColor = '#00d4ff'; 
-        let lineColor = '0, 212, 255'; 
-
-        function updateCanvasColors() {
-            if (document.body.classList.contains('light-mode')) {
-                particleColor = '#0077b6'; lineColor = '0, 119, 182';
-            } else {
-                particleColor = '#00d4ff'; lineColor = '0, 212, 255';
-            }
-        }
-        updateCanvasColors();
-
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let mouse = { x: null, y: null, radius: (canvas.height / 80) * (canvas.width / 80) };
-        window.addEventListener('mousemove', function(event) { mouse.x = event.x; mouse.y = event.y; });
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            mouse.radius = (canvas.height / 80) * (canvas.width / 80);
-            init();
-        });
-
-        class Particle {
-            constructor(x, y, dX, dY, size, color) {
-                this.x = x; this.y = y; this.dX = dX; this.dY = dY; this.size = size; this.color = color;
-            }
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = particleColor; ctx.fill();
-            }
-            update() {
-                if (this.x > canvas.width || this.x < 0) this.dX = -this.dX;
-                if (this.y > canvas.height || this.y < 0) this.dY = -this.dY;
-                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-                if (distance < mouse.radius + this.size){
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 10;
-                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 10;
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 10;
-                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 10;
+        // Canvas
+        const canvas=document.getElementById('networkCanvas'),ctx=canvas.getContext('2d');
+        let particlesArray,particleColor='#00d4ff',lineColor='0,212,255';
+        function updateCanvasColors(){particleColor=body.classList.contains('light-mode')?'#0077b6':'#00d4ff';lineColor=body.classList.contains('light-mode')?'0,119,182':'0,212,255';}
+        canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+        let mouse={x:null,y:null,radius:(canvas.height/80)*(canvas.width/80)};
+        window.addEventListener('mousemove',e=>{mouse.x=e.x;mouse.y=e.y;});
+        window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;mouse.radius=(canvas.height/80)*(canvas.width/80);init();});
+        class Particle{
+            constructor(x,y,dX,dY,size){this.x=x;this.y=y;this.dX=dX;this.dY=dY;this.size=size;}
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=particleColor;ctx.fill();}
+            update(){
+                if(this.x>canvas.width||this.x<0)this.dX=-this.dX;
+                if(this.y>canvas.height||this.y<0)this.dY=-this.dY;
+                let dx=mouse.x-this.x,dy=mouse.y-this.y,dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<mouse.radius+this.size){
+                    if(mouse.x<this.x&&this.x<canvas.width-this.size*10)this.x+=10;
+                    if(mouse.x>this.x&&this.x>this.size*10)this.x-=10;
+                    if(mouse.y<this.y&&this.y<canvas.height-this.size*10)this.y+=10;
+                    if(mouse.y>this.y&&this.y>this.size*10)this.y-=10;
                 }
-                this.x += this.dX; this.y += this.dY; this.draw();
+                this.x+=this.dX;this.y+=this.dY;this.draw();
             }
         }
-
-        function init() {
-            particlesArray = [];
-            let n = (canvas.height * canvas.width) / 9000;
-            for (let i = 0; i < n; i++) {
-                let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let dX = (Math.random() * 2) - 1; let dY = (Math.random() * 2) - 1;
-                particlesArray.push(new Particle(x, y, dX, dY, size, particleColor));
-            }
-        }
-
-        function connect() {
-            let opacity = 1;
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    let d = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
-                    if (d < (canvas.width/7) * (canvas.height/7)) {
-                        opacity = 1 - (d/20000);
-                        ctx.strokeStyle = 'rgba(' + lineColor + ',' + opacity + ')';
-                        ctx.lineWidth = 1; ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            requestAnimationFrame(animate); ctx.clearRect(0, 0, innerWidth, innerHeight);
-            for (let i = 0; i < particlesArray.length; i++) particlesArray[i].update();
-            connect();
-        }
-
-        init(); animate();
+        function init(){particlesArray=[];let n=(canvas.height*canvas.width)/9000;for(let i=0;i<n;i++){let sz=(Math.random()*2)+1;particlesArray.push(new Particle((Math.random()*((innerWidth-sz*2)-(sz*2))+sz*2),(Math.random()*((innerHeight-sz*2)-(sz*2))+sz*2),(Math.random()*2)-1,(Math.random()*2)-1,sz));}}
+        function connect(){for(let a=0;a<particlesArray.length;a++)for(let b=a;b<particlesArray.length;b++){let d=((particlesArray[a].x-particlesArray[b].x)**2)+((particlesArray[a].y-particlesArray[b].y)**2);if(d<(canvas.width/7)*(canvas.height/7)){ctx.strokeStyle='rgba('+lineColor+','+(1-d/20000)+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(particlesArray[a].x,particlesArray[a].y);ctx.lineTo(particlesArray[b].x,particlesArray[b].y);ctx.stroke();}}}
+        function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<particlesArray.length;i++)particlesArray[i].update();connect();}
+        init();animate();
     </script>
 </body>
 </html>
