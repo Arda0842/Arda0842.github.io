@@ -128,6 +128,20 @@
         }
         .btn-chess:hover { background: linear-gradient(135deg, #d4a843, #f0c060); transform: scale(1.02); box-shadow: 0 4px 15px rgba(212,168,67,0.4); }
 
+        /* ── Yılan Kartı ── */
+        .snake-card { border-color: #1a4a1a !important; }
+        .snake-card:hover { border-color: #50dd50 !important; box-shadow: 0 10px 35px rgba(80,220,80,0.25) !important; transform: translateY(-7px); }
+        .snake-card-image { width:100%; height:160px; background:linear-gradient(135deg,#0a150a 0%,#0f2a0f 60%,#0a150a 100%); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+        .snake-grid-mini { display:grid; grid-template-columns:repeat(10,12px); grid-template-rows:repeat(6,12px); gap:1px; opacity:0.65; }
+        .sg { width:12px; height:12px; background:#0f2a0f; border-radius:1px; }
+        .sg.sn { background:#32aa32; border-radius:2px; }
+        .sg.sh { background:#50dd50; border-radius:3px; }
+        .sg.fd { background:#ff5050; border-radius:50%; }
+        .snake-emoji { position:absolute; font-size:3.2rem; animation:snakeWiggle 1.8s ease-in-out infinite; right:22px; filter:drop-shadow(0 0 14px rgba(80,220,80,0.7)); }
+        @keyframes snakeWiggle { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-8px) rotate(5deg)} }
+        .btn-snake { background:linear-gradient(135deg,#1a6a1a,#32aa32); color:#e0ffe0; text-decoration:none; padding:10px; border-radius:8px; font-weight:bold; text-align:center; display:block; transition:0.2s; border:none; cursor:pointer; }
+        .btn-snake:hover { background:linear-gradient(135deg,#32aa32,#50dd50); color:#0a150a; transform:scale(1.02); box-shadow:0 4px 15px rgba(80,220,80,0.35); }
+
         .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
         .social-btn { color: var(--text-muted); font-size: 2rem; transition: color 0.3s, transform 0.3s, filter 0.3s; opacity: 0.7; text-decoration: none; }
@@ -215,6 +229,19 @@
                     </div>
                 </div>
 
+                <!-- ── YILAN ── -->
+                <div class="project-card snake-card animate-on-load delay-10">
+                    <div class="snake-card-image">
+                        <div class="snake-grid-mini" id="snakeGrid"></div>
+                        <span class="snake-emoji">🐍</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 style="color:#50dd50">Yılan Oyunu</h3>
+                        <p>Klasik yılan oyununun modern versiyonu. Seviye sistemi, hız artışı ve yüksek skor takibiyle tarayıcıda oyna.</p>
+                        <a href="yilan.html" class="btn-snake"><i class="fas fa-gamepad"></i> Hemen Oyna</a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -225,15 +252,30 @@
         <div class="social-links">
             <a href="https://github.com/Arda0842" target="_blank" class="social-btn github"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin"></i></a>
-            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email"><i class="fas fa-envelope"></i></a>
+            <a href="/cdn-cgi/l/email-protection#3150435550505a52504804080071565c50585d1f525e5c" class="social-btn email"><i class="fas fa-envelope"></i></a>
         </div>
         <footer>&copy; 2026 Arda | Tüm hakları saklıdır.</footer>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Mini board
         const mb = document.getElementById('miniBoard');
         for (let r=0;r<5;r++) for(let c=0;c<8;c++){const s=document.createElement('div');s.className='ms '+((r+c)%2===0?'l':'d');mb.appendChild(s);}
+
+        // Mini snake grid
+        const sg = document.getElementById('snakeGrid');
+        // Snake body path on 10x6 grid, food position
+        const snakeCells = new Set([12,11,10,9,8]);
+        const snakeHead = 13;
+        const foodCell = 47;
+        for(let i=0;i<60;i++){
+          const d=document.createElement('div');
+          let cls='sg';
+          if(i===snakeHead) cls+=' sh';
+          else if(snakeCells.has(i)) cls+=' sn';
+          else if(i===foodCell) cls+=' fd';
+          d.className=cls; sg.appendChild(d);
+        }
 
         // Scroll
         const scrollTopBtn=document.getElementById("scrollTopBtn");
@@ -306,8 +348,4 @@
         }
         function init(){particlesArray=[];let n=(canvas.height*canvas.width)/9000;for(let i=0;i<n;i++){let sz=(Math.random()*2)+1;particlesArray.push(new Particle((Math.random()*((innerWidth-sz*2)-(sz*2))+sz*2),(Math.random()*((innerHeight-sz*2)-(sz*2))+sz*2),(Math.random()*2)-1,(Math.random()*2)-1,sz));}}
         function connect(){for(let a=0;a<particlesArray.length;a++)for(let b=a;b<particlesArray.length;b++){let d=((particlesArray[a].x-particlesArray[b].x)**2)+((particlesArray[a].y-particlesArray[b].y)**2);if(d<(canvas.width/7)*(canvas.height/7)){ctx.strokeStyle='rgba('+lineColor+','+(1-d/20000)+')';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(particlesArray[a].x,particlesArray[a].y);ctx.lineTo(particlesArray[b].x,particlesArray[b].y);ctx.stroke();}}}
-        function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<particlesArray.length;i++)particlesArray[i].update();connect();}
-        init();animate();
-    </script>
-</body>
-</html>
+        function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,innerW
