@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Block Blast 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a1a;
+    --surface: #12122a;
+    --surface2: #1a1a3a;
+    --border: #2a2a5a;
+    --accent1: #ff4d6d;
+    --accent2: #c77dff;
+    --accent3: #00f5d4;
+    --accent4: #ffd60a;
+    --text: #e0e0ff;
+    --text-dim: #6060a0;
+    --glow1: rgba(255,77,109,0.4);
+    --glow2: rgba(199,125,255,0.4);
+    --glow3: rgba(0,245,212,0.4);
+    --grid-size: 10;
+    --cell: 44px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Exo 2', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(199,125,255,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,77,109,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    max-width: 520px;
+    padding: 20px 16px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    text-shadow: none;
+    filter: drop-shadow(0 0 12px var(--glow2));
+  }
+
+  .best-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .best-score .label {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .best-score .value {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent4);
+    text-shadow: 0 0 10px rgba(255,214,10,0.5);
+  }
+
+  /* SCORE PANEL */
+  .score-panel {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px;
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .score-box {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-box::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  }
+  .score-box .label {
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .score-box .value {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--text);
+    transition: transform 0.1s;
+  }
+  .score-box.bump .value { transform: scale(1.2); color: var(--accent3); }
+
+  /* GRID */
+  .grid-container {
+    position: relative;
+    z-index: 1;
+    padding: 0 16px;
+  }
+
+  .grid-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .grid-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(199,125,255,0.03), transparent 70%);
+    pointer-events: none;
+  }
+
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(10, var(--cell));
+    grid-template-rows: repeat(10, var(--cell));
+    gap: 2px;
+  }
+
+  .cell {
+    width: var(--cell);
+    height: var(--cell);
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    position: relative;
+    cursor: default;
+  }
+
+  .cell.filled {
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .cell.preview {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+
+  .cell.clearing {
+    animation: cellClear 0.35s ease-out forwards;
+  }
+
+  .cell.highlight-row, .cell.highlight-col {
+    animation: cellHighlight 0.25s ease-in-out;
+  }
+
+  @keyframes cellClear {
+    0% { transform: scale(1); opacity:1; }
+    50% { transform: scale(1.3); opacity:1; filter: brightness(2); }
+    100% { transform: scale(0); opacity:0; }
+  }
+
+  @keyframes cellHighlight {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(2.5); }
+    100% { filter: brightness(1); }
+  }
+
+  /* PIECE TRAY */
+  .tray {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 14px 16px;
+    width: 100%;
+    max-width: 520px;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .piece-slot {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 8px;
+    min-height: 110px;
+    cursor: grab;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .piece-slot:active { cursor: grabbing; transform: scale(0.97); }
+  .piece-slot.used { opacity: 0.2; pointer-events: none; }
+  .piece-slot.dragging-active {
+    border-color: var(--accent3);
+    box-shadow: 0 0 16px var(--glow3);
+  }
+  .piece-slot::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .piece-slot:hover::after { opacity: 1; }
+
+  .piece-canvas {
+    display: grid;
+    gap: 3px;
+  }
+
+  .mini-cell {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+  }
+
+  /* GAME OVER */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(5,5,20,0.92);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    backdrop-filter: blur(10px);
+  }
+  .overlay.show { display: flex; }
+
+  .overlay h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{filter:drop-shadow(0 0 8px var(--glow1))} 50%{filter:drop-shadow(0 0 24px var(--glow1))} }
+
+  .overlay .final-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--accent4);
+    text-shadow: 0 0 20px rgba(255,214,10,0.6);
+  }
+
+  .overlay .final-label {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: -10px;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    border: none;
+    color: white;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    padding: 14px 36px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px var(--glow1);
+    margin-top: 8px;
+  }
+  .btn:hover { transform: scale(1.06); box-shadow: 0 0 30px var(--glow2); }
+  .btn:active { transform: scale(0.97); }
+
+  /* LEADERBOARD */
+  .leaderboard {
+    width: 100%;
+    max-width: 520px;
+    padding: 0 16px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .lb-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lb-title::after { content:''; flex:1; height:1px; background: var(--border); }
+
+  .lb-list { display: flex; flex-direction: column; gap: 6px; }
+
+  .lb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+  }
+  .lb-rank {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    width: 20px;
+    text-align: center;
+  }
+  .lb-rank.gold { color: var(--accent4); text-shadow: 0 0 8px rgba(255,214,10,0.5); }
+  .lb-rank.silver { color: #c0c0c0; }
+  .lb-rank.bronze { color: #cd7f32; }
+  .lb-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-left: auto;
+  }
+  .lb-date { font-size: 0.7rem; color: var(--text-dim); }
+
+  /* PARTICLE */
+  .particle {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 200;
+    animation: particleFly 0.8s ease-out forwards;
+  }
+  @keyframes particleFly {
+    0% { opacity:1; transform: translate(0,0) scale(1); }
+    100% { opacity:0; transform: translate(var(--dx),var(--dy)) scale(0.2); }
+  }
+
+  /* SCORE POPUP */
+  .score-popup {
+    position: fixed;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--accent3);
+    text-shadow: 0 0 10px var(--glow3);
+    pointer-events: none;
+    z-index: 201;
+    animation: scorePopup 1s ease-out forwards;
+  }
+  @keyframes scorePopup {
+    0% { opacity:1; transform: translateY(0) scale(1); }
+    100% { opacity:0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  /* DRAGGING GHOST */
+  #drag-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    display: none;
+    transform: translate(-50%,-50%) scale(1.1);
+  }
+
+  /* COMBO BANNER */
+  .combo-banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 2rem;
+    z-index: 202;
+    pointer-events: none;
+    display: none;
+  }
+  .combo-banner.show {
+    display: block;
+    animation: comboPop 1s ease-out forwards;
+  }
+  @keyframes comboPop {
+    0% { opacity:0; transform: translate(-50%,-50%) scale(0.5); }
+    30% { opacity:1; transform: translate(-50%,-50%) scale(1.2); }
+    70% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity:0; transform: translate(-50%,-50%) scale(1.5); }
+  }
+
+  @media (max-width: 480px) {
+    :root { --cell: 34px; }
+    .logo { font-size: 1.3rem; }
+    .mini-cell { width: 14px; height: 14px; }
+    .piece-slot { min-height: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">BLOCK<br>BLAST</div>
+  <div class="best-score">
+    <span class="label">EN İYİ</span>
+    <span class="value" id="best-display">0</span>
+  </div>
+</div>
+
+<div class="score-panel">
+  <div class="score-box" id="score-box">
+    <div class="label">PUAN</div>
+    <div class="value" id="score-display">0</div>
+  </div>
+  <div class="score-box" style="flex:0.6">
+    <div class="label">KOMBİ</div>
+    <div class="value" id="combo-display" style="color:var(--accent2)">×1</div>
+  </div>
+</div>
+
+<div class="grid-container">
+  <div class="grid-wrap">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<div class="tray" id="tray">
+  <div class="piece-slot" id="slot-0" data-index="0"></div>
+  <div class="piece-slot" id="slot-1" data-index="1"></div>
+  <div class="piece-slot" id="slot-2" data-index="2"></div>
+</div>
+
+<div class="leaderboard">
+  <div class="lb-title">Skor Tablosu</div>
+  <div class="lb-list" id="lb-list"></div>
+</div>
+
+<!-- Drag Ghost -->
+<div id="drag-ghost"></div>
+
+<!-- Combo Banner -->
+<div class="combo-banner" id="combo-banner"></div>
+
+<!-- Game Over Overlay -->
+<div class="overlay" id="overlay">
+  <h2>GAME OVER</h2>
+  <div style="font-size:0.75rem;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase">PUANIN</div>
+  <div class="final-score" id="final-score">0</div>
+  <button class="btn" onclick="restartGame()">YENİDEN OYNA</button>
+</div>
+
+<script>
+// ==================== AUDIO ====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function getAudioCtx() {
+  if (!actx) actx = new AudioCtx();
+  return actx;
+}
+
+function playTone(freq, type, duration, vol=0.3, startTime=0) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.5, ctx.currentTime + startTime + duration);
+    gain.gain.setValueAtTime(vol, ctx.currentTime + startTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
+    osc.start(ctx.currentTime + startTime);
+    osc.stop(ctx.currentTime + startTime + duration);
+  } catch(e){}
+}
+
+function sfxPlace() { playTone(220, 'square', 0.08, 0.15); }
+function sfxClear(lines) {
+  for (let i=0; i<lines; i++) {
+    playTone(440 + i*110, 'sawtooth', 0.15, 0.25, i*0.06);
+    playTone(880 + i*220, 'sine', 0.1, 0.15, i*0.06+0.05);
+  }
+}
+function sfxGameOver() {
+  playTone(220, 'sawtooth', 0.4, 0.3);
+  playTone(180, 'sawtooth', 0.4, 0.25, 0.15);
+  playTone(140, 'sawtooth', 0.6, 0.2, 0.35);
+}
+function sfxNewRecord() {
+  [523,659,784,1047].forEach((f,i) => playTone(f,'sine',0.15,0.3,i*0.1));
+}
+
+// ==================== COLORS ====================
+const COLORS = [
+  { bg: '#ff4d6d', shadow: 'rgba(255,77,109,0.6)', inner: '#ff7096' },
+  { bg: '#c77dff', shadow: 'rgba(199,125,255,0.6)', inner: '#d9a0ff' },
+  { bg: '#00f5d4', shadow: 'rgba(0,245,212,0.6)', inner: '#40ffdf' },
+  { bg: '#ffd60a', shadow: 'rgba(255,214,10,0.6)', inner: '#ffe55a' },
+  { bg: '#4cc9f0', shadow: 'rgba(76,201,240,0.6)', inner: '#7ad8f7' },
+  { bg: '#f72585', shadow: 'rgba(247,37,133,0.6)', inner: '#f95fa3' },
+];
+
+function colorCell(cell, colorIdx) {
+  if (colorIdx === null) {
+    cell.style.background = 'var(--surface2)';
+    cell.style.boxShadow = 'none';
+    cell.style.border = '1px solid rgba(255,255,255,0.03)';
+    cell.classList.remove('filled');
+  } else {
+    const c = COLORS[colorIdx % COLORS.length];
+    cell.style.background = `radial-gradient(circle at 35% 35%, ${c.inner}, ${c.bg})`;
+    cell.style.boxShadow = `0 0 8px ${c.shadow}, inset 0 1px 0 rgba(255,255,255,0.3)`;
+    cell.style.border = '1px solid rgba(255,255,255,0.2)';
+    cell.classList.add('filled');
+  }
+}
+
+// ==================== PIECES ====================
+const PIECES = [
+  { shape: [[1]], name: '1x1' },
+  { shape: [[1,1]], name: '1x2' },
+  { shape: [[1],[1]], name: '2x1' },
+  { shape: [[1,1,1]], name: '1x3' },
+  { shape: [[1],[1],[1]], name: '3x1' },
+  { shape: [[1,1,1,1]], name: '1x4' },
+  { shape: [[1],[1],[1],[1]], name: '4x1' },
+  { shape: [[1,1],[1,1]], name: '2x2' },
+  { shape: [[1,1,0],[1,1,0],[0,0,0]], name: '2x2' },
+  { shape: [[1,0],[1,0],[1,1]], name: 'L' },
+  { shape: [[0,1],[0,1],[1,1]], name: 'J' },
+  { shape: [[1,1],[1,0]], name: 'small-L' },
+  { shape: [[1,1],[0,1]], name: 'small-J' },
+  { shape: [[1,1,0],[0,1,1]], name: 'S' },
+  { shape: [[0,1,1],[1,1,0]], name: 'Z' },
+  { shape: [[0,1,0],[1,1,1]], name: 'T' },
+  { shape: [[1,0,0],[1,0,0],[1,1,1]], name: 'L3' },
+  { shape: [[0,0,1],[0,0,1],[1,1,1]], name: 'J3' },
+  { shape: [[1,1,1],[1,0,0],[1,0,0]], name: 'L3r' },
+  { shape: [[1,1,1],[0,0,1],[0,0,1]], name: 'J3r' },
+  { shape: [[1,1,1],[0,1,0],[0,1,0]], name: 'T2' },
+  { shape: [[0,1,0],[0,1,0],[1,1,1]], name: 'T3' },
+  { shape: [[3,0],[0,3],[3,0],[0,3]], name: 'N' }, // won't render empty, handle
+];
+
+const REAL_PIECES = PIECES.slice(0, 22);
+
+// ==================== STATE ====================
+const GRID_SIZE = 10;
+let grid = [];           // grid[r][c] = null | colorIndex
+let cells = [];          // DOM cells
+let pieces = [null,null,null];
+let score = 0;
+let combo = 1;
+let bestScore = 0;
+let leaderboard = [];
+let gameOver = false;
+let dragState = null;    // { pieceIndex, piece, startX, startY, curRow, curCol }
+
+// ==================== INIT ====================
+function init() {
+  // Load storage
+  bestScore = parseInt(localStorage.getItem('bb_best') || '0');
+  leaderboard = JSON.parse(localStorage.getItem('bb_lb') || '[]');
+  document.getElementById('best-display').textContent = bestScore;
+  renderLeaderboard();
+
+  // Build grid data
+  grid = Array.from({length: GRID_SIZE}, () => Array(GRID_SIZE).fill(null));
+
+  // Build DOM grid
+  const gridEl = document.getElementById('grid');
+  gridEl.innerHTML = '';
+  cells = [];
+  for (let r=0; r<GRID_SIZE; r++) {
+    cells[r] = [];
+    for (let c=0; c<GRID_SIZE; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.r = r; cell.dataset.c = c;
+      colorCell(cell, null);
+      gridEl.appendChild(cell);
+      cells[r][c] = cell;
+
+      // Drop target events
+      cell.addEventListener('dragover', e => { e.preventDefault(); onDragOverCell(r,c); });
+      cell.addEventListener('drop', e => { e.preventDefault(); onDropCell(r,c); });
+    }
+  }
+
+  // Generate pieces
+  score = 0; combo = 1; gameOver = false;
+  updateScore(0);
+  document.getElementById('combo-display').textContent = '×1';
+  document.getElementById('overlay').classList.remove('show');
+  spawnPieces();
+}
+
+function restartGame() { init(); }
+
+// ==================== PIECES ====================
+function randomPiece() {
+  const p = REAL_PIECES[Math.floor(Math.random() * REAL_PIECES.length)];
+  const color = Math.floor(Math.random() * COLORS.length);
+  return { shape: p.shape, color };
+}
+
+function spawnPieces() {
+  for (let i=0; i<3; i++) {
+    if (!pieces[i]) {
+      pieces[i] = randomPiece();
+    }
+  }
+  renderPieceTray();
+  checkGameOver();
+}
+
+function renderPieceTray() {
+  for (let i=0; i<3; i++) {
+    const slot = document.getElementById(`slot-${i}`);
+    slot.innerHTML = '';
+    slot.classList.remove('used', 'dragging-active');
+
+    if (!pieces[i]) {
+      slot.classList.add('used');
+      continue;
+    }
+
+    const p = pieces[i];
+    const rows = p.shape.length;
+    const cols = p.shape[0].length;
+    const canvas = document.createElement('div');
+    canvas.className = 'piece-canvas';
+    canvas.style.gridTemplateColumns = `repeat(${cols}, 18px)`;
+    canvas.style.gridTemplateRows = `repeat(${rows}, 18px)`;
+
+    for (let r=0; r<rows; r++) {
+      for (let c=0; c<cols; c++) {
+        const mc = document.createElement('div');
+        mc.className = 'mini-cell';
+        if (p.shape[r][c]) {
+          const col = COLORS[p.color % COLORS.length];
+          mc.style.background = `radial-gradient(circle at 35% 35%, ${col.inner}, ${col.bg})`;
+          mc.style.boxShadow = `0 0 4px ${col.shadow}`;
+        } else {
+          mc.style.background = 'transparent';
+        }
+        canvas.appendChild(mc);
+      }
+    }
+
+    slot.appendChild(canvas);
+
+    // Drag setup
+    slot.setAttribute('draggable', true);
+    slot.addEventListener('dragstart', (e) => onDragStart(e, i), {once:true});
+
+    // Touch
+    slot.addEventListener('touchstart', (e) => onTouchStart(e, i), {passive:false});
+  }
+}
+
+// ==================== DRAG & DROP (MOUSE) ====================
+function onDragStart(e, idx) {
+  if (!pieces[idx]) return;
+  dragState = { pieceIndex: idx, piece: pieces[idx] };
+  e.dataTransfer.effectAllowed = 'move';
+  document.getElementById(`slot-${idx}`).classList.add('dragging-active');
+
+  // Ghost
+  const ghost = buildGhostEl(pieces[idx]);
+  document.getElementById('drag-ghost').innerHTML = '';
+  document.getElementById('drag-ghost').appendChild(ghost);
+  e.dataTransfer.setDragImage(document.createElement('div'), 0, 0); // hide default
+}
+
+function onDragOverCell(r, c) {
+  if (!dragState) return;
+  showPreview(r, c, dragState.piece);
+}
+
+function onDropCell(r, c) {
+  if (!dragState) return;
+  clearPreview();
+  placePiece(dragState.pieceIndex, r, c);
+  dragState = null;
+  document.querySelectorAll('.piece-slot').forEach(s => s.classList.remove('dragging-active'));
+}
+
+document.addEventListener('dragend', () => {
+  clearPreview();
+  dragState = null;
+  document.querySelectorAll('.piece-slot').forEach(s => s.classList.remove('dragging-active'));
+});
+
+// ==================== TOUCH ====================
+function onTouchStart(e, idx) {
+  if (!pieces[idx]) return;
+  e.preventDefault();
+  getAudioCtx(); // unlock audio on touch
+  dragState = { pieceIndex: idx, piece: pieces[idx] };
+
+  const ghost = document.getElementById('drag-ghost');
+  ghost.innerHTML = '';
+  ghost.appendChild(buildGhostEl(pieces[idx]));
+  ghost.style.display = 'block';
+
+  document.getElementById(`slot-${idx}`).classList.add('dragging-active');
+
+  const move = (ev) => {
+    ev.preventDefault();
+    const t = ev.touches[0];
+    ghost.style.left = t.clientX + 'px';
+    ghost.style.top = t.clientY + 'px';
+
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    if (el && el.dataset.r !== undefined) {
+      showPreview(+el.dataset.r, +el.dataset.c, dragState.piece);
+    } else {
+      clearPreview();
+    }
+  };
+
+  const end = (ev) => {
+    ev.preventDefault();
+    ghost.style.display = 'none';
+    clearPreview();
+    const t = ev.changedTouches[0];
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    if (el && el.dataset.r !== undefined) {
+      placePiece(idx, +el.dataset.r, +el.dataset.c);
+    }
+    dragState = null;
+    document.querySelectorAll('.piece-slot').forEach(s => s.classList.remove('dragging-active'));
+    document.removeEventListener('touchmove', move);
+    document.removeEventListener('touchend', end);
+  };
+
+  document.addEventListener('touchmove', move, {passive:false});
+  document.addEventListener('touchend', end, {passive:false});
+}
+
+function buildGhostEl(piece) {
+  const rows = piece.shape.length;
+  const cols = piece.shape[0].length;
+  const g = document.createElement('div');
+  g.style.display = 'grid';
+  g.style.gridTemplateColumns = `repeat(${cols}, 22px)`;
+  g.style.gridTemplateRows = `repeat(${rows}, 22px)`;
+  g.style.gap = '2px';
+  g.style.opacity = '0.85';
+  for (let r=0; r<rows; r++) {
+    for (let c=0; c<cols; c++) {
+      const mc = document.createElement('div');
+      mc.style.width = '22px'; mc.style.height = '22px';
+      mc.style.borderRadius = '4px';
+      if (piece.shape[r][c]) {
+        const col = COLORS[piece.color % COLORS.length];
+        mc.style.background = col.bg;
+        mc.style.boxShadow = `0 0 6px ${col.shadow}`;
+      }
+      g.appendChild(mc);
+    }
+  }
+  return g;
+}
+
+// ==================== PREVIEW ====================
+let previewCells = [];
+
+function showPreview(r, c, piece) {
+  clearPreview();
+  const rows = piece.shape.length;
+  const cols = piece.shape[0].length;
+  const valid = canPlace(r, c, piece);
+  const col = COLORS[piece.color % COLORS.length];
+
+  for (let pr=0; pr<rows; pr++) {
+    for (let pc=0; pc<cols; pc++) {
+      if (!piece.shape[pr][pc]) continue;
+      const nr = r+pr, nc = c+pc;
+      if (nr < 0 || nr >= GRID_SIZE || nc < 0 || nc >= GRID_SIZE) continue;
+      const cell = cells[nr][nc];
+      if (grid[nr][nc] !== null) continue;
+
+      if (valid) {
+        cell.style.background = `radial-gradient(circle at 35% 35%, ${col.inner}, ${col.bg})`;
+        cell.style.opacity = '0.5';
+        cell.style.transform = 'scale(0.9)';
+      } else {
+        cell.style.background = 'rgba(255,77,109,0.3)';
+        cell.style.opacity = '0.6';
+      }
+      previewCells.push(cell);
+    }
+  }
+}
+
+function clearPreview() {
+  previewCells.forEach(cell => {
+    const r = +cell.dataset.r, c = +cell.dataset.c;
+    cell.style.opacity = '';
+    cell.style.transform = '';
+    if (grid[r][c] !== null) {
+      colorCell(cell, grid[r][c]);
+    } else {
+      colorCell(cell, null);
+    }
+  });
+  previewCells = [];
+}
+
+// ==================== PLACEMENT ====================
+function canPlace(r, c, piece) {
+  const rows = piece.shape.length;
+  const cols = piece.shape[0].length;
+  for (let pr=0; pr<rows; pr++) {
+    for (let pc=0; pc<cols; pc++) {
+      if (!piece.shape[pr][pc]) continue;
+      const nr=r+pr, nc=c+pc;
+      if (nr<0||nr>=GRID_SIZE||nc<0||nc>=GRID_SIZE) return false;
+      if (grid[nr][nc] !== null) return false;
+    }
+  }
+  return true;
+}
+
+function placePiece(idx, r, c) {
+  const piece = pieces[idx];
+  if (!piece) return;
+  if (!canPlace(r, c, piece)) return;
+
+  const rows = piece.shape.length;
+  const cols = piece.shape[0].length;
+
+  // Place on grid
+  for (let pr=0; pr<rows; pr++) {
+    for (let pc=0; pc<cols; pc++) {
+      if (!piece.shape[pr][pc]) continue;
+      const nr=r+pr, nc=c+pc;
+      grid[nr][nc] = piece.color;
+      colorCell(cells[nr][nc], piece.color);
+    }
+  }
+
+  sfxPlace();
+  pieces[idx] = null;
+
+  // Check clears
+  setTimeout(() => checkClears(r, c, rows, cols), 80);
+}
+
+// ==================== CLEAR ====================
+function checkClears(startR, startC, pieceRows, pieceCols) {
+  const fullRows = [];
+  const fullCols = [];
+
+  // Check rows touched by piece
+  const rowsToCheck = new Set();
+  const colsToCheck = new Set();
+  for (let r=startR; r<startR+pieceRows; r++) if (r>=0&&r<GRID_SIZE) rowsToCheck.add(r);
+  for (let c=startC; c<startC+pieceCols; c++) if (c>=0&&c<GRID_SIZE) colsToCheck.add(c);
+
+  rowsToCheck.forEach(r => {
+    if (grid[r].every(v => v !== null)) fullRows.push(r);
+  });
+  colsToCheck.forEach(c => {
+    let full = true;
+    for (let r=0; r<GRID_SIZE; r++) if (grid[r][c] === null) { full=false; break; }
+    if (full) fullCols.push(c);
+  });
+
+  const totalLines = fullRows.length + fullCols.length;
+
+  if (totalLines === 0) {
+    combo = 1;
+    document.getElementById('combo-display').textContent = '×1';
+    // Check if all pieces used → respawn
+    if (pieces.every(p => p === null)) spawnPieces();
+    else checkGameOver();
+    return;
+  }
+
+  // Highlight
+  const toClear = new Set();
+  fullRows.forEach(r => { for (let c=0; c<GRID_SIZE; c++) toClear.add(`${r},${c}`); });
+  fullCols.forEach(c => { for (let r=0; r<GRID_SIZE; r++) toClear.add(`${r},${c}`); });
+
+  toClear.forEach(key => {
+    const [r,c] = key.split(',').map(Number);
+    cells[r][c].classList.add('clearing');
+  });
+
+  sfxClear(totalLines);
+
+  // Score: cells × combo multiplier
+  const basePoints = toClear.size * 10 * totalLines;
+  const points = basePoints * combo;
+
+  // Show score popup
+  const gridEl = document.getElementById('grid');
+  const rect = gridEl.getBoundingClientRect();
+  spawnScorePopup(rect.left + rect.width/2, rect.top + rect.height/2, `+${points}`);
+
+  // Particles
+  toClear.forEach(key => {
+    const [r,c] = key.split(',').map(Number);
+    const cr = cells[r][c].getBoundingClientRect();
+    spawnParticles(cr.left + cr.width/2, cr.top + cr.height/2, grid[r][c]);
+  });
+
+  // Combo
+  combo = Math.min(combo + totalLines, 8);
+  document.getElementById('combo-display').textContent = `×${combo}`;
+  if (combo >= 3) showComboBanner(`×${combo} KOMBİ!`);
+
+  setTimeout(() => {
+    toClear.forEach(key => {
+      const [r,c] = key.split(',').map(Number);
+      cells[r][c].classList.remove('clearing');
+      grid[r][c] = null;
+      colorCell(cells[r][c], null);
+    });
+
+    updateScore(score + points);
+
+    if (pieces.every(p => p === null)) spawnPieces();
+    else checkGameOver();
+  }, 380);
+}
+
+// ==================== GAME OVER ====================
+function checkGameOver() {
+  // Check if any remaining piece can be placed anywhere
+  for (let i=0; i<3; i++) {
+    if (!pieces[i]) continue;
+    for (let r=0; r<GRID_SIZE; r++) {
+      for (let c=0; c<GRID_SIZE; c++) {
+        if (canPlace(r, c, pieces[i])) return; // still playable
+      }
+    }
+  }
+
+  // Game over
+  gameOver = true;
+  sfxGameOver();
+
+  setTimeout(() => {
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('overlay').classList.add('show');
+    saveScore(score);
+  }, 400);
+}
+
+// ==================== SCORE ====================
+function updateScore(newScore) {
+  score = newScore;
+  document.getElementById('score-display').textContent = score;
+
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('bb_best', bestScore);
+    document.getElementById('best-display').textContent = bestScore;
+    sfxNewRecord();
+  }
+
+  const box = document.getElementById('score-box');
+  box.classList.add('bump');
+  setTimeout(() => box.classList.remove('bump'), 200);
+}
+
+function saveScore(s) {
+  const entry = { score: s, date: new Date().toLocaleDateString('tr-TR') };
+  leaderboard.push(entry);
+  leaderboard.sort((a,b) => b.score - a.score);
+  leaderboard = leaderboard.slice(0, 5);
+  localStorage.setItem('bb_lb', JSON.stringify(leaderboard));
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const list = document.getElementById('lb-list');
+  if (!leaderboard.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;padding:12px">Henüz skor yok. Oynamaya başla!</div>';
+    return;
+  }
+  list.innerHTML = leaderboard.map((e,i) => {
+    const rankClass = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+    return `<div class="lb-item">
+      <div class="lb-rank ${rankClass}">${medal}</div>
+      <div style="flex:1">
+        <div class="lb-score">${e.score.toLocaleString('tr-TR')}</div>
+      </div>
+      <div class="lb-date">${e.date}</div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== FX ====================
+function spawnParticles(x, y, colorIdx) {
+  const col = colorIdx !== null ? COLORS[colorIdx % COLORS.length].bg : '#fff';
+  for (let i=0; i<8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (i/8)*Math.PI*2;
+    const dist = 40 + Math.random()*40;
+    p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+    p.style.background = col;
+    p.style.left = x + 'px'; p.style.top = y + 'px';
+    p.style.boxShadow = `0 0 6px ${col}`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 900);
+  }
+}
+
+function spawnScorePopup(x, y, text) {
+  const el = document.createElement('div');
+  el.className = 'score-popup';
+  el.textContent = text;
+  el.style.left = x + 'px'; el.style.top = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+function showComboBanner(text) {
+  const b = document.getElementById('combo-banner');
+  b.textContent = text;
+  b.style.background = 'linear-gradient(135deg, var(--accent1), var(--accent2))';
+  b.style.webkitBackgroundClip = 'text';
+  b.style.webkitTextFillColor = 'transparent';
+  b.style.backgroundClip = 'text';
+  b.style.filter = 'drop-shadow(0 0 20px var(--glow1))';
+  b.classList.remove('show');
+  void b.offsetWidth;
+  b.classList.add('show');
+  setTimeout(() => b.classList.remove('show'), 1100);
+}
+
+// ==================== START ====================
+init();
+</script>
+</body>
+</html>
