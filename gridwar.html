@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
 <script type="module">
-  // --- FIREBASE KURULUMU ---
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
@@ -25,21 +24,13 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // Fonksiyonları butonlar görsün diye window'a bağlıyoruz
   window.createOnlineRoom = async () => {
     const code = Math.random().toString(36).substr(2,4).toUpperCase();
     window.currentRoom = code;
     window.myRole = 'p1';
     document.getElementById('room-code-display').textContent = code;
-    
-    await set(ref(db, 'rooms/' + code), {
-        status: 'waiting',
-        p1_score: 0,
-        p2_score: 0
-    });
-    
+    await set(ref(db, 'rooms/' + code), { status: 'waiting', p1_score: 0, p2_score: 0 });
     showScreen('scr-create');
-
     onValue(ref(db, 'rooms/' + code), (snapshot) => {
         const data = snapshot.val();
         if (data && data.status === 'playing' && !window.gameStarted) {
@@ -53,10 +44,8 @@
   window.joinOnlineRoom = async () => {
     const code = document.getElementById('join-input').value.toUpperCase();
     if (code.length !== 4) return alert("4 haneli kod gir!");
-    
     window.currentRoom = code;
     window.myRole = 'p2';
-
     await update(ref(db, 'rooms/' + code), { status: 'playing' });
     window.gameStarted = true;
     startSolo();
@@ -78,55 +67,50 @@
 </script>
 
 <style>
-/* CSS Tasarımı (Hepsini buraya topladım) */
-:root{ --bg:#060612; --bg2:#0d0d20; --surface:#111128; --surface2:#181835; --border:#1e1e45; --border2:#2a2a60; --A:#00e5ff; --B:#ff3864; --C:#ffe600; --D:#39ff14; --E:#bf5af2; --F:#ff9500; --text:#dde4ff; --dim:#4a4a80; --glowA:rgba(0,229,255,0.5); }
+/* --- SENİN ORİJİNAL TASARIMIN --- */
+:root{--bg:#060612;--bg2:#0d0d20;--surface:#111128;--surface2:#181835;--border:#1e1e45;--border2:#2a2a60;--A:#00e5ff;--B:#ff3864;--C:#ffe600;--D:#39ff14;--E:#bf5af2;--F:#ff9500;--text:#dde4ff;--dim:#4a4a80;--glowA:rgba(0,229,255,0.5);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{ background:var(--bg); font-family:'Rajdhani',sans-serif; color:var(--text); display:flex; flex-direction:column; align-items:center; overflow:hidden; touch-action:none; }
-.screen{ display:none; position:fixed; inset:0; z-index:50; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:var(--bg); }
-.screen.active{ display:flex; }
-.game-logo{ font-family:'Orbitron'; font-weight:900; font-size:3rem; background:linear-gradient(135deg,var(--A),var(--E)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.menu-btn{ width:240px; padding:14px; border-radius:8px; border:none; font-family:'Orbitron'; font-weight:700; cursor:pointer; text-transform:uppercase; margin:5px; }
-.primary{ background:var(--A); color:#000; box-shadow:0 0 15px var(--glowA); }
-.secondary{ background:var(--surface2); color:#fff; }
-.lobby-box{ background:var(--surface); padding:30px; border-radius:15px; text-align:center; border:1px solid var(--border2); }
-.room-code{ font-family:'Orbitron'; font-size:3rem; color:var(--C); margin:10px 0; }
-.topbar{ width:100%; max-width:400px; padding:10px; display:none; justify-content:space-between; }
-.grid-outer{ background:var(--surface); padding:10px; border-radius:10px; display:none; }
-#grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:2px; }
-.cell{ width:35px; height:35px; background:var(--surface2); border-radius:4px; }
-.tray{ display:none; gap:10px; margin-top:10px; }
-.slot{ width:100px; height:100px; background:var(--surface); border:1px solid var(--border2); border-radius:10px; display:flex; align-items:center; justify-content:center; }
-input.code-input{ background:var(--surface2); border:2px solid var(--border2); color:#fff; padding:10px; font-size:1.5rem; text-align:center; width:150px; }
-.game-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:100; flex-direction:column; align-items:center; justify-content:center; }
-#ghost{ position:fixed; pointer-events:none; z-index:999; display:none; }
+body{background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;height:100vh;overflow:hidden;}
+.screen{display:none;position:fixed;inset:0;z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);}
+.screen.active{display:flex;}
+.game-logo{font-family:'Orbitron';font-weight:900;font-size:3rem;letter-spacing:4px;background:linear-gradient(135deg,var(--A),var(--E),var(--B));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;}
+.menu-btn{width:240px;padding:14px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron';font-weight:700;text-transform:uppercase;transition:0.15s;}
+.primary{background:linear-gradient(135deg,var(--A),#0099bb);color:#000;box-shadow:0 0 20px var(--glowA);}
+.secondary{background:linear-gradient(135deg,var(--E),#8822cc);color:#fff;}
+.room-code{font-family:'Orbitron';font-size:3rem;color:var(--C);margin:15px 0;}
+.topbar{width:100%;max-width:440px;padding:10px;display:none;justify-content:space-between;align-items:center;}
+.grid-outer{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:7px;display:none;position:relative;}
+#grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;}
+.cell{width:38px;height:38px;background:var(--surface2);border-radius:4px;transition:0.1s;}
+.tray{width:100%;max-width:440px;display:none;justify-content:space-around;padding:15px;gap:10px;}
+.slot{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:12px;height:90px;display:flex;align-items:center;justify-content:center;cursor:grab;}
+#ghost{position:fixed;pointer-events:none;z-index:999;display:none;}
+.cell.filled{border:1px solid rgba(255,255,255,0.2);}
 </style>
 </head>
 <body>
 
 <div class="screen active" id="scr-menu">
-  <div class="game-logo">GRIDWAR</div>
-  <button class="menu-btn primary" onclick="createOnlineRoom()">ODA OLUŞTUR</button>
-  <button class="menu-btn secondary" onclick="showScreen('scr-join')">ODAYA KATIL</button>
+  <div class="game-logo">GRID<br>WAR</div>
+  <button class="menu-btn primary" onclick="createOnlineRoom()">🌐 ODA OLUŞTUR</button>
+  <button class="menu-btn secondary" onclick="showScreen('scr-join')">🔗 ODAYA KATIL</button>
 </div>
 
 <div class="screen" id="scr-create">
-  <div class="lobby-box">
-    <h2>ODA KODU</h2>
-    <div class="room-code" id="room-code-display">----</div>
-    <div style="color:var(--dim)">Rakip Bekleniyor...</div>
-  </div>
+  <div class="game-logo">KODUNUZ</div>
+  <div class="room-code" id="room-code-display">----</div>
+  <div style="color:var(--dim);letter-spacing:2px;">RAKİP BEKLENİYOR...</div>
 </div>
 
 <div class="screen" id="scr-join">
-  <div class="lobby-box">
-    <input class="code-input" id="join-input" maxlength="4" placeholder="KOD">
-    <button class="menu-btn primary" onclick="joinOnlineRoom()">KATIL</button>
-  </div>
+  <div class="game-logo">KATIL</div>
+  <input type="text" id="join-input" maxlength="4" style="background:var(--surface2); border:2px solid var(--A); color:#fff; font-size:2rem; text-align:center; width:150px; outline:none; font-family:'Orbitron';">
+  <button class="menu-btn primary" onclick="joinOnlineRoom()">KATIL</button>
 </div>
 
 <div class="topbar" id="topbar">
-  <div style="font-family:'Orbitron'">SCORE: <span id="sv">0</span></div>
-  <div style="font-family:'Orbitron'">RAKİP: <span id="ov-score">0</span></div>
+  <div style="font-family:'Orbitron'; font-size:0.9rem;">SKOR: <span id="sv" style="color:var(--A)">0</span></div>
+  <div style="font-family:'Orbitron'; font-size:0.9rem;">RAKİP: <span id="ov-score" style="color:var(--B)">0</span></div>
 </div>
 
 <div class="grid-outer" id="gout"><div id="grid"></div></div>
@@ -135,34 +119,35 @@ input.code-input{ background:var(--surface2); border:2px solid var(--border2); c
 </div>
 
 <div id="ghost"></div>
-<div class="game-overlay" id="ov">
-  <h1 style="color:var(--B)">OYUN BİTTİ</h1>
-  <button class="menu-btn primary" onclick="location.reload()">TEKRAR DENE</button>
-</div>
 
 <script>
-// --- OYUN MANTIĞI ---
-let score = 0, best = 0;
+// --- OYUN DEĞİŞKENLERİ ---
 const N = 8;
 let grid = Array.from({length:N},()=>Array(N).fill(null));
-let pieces = [null,null,null];
+let cells = [], pieces = [null,null,null], score = 0;
+const COLORS = [
+  {bg:'#00e5ff', inner:'#66f0ff'}, {bg:'#ff3864', inner:'#ff6d8a'}, 
+  {bg:'#ffe600', inner:'#fff066'}, {bg:'#39ff14', inner:'#88ff66'}, {bg:'#bf5af2', inner:'#d488ff'}
+];
+const SHAPES = [
+  [[1]], [[1,1]], [[1],[1]], [[1,1],[1,1]], [[1,1,1]], [[1],[1],[1]], 
+  [[1,1,1],[0,1,0]], [[1,1,1],[1,0,0]], [[1,1,0],[0,1,1]]
+];
 
-const SHAPES = [[[1]], [[1,1]], [[1],[1]], [[1,1],[1,1]], [[1,1,1]], [[1,1,0],[0,1,1]]];
-const COLORS = ['#00e5ff', '#ff3864', '#ffe600', '#39ff14', '#bf5af2'];
-
+// --- CORE FONKSİYONLAR ---
 function buildGrid(){
-  const g = document.getElementById('grid'); g.innerHTML = '';
+  const g = document.getElementById('grid'); g.innerHTML = ''; cells = [];
   for(let r=0; r<N; r++){
+    cells[r] = [];
     for(let c=0; c<N; c++){
       const el = document.createElement('div'); el.className = 'cell';
-      el.id = `c-${r}-${c}`; g.appendChild(el);
+      g.appendChild(el); cells[r][c] = el;
     }
   }
 }
 
 function startSolo(){
-  window.gameStarted = true;
-  hideAllScreens();
+  showScreen('none');
   document.getElementById('topbar').style.display = 'flex';
   document.getElementById('gout').style.display = 'block';
   document.getElementById('tray').style.display = 'flex';
@@ -178,39 +163,90 @@ function spawnPieces(){
 }
 
 function renderSlot(i){
-  const s = document.getElementById('s'+i); s.innerHTML = '';
+  const slot = document.getElementById('s'+i); slot.innerHTML = '';
   if(!pieces[i]) return;
-  const p = pieces[i];
-  const div = document.createElement('div');
-  div.style.display = 'grid';
-  div.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 15px)`;
+  const p = pieces[i], cv = document.createElement('div');
+  cv.style.display = 'grid'; cv.style.gap = '2px';
+  cv.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 15px)`;
   p.shape.forEach(row => row.forEach(cell => {
-    const c = document.createElement('div');
-    c.style.width = '15px'; c.style.height = '15px';
-    if(cell) c.style.background = COLORS[p.color];
-    div.appendChild(c);
+    const c = document.createElement('div'); c.style.width = '15px'; c.style.height = '15px'; c.style.borderRadius = '2px';
+    if(cell) c.style.background = COLORS[p.color].bg;
+    cv.appendChild(c);
   }));
-  s.appendChild(div);
-  s.onmousedown = (e) => startDrag(e, i);
+  slot.appendChild(cv);
+  slot.onmousedown = (e) => handleDrag(e, i);
+  slot.ontouchstart = (e) => handleDrag(e.touches[0], i);
 }
 
-// Sürükle bırak ve diğer fonksiyonların basitleştirilmiş hali...
-// (Bu kısım uzun olduğu için ana mantığı korudum)
+function handleDrag(e, idx){
+  const p = pieces[idx]; if(!p) return;
+  const ghost = document.getElementById('ghost'); ghost.innerHTML = '';
+  ghost.style.display = 'grid'; ghost.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 38px)`;
+  p.shape.forEach(row => row.forEach(cell => {
+    const c = document.createElement('div'); c.style.width = '38px'; c.style.height = '38px';
+    if(cell) { c.style.background = COLORS[p.color].bg; c.style.borderRadius = '4px'; }
+    ghost.appendChild(c);
+  }));
+
+  const move = (ev) => {
+    const touch = ev.touches ? ev.touches[0] : ev;
+    ghost.style.left = (touch.clientX - 20) + 'px';
+    ghost.style.top = (touch.clientY - 60) + 'px';
+  };
+
+  const end = (ev) => {
+    const touch = ev.changedTouches ? ev.changedTouches[0] : ev;
+    ghost.style.display = 'none';
+    const rect = document.getElementById('grid').getBoundingClientRect();
+    const r = Math.floor((touch.clientY - rect.top) / 40);
+    const c = Math.floor((touch.clientX - rect.left) / 40);
+    if(tryPlace(idx, r, c)) checkClears();
+    window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', end);
+    window.removeEventListener('touchmove', move); window.removeEventListener('touchend', end);
+  };
+
+  window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  window.addEventListener('touchmove', move); window.addEventListener('touchend', end);
+}
+
+function tryPlace(idx, r, c){
+  const p = pieces[idx];
+  for(let pr=0; pr<p.shape.length; pr++)
+    for(let pc=0; pc<p.shape[0].length; pc++)
+      if(p.shape[pr][pc] && (r+pr<0 || r+pr>=N || c+pc<0 || c+pc>=N || grid[r+pr][c+pc]!==null)) return false;
+
+  for(let pr=0; pr<p.shape.length; pr++)
+    for(let pc=0; pc<p.shape[0].length; pc++)
+      if(p.shape[pr][pc]){
+        grid[r+pr][c+pc] = p.color;
+        cells[r+pr][c+pc].style.background = COLORS[p.color].bg;
+        cells[r+pr][c+pc].classList.add('filled');
+      }
+  pieces[idx] = null; renderSlot(idx);
+  if(pieces.every(x => x === null)) spawnPieces();
+  return true;
+}
+
+function checkClears(){
+  let cleared = 0;
+  let rowsToClear = [], colsToClear = [];
+  for(let r=0; r<N; r++) if(grid[r].every(x => x!==null)) rowsToClear.push(r);
+  for(let c=0; c<N; c++) { let ok = true; for(let r=0; r<N; r++) if(grid[r][c]===null) ok=false; if(ok) colsToClear.push(c); }
+  
+  rowsToClear.forEach(r => { for(let c=0; c<N; c++) { grid[r][c]=null; cells[r][c].style.background=''; cells[r][c].classList.remove('filled'); cleared++; } });
+  colsToClear.forEach(c => { for(let r=0; r<N; r++) { if(grid[r][c]!==null) { grid[r][c]=null; cells[r][c].style.background=''; cells[r][c].classList.remove('filled'); cleared++; } } });
+  
+  if(cleared > 0) {
+    score += cleared * 10;
+    document.getElementById('sv').textContent = score;
+    window.syncMyScore(score);
+  }
+}
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  if(id!=='none') document.getElementById(id).classList.add('active');
 }
-function hideAllScreens(){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); }
-
-// Skor arttığında Firebase'e gönder
-function addScore(p){
-  score += p;
-  document.getElementById('sv').textContent = score;
-  if(window.syncMyScore) window.syncMyScore(score);
-}
-
-buildGrid(); // Başlangıçta gridi hazırla
 </script>
 </body>
 </html>
