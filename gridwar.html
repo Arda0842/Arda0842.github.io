@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>GridWar Online ⚔️</title>
+<title>GridWar ⚔️</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-
   const firebaseConfig = {
     apiKey: "AIzaSyBmFkmbEuqfQbtDW-T9TIeSBAeYr6SVgDY",
     authDomain: "gridwar-8f1fa.firebaseapp.com",
@@ -20,80 +19,55 @@
     appId: "1:27513897350:web:4a1dfdd299ecb81f5a2c07",
     measurementId: "G-K1207KE14Y"
   };
-
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   const emptyGrid = () => Array(8).fill(null).map(() => Array(8).fill(null));
 
-  // ── ODA OLUŞTUR ──
   window.createOnlineRoom = async () => {
     const code = Math.random().toString(36).substr(2,4).toUpperCase();
-    window.currentRoom = code;
-    window.myRole = 'p1';
-    window.gameStarted = false;
+    window.currentRoom = code; window.myRole = 'p1'; window.gameStarted = false;
     document.getElementById('room-code-display').textContent = code;
-
     await set(ref(db, 'rooms/' + code), {
-      status: 'waiting',
-      p1_score: 0, p2_score: 0,
-      p1_grid: emptyGrid(),
-      p2_grid: emptyGrid()
+      status: 'waiting', p1_score: 0, p2_score: 0,
+      p1_grid: emptyGrid(), p2_grid: emptyGrid()
     });
-
     showScreen('scr-create');
-
-    // p2 katılınca oyunu başlat
     onValue(ref(db, 'rooms/' + code + '/status'), (snap) => {
       if (snap.val() === 'playing' && !window.gameStarted) {
         window.gameStarted = true;
-        startGame();
+        startGame(true);
         listenOpponent(code);
       }
     });
   };
 
-  // ── ODAYA KATIL ──
   window.joinOnlineRoom = async () => {
     const code = document.getElementById('join-input').value.trim().toUpperCase();
     if (code.length !== 4) return alert("4 haneli kod gir!");
-
     const snap = await get(ref(db, 'rooms/' + code));
     if (!snap.exists()) return alert("Oda bulunamadı: " + code);
-
-    window.currentRoom = code;
-    window.myRole = 'p2';
-    window.gameStarted = true;
-
+    window.currentRoom = code; window.myRole = 'p2'; window.gameStarted = true;
     await update(ref(db, 'rooms/' + code), { status: 'playing' });
-    startGame();
+    startGame(true);
     listenOpponent(code);
   };
 
-  // ── RAKİBİN HAMLELERİNİ DİNLE ──
   function listenOpponent(code) {
     const oppKey = window.myRole === 'p1' ? 'p2_grid' : 'p1_grid';
     const oppScoreKey = window.myRole === 'p1' ? 'p2_score' : 'p1_score';
-
     onValue(ref(db, 'rooms/' + code + '/' + oppKey), (snap) => {
-      const g = snap.val();
-      if (g) renderOppGrid(g);
+      const g = snap.val(); if (g) renderOppGrid(g);
     });
-
     onValue(ref(db, 'rooms/' + code + '/' + oppScoreKey), (snap) => {
-      const el = document.getElementById('opp-score');
-      if (el) el.textContent = snap.val() || 0;
+      const el = document.getElementById('opp-score'); if (el) el.textContent = snap.val() || 0;
     });
   }
 
-  // ── KENDİ HAMLEMİ GÖNDER ──
   window.pushMyState = (myGrid, myScore) => {
     if (!window.currentRoom) return;
     const gridKey = window.myRole === 'p1' ? 'p1_grid' : 'p2_grid';
     const scoreKey = window.myRole === 'p1' ? 'p1_score' : 'p2_score';
-    update(ref(db, 'rooms/' + window.currentRoom), {
-      [gridKey]: myGrid,
-      [scoreKey]: myScore
-    });
+    update(ref(db, 'rooms/' + window.currentRoom), { [gridKey]: myGrid, [scoreKey]: myScore });
   };
 </script>
 
@@ -101,20 +75,21 @@
 :root{
   --bg:#060612;--surface:#111128;--surface2:#181835;
   --border:#1e1e45;--border2:#2a2a60;
-  --A:#00e5ff;--B:#ff3864;--C:#ffe600;--D:#39ff14;--E:#bf5af2;
+  --A:#00e5ff;--B:#ff3864;--C:#ffe600;--D:#39ff14;--E:#bf5af2;--F:#ff9500;
   --text:#dde4ff;--dim:#4a4a80;
-  --glowA:rgba(0,229,255,0.5);
+  --glowA:rgba(0,229,255,0.5);--glowB:rgba(255,56,100,0.4);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;}
-body{background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);
-  display:flex;flex-direction:column;align-items:center;}
+body{background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,229,255,0.06) 0%,transparent 60%);}
 
-/* SCREENS */
+/* ── SCREENS ── */
 .screen{display:none;position:fixed;inset:0;z-index:50;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;background:var(--bg);padding:20px;}
+  align-items:center;justify-content:center;gap:14px;background:var(--bg);padding:20px;}
 .screen.active{display:flex;}
 
 .game-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:3rem;letter-spacing:4px;
@@ -125,16 +100,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 
 .menu-btn{width:240px;padding:13px 0;border-radius:8px;border:none;cursor:pointer;
   font-family:'Orbitron',monospace;font-weight:700;font-size:0.85rem;letter-spacing:2px;
-  text-transform:uppercase;transition:transform 0.15s;}
+  text-transform:uppercase;transition:transform 0.15s,box-shadow 0.15s;}
 .menu-btn:hover{transform:scale(1.05);}
 .menu-btn:active{transform:scale(0.97);}
+.btn-solo{background:linear-gradient(135deg,var(--D),#228822);color:#000;}
 .btn-create{background:linear-gradient(135deg,var(--A),#0099bb);color:#000;box-shadow:0 0 18px var(--glowA);}
 .btn-join{background:linear-gradient(135deg,var(--E),#8822cc);color:#fff;}
-.btn-back{background:var(--surface2);color:var(--dim);margin-top:4px;}
-.menu-div{width:200px;height:1px;background:var(--border2);margin:4px 0;}
+.btn-back{background:var(--surface2);color:var(--dim);}
+.menu-div{width:200px;height:1px;background:var(--border2);margin:2px 0;}
 
 .lobby-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;
-  padding:28px 32px;text-align:center;max-width:320px;width:100%;}
+  padding:26px 30px;text-align:center;max-width:320px;width:100%;}
 .lobby-box h2{font-family:'Orbitron',monospace;font-size:1rem;letter-spacing:3px;color:var(--A);margin-bottom:12px;}
 .room-code{font-family:'Orbitron',monospace;font-size:2.8rem;font-weight:900;letter-spacing:8px;
   color:var(--C);text-shadow:0 0 20px rgba(255,230,0,0.6);margin:10px 0;}
@@ -147,7 +123,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   text-transform:uppercase;outline:none;}
 .code-input:focus{border-color:var(--A);box-shadow:0 0 12px var(--glowA);}
 
-/* GAME UI */
+/* ── TOPBAR ── */
 .topbar{width:100%;max-width:780px;padding:8px 12px 4px;
   display:none;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:1;}
 .gw-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1rem;letter-spacing:3px;
@@ -155,38 +131,46 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   -webkit-text-fill-color:transparent;background-clip:text;}
 .score-row{display:flex;gap:8px;}
 .sbox{display:flex;flex-direction:column;align-items:center;background:var(--surface);
-  border:1px solid var(--border);border-radius:8px;padding:3px 10px;min-width:60px;position:relative;overflow:hidden;}
+  border:1px solid var(--border);border-radius:8px;padding:3px 10px;min-width:58px;position:relative;overflow:hidden;}
 .sbox::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sbox.sc::after{background:linear-gradient(90deg,var(--A),var(--E));}
+.sbox.bst::after{background:linear-gradient(90deg,var(--C),var(--F));}
 .sbox.mine::after{background:linear-gradient(90deg,var(--A),var(--E));}
 .sbox.opp::after{background:linear-gradient(90deg,var(--B),var(--E));}
 .sbox .lbl{font-size:0.48rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
 .sbox .val{font-family:'Orbitron',monospace;font-weight:700;font-size:0.85rem;color:var(--text);}
+.sbox.bst .val{color:var(--C);}
 .sbox.opp .val{color:var(--B);}
+.sbox.bump .val{animation:bump 0.2s ease;}
+@keyframes bump{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
 
-/* GRIDS WRAPPER */
-.grids-wrap{display:none;flex-direction:row;gap:16px;align-items:flex-start;
+/* ── GRIDS ── */
+.grids-wrap{display:none;flex-direction:row;gap:14px;align-items:flex-start;
   flex-shrink:0;position:relative;z-index:1;}
-
-.grid-panel{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.grid-label{font-size:0.6rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
-.grid-label.mine{color:var(--A);}
-.grid-label.opp{color:var(--B);}
-
+.grid-panel{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.grid-label{font-size:0.58rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
+.grid-label.mine-lbl{color:var(--A);}
+.grid-label.opp-lbl{color:var(--B);}
 .grid-outer{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:6px;
   box-shadow:0 0 30px rgba(0,0,0,0.5);}
-.grid-outer.mine-outer{box-shadow:0 0 0 1px rgba(0,229,255,0.1),0 0 30px rgba(0,0,0,0.5);}
-.grid-outer.opp-outer{box-shadow:0 0 0 1px rgba(255,56,100,0.1),0 0 30px rgba(0,0,0,0.5);pointer-events:none;opacity:0.75;}
-
+.grid-outer.mine-outer{box-shadow:0 0 0 1px rgba(0,229,255,0.08),0 0 30px rgba(0,0,0,0.5);}
+.grid-outer.opp-outer{box-shadow:0 0 0 1px rgba(255,56,100,0.08),0 0 30px rgba(0,0,0,0.5);pointer-events:none;opacity:0.72;}
+.grid-outer.solo-outer{box-shadow:0 0 0 1px rgba(0,229,255,0.1),0 0 40px rgba(0,0,0,0.6);}
 .grid-el{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;}
-.cell{border-radius:3px;background:var(--surface2);border:1px solid rgba(255,255,255,0.025);
-  transition:background 0.1s;}
-.cell.filled{border:1px solid rgba(255,255,255,0.1);}
+.cell{border-radius:4px;background:var(--surface2);border:1px solid rgba(255,255,255,0.025);
+  transition:background 0.08s,box-shadow 0.08s;}
+.cell.filled{border:1px solid rgba(255,255,255,0.12);}
 .cell.prev-ok{opacity:0.55;transform:scale(0.85);}
 .cell.prev-bad{background:rgba(255,50,50,0.3)!important;opacity:0.5;}
+.cell.flash{animation:flash 0.15s ease-in-out 2;}
+@keyframes flash{0%,100%{filter:brightness(1)}50%{filter:brightness(2.5)}}
 .cell.clearing{animation:clr 0.3s ease-out forwards;}
 @keyframes clr{0%{transform:scale(1);opacity:1}40%{transform:scale(1.3);filter:brightness(3)}100%{transform:scale(0);opacity:0}}
 
-/* TRAY */
+/* ── SOLO WRAP ── */
+.solo-wrap{display:none;flex-direction:column;align-items:center;flex-shrink:0;position:relative;z-index:1;}
+
+/* ── TRAY ── */
 .tray{width:100%;max-width:780px;display:none;justify-content:space-around;align-items:center;
   padding:8px 10px;gap:6px;flex-shrink:0;position:relative;z-index:1;}
 .slot{flex:1;display:flex;align-items:center;justify-content:center;
@@ -197,7 +181,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
 .pcv{display:grid;gap:3px;pointer-events:none;}
 .mc{border-radius:3px;pointer-events:none;}
 
-/* OVERLAY */
+/* ── LB (solo) ── */
+.lb{width:100%;max-width:440px;padding:0 12px 6px;flex-shrink:0;position:relative;z-index:1;}
+.lb-ttl{font-size:0.55rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;
+  margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.lb-ttl::after{content:'';flex:1;height:1px;background:var(--border);}
+.lb-list{display:flex;flex-direction:column;gap:3px;}
+.lb-row{display:flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:7px;padding:4px 10px;}
+.lb-rk{font-family:'Orbitron',monospace;font-weight:700;font-size:0.62rem;color:var(--dim);width:20px;text-align:center;}
+.lb-rk.g{color:var(--C);}.lb-rk.s{color:#c0c0c0;}.lb-rk.b{color:#cd7f32;}
+.lb-sc{font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:700;color:var(--text);margin-left:auto;}
+.lb-dt{font-size:0.58rem;color:var(--dim);}
+
+/* ── OVERLAY ── */
 .game-overlay{display:none;position:fixed;inset:0;background:rgba(3,3,15,0.93);z-index:100;
   flex-direction:column;align-items:center;justify-content:center;gap:12px;backdrop-filter:blur(14px);}
 .game-overlay.show{display:flex;}
@@ -206,54 +203,56 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .ov-score{font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;
   color:var(--C);text-shadow:0 0 20px rgba(255,230,0,0.6);}
-.ov-lbl{font-size:0.65rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;}
+.ov-lbl{font-size:0.65rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-top:-8px;}
 .ov-btn{background:linear-gradient(135deg,var(--A),#0099bb);border:none;color:#000;
   font-family:'Orbitron',monospace;font-weight:700;font-size:0.8rem;letter-spacing:2px;
   padding:12px 32px;border-radius:50px;cursor:pointer;box-shadow:0 0 20px var(--glowA);
   margin-top:6px;transition:transform 0.15s;}
 .ov-btn:hover{transform:scale(1.06);}
+.ov-btn.menu-go{background:linear-gradient(135deg,var(--E),#8822cc);color:#fff;margin-top:0;}
 
-/* FX */
+/* ── FX ── */
 .ptcl{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:200;animation:pfly 0.7s ease-out forwards;}
 @keyframes pfly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2)}}
+.spop{position:fixed;font-family:'Orbitron',monospace;font-weight:900;font-size:1.1rem;
+  color:var(--A);text-shadow:0 0 10px var(--glowA);pointer-events:none;z-index:201;
+  animation:spopAnim 0.8s ease-out forwards;}
+@keyframes spopAnim{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-45px) scale(1.3)}}
 #ghost{position:fixed;pointer-events:none;z-index:999;display:none;}
 </style>
 </head>
 <body>
 
-<!-- MENU -->
+<!-- ══ MENU ══ -->
 <div class="screen active" id="scr-menu">
   <div class="game-logo">GRID<br>WAR</div>
-  <div class="logo-sub">⚔️ Online Battle ⚔️</div>
+  <div class="logo-sub">⚔️ Block Battle ⚔️</div>
   <div style="height:8px"></div>
-  <button class="menu-btn btn-create" onclick="createOnlineRoom()">🌐 ODA OLUŞTUR</button>
+  <button class="menu-btn btn-solo" onclick="initSolo()">▶ TEK OYUNCU</button>
   <div class="menu-div"></div>
+  <button class="menu-btn btn-create" onclick="createOnlineRoom()">🌐 ODA OLUŞTUR</button>
   <button class="menu-btn btn-join" onclick="showScreen('scr-join')">🔗 ODAYA KATIL</button>
 </div>
 
-<!-- CREATE -->
+<!-- ══ CREATE ══ -->
 <div class="screen" id="scr-create">
   <div class="lobby-box">
     <h2>ODA OLUŞTURULDU</h2>
-    <div style="font-size:0.7rem;color:var(--dim);letter-spacing:2px">ODA KODU</div>
+    <div style="font-size:0.68rem;color:var(--dim);letter-spacing:2px">ODA KODU</div>
     <div class="room-code" id="room-code-display">----</div>
-    <div style="font-size:0.8rem;color:var(--dim);margin-top:4px">
-      <span class="pulse-dot"></span>Rakip bekleniyor...
-    </div>
-    <div style="height:16px"></div>
-    <div style="font-size:0.72rem;color:var(--dim);line-height:1.9">
-      Kodu arkadaşına gönder.<br>Bağlanınca oyun otomatik başlar.
-    </div>
-    <div style="height:16px"></div>
+    <div style="font-size:0.78rem;color:var(--dim)"><span class="pulse-dot"></span>Rakip bekleniyor...</div>
+    <div style="height:14px"></div>
+    <div style="font-size:0.7rem;color:var(--dim);line-height:1.9">Kodu arkadaşına gönder.<br>Bağlanınca oyun otomatik başlar.</div>
+    <div style="height:14px"></div>
     <button class="menu-btn btn-back" style="width:100%;font-size:0.75rem" onclick="showScreen('scr-menu')">← GERİ</button>
   </div>
 </div>
 
-<!-- JOIN -->
+<!-- ══ JOIN ══ -->
 <div class="screen" id="scr-join">
   <div class="lobby-box">
     <h2>ODAYA KATIL</h2>
-    <div style="font-size:0.7rem;color:var(--dim);letter-spacing:2px;margin-bottom:4px">ODA KODU GİR</div>
+    <div style="font-size:0.68rem;color:var(--dim);letter-spacing:2px;margin-bottom:4px">ODA KODU GİR</div>
     <input class="code-input" id="join-input" maxlength="4" placeholder="XXXX" oninput="this.value=this.value.toUpperCase()">
     <button class="menu-btn btn-create" style="width:100%;margin-top:8px" onclick="joinOnlineRoom()">KATIL</button>
     <div style="height:8px"></div>
@@ -261,167 +260,288 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;
   </div>
 </div>
 
-<!-- TOPBAR -->
+<!-- ══ TOPBAR ══ -->
 <div class="topbar" id="topbar">
   <div class="gw-logo">GRIDWAR</div>
-  <div class="score-row">
+  <div class="score-row" id="score-row-solo">
+    <div class="sbox sc"><span class="lbl">PUAN</span><span class="val" id="solo-score">0</span></div>
+    <div class="sbox bst"><span class="lbl">EN İYİ</span><span class="val" id="solo-best">0</span></div>
+  </div>
+  <div class="score-row" id="score-row-online" style="display:none">
     <div class="sbox mine"><span class="lbl">BEN</span><span class="val" id="my-score">0</span></div>
     <div class="sbox opp"><span class="lbl">RAKİP</span><span class="val" id="opp-score">0</span></div>
   </div>
 </div>
 
-<!-- GRIDS: kendi + rakip -->
+<!-- ══ SOLO GRID ══ -->
+<div class="solo-wrap" id="solo-wrap">
+  <div class="grid-outer solo-outer"><div class="grid-el" id="solo-grid"></div></div>
+</div>
+
+<!-- ══ ONLINE GRIDS ══ -->
 <div class="grids-wrap" id="grids-wrap">
   <div class="grid-panel">
-    <div class="grid-label mine">⚔️ BEN</div>
+    <div class="grid-label mine-lbl">⚔️ BEN</div>
     <div class="grid-outer mine-outer"><div class="grid-el" id="my-grid"></div></div>
   </div>
   <div class="grid-panel">
-    <div class="grid-label opp">🛡 RAKİP</div>
+    <div class="grid-label opp-lbl">🛡 RAKİP</div>
     <div class="grid-outer opp-outer"><div class="grid-el" id="opp-grid"></div></div>
   </div>
 </div>
 
-<!-- TRAY -->
+<!-- ══ TRAY ══ -->
 <div class="tray" id="tray">
-  <div class="slot" id="s0" data-i="0"></div>
-  <div class="slot" id="s1" data-i="1"></div>
-  <div class="slot" id="s2" data-i="2"></div>
+  <div class="slot" id="s0"></div>
+  <div class="slot" id="s1"></div>
+  <div class="slot" id="s2"></div>
 </div>
 
-<!-- GAME OVER -->
+<!-- ══ LEADERBOARD (solo) ══ -->
+<div class="lb" id="lbwrap" style="display:none">
+  <div class="lb-ttl">Skor Tablosu</div>
+  <div class="lb-list" id="lbl"></div>
+</div>
+
+<!-- ══ OVERLAY ══ -->
 <div class="game-overlay" id="ov">
   <div class="ov-title" id="ov-title">GAME OVER</div>
   <div class="ov-lbl">PUANIN</div>
   <div class="ov-score" id="ov-final">0</div>
-  <button class="ov-btn" onclick="location.reload()">YENİDEN OYNA</button>
+  <button class="ov-btn" id="ov-replay" onclick="replayGame()">YENİDEN OYNA</button>
+  <button class="ov-btn menu-go" onclick="goMenu()">ANA MENÜ</button>
 </div>
 
 <div id="ghost"></div>
 
 <script>
-/* ══ CONSTANTS ══ */
+/* ════ KLASİK BLOCK BLAST PARÇALARI ════ */
+const SHAPES = [
+  // 1x1
+  [[1]],
+  // 1x2, 2x1
+  [[1,1]],
+  [[1],[1]],
+  // 1x3, 3x1
+  [[1,1,1]],
+  [[1],[1],[1]],
+  // 1x4, 4x1
+  [[1,1,1,1]],
+  [[1],[1],[1],[1]],
+  // 1x5, 5x1
+  [[1,1,1,1,1]],
+  [[1],[1],[1],[1],[1]],
+  // 2x2
+  [[1,1],[1,1]],
+  // 3x3
+  [[1,1,1],[1,1,1],[1,1,1]],
+  // 2x3, 3x2
+  [[1,1,1],[1,1,1]],
+  [[1,1],[1,1],[1,1]],
+  // L şekilleri
+  [[1,0],[1,0],[1,1]],
+  [[0,1],[0,1],[1,1]],
+  [[1,1],[1,0],[1,0]],
+  [[1,1],[0,1],[0,1]],
+  // küçük L
+  [[1,0],[1,1]],
+  [[0,1],[1,1]],
+  [[1,1],[1,0]],
+  [[1,1],[0,1]],
+  // T
+  [[1,1,1],[0,1,0]],
+  [[0,1,0],[1,1,1]],
+  [[1,0],[1,1],[1,0]],
+  [[0,1],[1,1],[0,1]],
+  // S/Z
+  [[0,1,1],[1,1,0]],
+  [[1,1,0],[0,1,1]],
+  [[1,0],[1,1],[0,1]],
+  [[0,1],[1,1],[1,0]],
+];
+
 const N = 8;
 const COLORS = [
-  {bg:'#00e5ff',inner:'#66f0ff',sh:'rgba(0,229,255,0.7)'},
-  {bg:'#ff3864',inner:'#ff6d8a',sh:'rgba(255,56,100,0.7)'},
-  {bg:'#ffe600',inner:'#fff066',sh:'rgba(255,230,0,0.7)'},
-  {bg:'#39ff14',inner:'#88ff66',sh:'rgba(57,255,20,0.7)'},
-  {bg:'#bf5af2',inner:'#d488ff',sh:'rgba(191,90,242,0.7)'},
-  {bg:'#ff9500',inner:'#ffbb55',sh:'rgba(255,149,0,0.7)'},
-];
-const SHAPES=[
-  [[1]],[[1,1]],[[1],[1]],
-  [[1,1,1]],[[1],[1],[1]],
-  [[1,1],[1,1]],
-  [[1,0],[1,0],[1,1]],[[0,1],[0,1],[1,1]],
-  [[1,1],[1,0]],[[1,1],[0,1]],[[1,0],[1,1]],[[0,1],[1,1]],
-  [[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]],
-  [[0,1,0],[1,1,1]],[[1,1,1],[0,1,0]],
-  [[1,0],[1,1],[1,0]],[[0,1],[1,1],[0,1]],
-  [[1,0,0],[1,0,0],[1,1,1]],[[0,0,1],[0,0,1],[1,1,1]],
-  [[0,1,0],[0,1,0],[1,1,1]],
+  {bg:'#ff4d6d',inner:'#ff7a93',sh:'rgba(255,77,109,0.7)'},
+  {bg:'#c77dff',inner:'#dba8ff',sh:'rgba(199,125,255,0.7)'},
+  {bg:'#00f5d4',inner:'#66ffea',sh:'rgba(0,245,212,0.7)'},
+  {bg:'#ffd60a',inner:'#ffe566',sh:'rgba(255,214,10,0.7)'},
+  {bg:'#4cc9f0',inner:'#88ddff',sh:'rgba(76,201,240,0.7)'},
+  {bg:'#f72585',inner:'#ff66aa',sh:'rgba(247,37,133,0.7)'},
 ];
 
-/* ══ STATE ══ */
-let myGrid, oppGridData, myCells, oppCells, pieces, myScore, drag;
-let prevCells = [];
+let isOnline = false;
+let myGrid, oppGridData, myCells, oppCells, soloCells, soloGrid;
+let pieces = [null,null,null], myScore = 0, soloScore = 0, combo = 1;
+let best, lb, prevCells = [], drag = null;
 const MC = 14;
+let CS = 36;
+let anch = {r:0,c:0};
 
-/* ══ CELL SIZE ══ */
-let CS = 34;
-function calcCS(){
+/* ── CELL SIZE ── */
+function calcCS(dual = false) {
   const vw = window.innerWidth, vh = window.innerHeight;
-  const avail = Math.min(Math.floor((vw - 60) / 2), vh - 220);
-  CS = Math.max(20, Math.min(Math.floor(avail / N), 42));
+  if (dual) {
+    const avail = Math.min(Math.floor((vw - 60) / 2), vh - 220);
+    CS = Math.max(18, Math.min(Math.floor(avail / N), 40));
+  } else {
+    const avail = Math.min(vw - 26, vh - 260);
+    CS = Math.max(24, Math.min(Math.floor(avail / N), 50));
+  }
 }
-function applyCS(){
-  calcCS();
+function applyCS(dual = false) {
+  calcCS(dual);
   const side = CS * N + 2 * (N - 1);
-  [document.getElementById('my-grid'), document.getElementById('opp-grid')].forEach(g => {
-    g.style.width = side + 'px'; g.style.height = side + 'px';
-  });
-  [...(myCells||[]), ...(oppCells||[])].flat().forEach(c => {
-    c.style.width = CS + 'px'; c.style.height = CS + 'px';
-  });
+  const grids = dual
+    ? [document.getElementById('my-grid'), document.getElementById('opp-grid')]
+    : [document.getElementById('solo-grid')];
+  grids.forEach(g => { if(g){g.style.width=side+'px';g.style.height=side+'px';} });
+  const allCells = dual
+    ? [...(myCells||[]), ...(oppCells||[])].flat()
+    : (soloCells||[]).flat();
+  allCells.forEach(c => { c.style.width=CS+'px'; c.style.height=CS+'px'; });
 }
-window.addEventListener('resize', applyCS);
+window.addEventListener('resize', () => applyCS(isOnline));
 
-/* ══ AUDIO ══ */
+/* ── AUDIO ── */
 let AC = null;
-const getAC = () => { if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); return AC; };
-const tone = (f,t,d,v=0.2,s=0) => { try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.setValueAtTime(f,c.currentTime+s);g.gain.setValueAtTime(v,c.currentTime+s);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+s+d);o.start(c.currentTime+s);o.stop(c.currentTime+s+d);}catch(e){} };
-const sfxPlace = () => { tone(300,'square',0.06,0.1); tone(450,'sine',0.08,0.06,0.03); };
-const sfxClear = n => { for(let i=0;i<n;i++) tone(500+i*100,'sawtooth',0.12,0.2,i*0.05); };
+const getAC = () => { if(!AC) AC = new(window.AudioContext||window.webkitAudioContext)(); return AC; };
+const tone = (f,t,d,v=0.18,s=0) => {
+  try{const c=getAC(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+    o.type=t;o.frequency.setValueAtTime(f,c.currentTime+s);
+    g.gain.setValueAtTime(v,c.currentTime+s);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+s+d);
+    o.start(c.currentTime+s);o.stop(c.currentTime+s+d);}catch(e){}
+};
+const sfxPlace = () => {tone(280,'square',0.06,0.1);tone(420,'sine',0.08,0.06,0.03);};
+const sfxClear = n => {for(let i=0;i<n;i++)tone(500+i*120,'sawtooth',0.13,0.2,i*0.055);};
+const sfxOver  = () => {[220,185,150].forEach((f,i)=>tone(f,'sawtooth',0.35,0.25,i*0.15));};
+const sfxRecord= () => {[523,659,784,1047].forEach((f,i)=>tone(f,'sine',0.12,0.26,i*0.08));};
 
-/* ══ PAINT ══ */
+/* ── PAINT ── */
 function paintCell(el, ci) {
   if (ci === null || ci === undefined) {
-    el.style.background = 'var(--surface2)'; el.style.boxShadow = 'none';
-    el.style.border = '1px solid rgba(255,255,255,0.025)'; el.classList.remove('filled');
+    el.style.background='var(--surface2)';el.style.boxShadow='none';
+    el.style.border='1px solid rgba(255,255,255,0.025)';el.classList.remove('filled');
   } else {
     const c = COLORS[ci % COLORS.length];
-    el.style.background = `radial-gradient(circle at 30% 30%,${c.inner},${c.bg})`;
-    el.style.boxShadow = `0 0 6px ${c.sh},inset 0 1px 0 rgba(255,255,255,0.3)`;
-    el.style.border = '1px solid rgba(255,255,255,0.15)'; el.classList.add('filled');
+    el.style.background=`radial-gradient(circle at 30% 30%,${c.inner},${c.bg})`;
+    el.style.boxShadow=`0 0 7px ${c.sh},inset 0 1px 0 rgba(255,255,255,0.25)`;
+    el.style.border='1px solid rgba(255,255,255,0.15)';el.classList.add('filled');
   }
 }
 
-/* ══ BUILD GRIDS ══ */
-function buildGrid(el) {
-  el.innerHTML = '';
+/* ── BUILD GRID ── */
+function buildGrid(elId) {
+  const el = document.getElementById(elId); el.innerHTML = '';
   const rows = [];
   for (let r = 0; r < N; r++) {
     rows[r] = [];
     for (let c = 0; c < N; c++) {
       const cell = document.createElement('div'); cell.className = 'cell';
       cell.dataset.r = r; cell.dataset.c = c;
-      cell.style.width = CS + 'px'; cell.style.height = CS + 'px';
+      cell.style.width = CS+'px'; cell.style.height = CS+'px';
       paintCell(cell, null); el.appendChild(cell); rows[r][c] = cell;
     }
   }
   return rows;
 }
 
-/* ══ SHOW/HIDE UI ══ */
+/* ── SHOW/HIDE ── */
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   if (id !== 'none') { const s = document.getElementById(id); if(s) s.classList.add('active'); }
 }
-function showGameUI() {
-  document.getElementById('topbar').style.display = 'flex';
-  document.getElementById('grids-wrap').style.display = 'flex';
-  document.getElementById('tray').style.display = 'flex';
+function hideAll() {
+  showScreen('none');
+  document.getElementById('topbar').style.display = 'none';
+  document.getElementById('solo-wrap').style.display = 'none';
+  document.getElementById('grids-wrap').style.display = 'none';
+  document.getElementById('tray').style.display = 'none';
+  document.getElementById('lbwrap').style.display = 'none';
 }
 
-/* ══ START GAME ══ */
-window.startGame = function() {
-  showScreen('none');
-  showGameUI();
-  myGrid = Array.from({length:N}, () => Array(N).fill(null));
-  oppGridData = Array.from({length:N}, () => Array(N).fill(null));
-  myScore = 0; pieces = [null,null,null]; drag = null;
-  myCells = buildGrid(document.getElementById('my-grid'));
-  oppCells = buildGrid(document.getElementById('opp-grid'));
-  applyCS();
+/* ── MENU ── */
+function goMenu() {
+  document.getElementById('ov').classList.remove('show');
+  hideAll();
+  showScreen('scr-menu');
+  isOnline = false;
+}
+
+/* ══ SOLO ══ */
+function initSolo() {
+  isOnline = false;
+  best = parseInt(localStorage.getItem('gw_best')||'0');
+  lb = JSON.parse(localStorage.getItem('gw_lb')||'[]');
+  hideAll();
+  document.getElementById('topbar').style.display = 'flex';
+  document.getElementById('score-row-solo').style.display = 'flex';
+  document.getElementById('score-row-online').style.display = 'none';
+  document.getElementById('solo-wrap').style.display = 'flex';
+  document.getElementById('tray').style.display = 'flex';
+  document.getElementById('lbwrap').style.display = 'block';
+  document.getElementById('solo-best').textContent = best;
+  document.getElementById('ov').classList.remove('show');
+  soloGrid = Array.from({length:N},()=>Array(N).fill(null));
+  soloScore = 0; combo = 1; pieces = [null,null,null];
+  soloCells = buildGrid('solo-grid');
+  applyCS(false);
+  document.getElementById('solo-score').textContent = '0';
+  renderLB();
+  spawnPieces();
+  window._gameMode = 'solo';
+}
+
+/* ══ ONLINE ══ */
+window.startGame = function(online) {
+  isOnline = online;
+  hideAll();
+  document.getElementById('topbar').style.display = 'flex';
+  document.getElementById('score-row-solo').style.display = 'none';
+  document.getElementById('score-row-online').style.display = 'flex';
+  document.getElementById('grids-wrap').style.display = 'flex';
+  document.getElementById('tray').style.display = 'flex';
+  document.getElementById('ov').classList.remove('show');
+  myGrid = Array.from({length:N},()=>Array(N).fill(null));
+  oppGridData = Array.from({length:N},()=>Array(N).fill(null));
+  myScore = 0; pieces = [null,null,null];
+  myCells = buildGrid('my-grid');
+  oppCells = buildGrid('opp-grid');
+  applyCS(true);
   document.getElementById('my-score').textContent = '0';
   document.getElementById('opp-score').textContent = '0';
   spawnPieces();
-  // ilk state'i gönder
   window.pushMyState(myGrid, myScore);
+  window._gameMode = 'online';
 };
 
-/* ══ RAKİBİN GRIDINI RENDER ET ══ */
 window.renderOppGrid = function(g) {
   if (!oppCells) return;
-  oppGridData = g;
   for (let r = 0; r < N; r++)
     for (let c = 0; c < N; c++)
       paintCell(oppCells[r][c], g[r] ? g[r][c] : null);
 };
 
+/* ══ LEADERBOARD ══ */
+function renderLB() {
+  const list = document.getElementById('lbl');
+  if (!lb || !lb.length) {
+    list.innerHTML = '<div style="color:var(--dim);font-size:0.7rem;text-align:center;padding:6px">Henüz skor yok!</div>'; return;
+  }
+  list.innerHTML = lb.map((e,i) => {
+    const rc = i===0?'g':i===1?'s':i===2?'b':'';
+    const m = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    return `<div class="lb-row"><div class="lb-rk ${rc}">${m}</div><div style="flex:1"><div class="lb-sc">${e.score.toLocaleString('tr-TR')}</div></div><div class="lb-dt">${e.date}</div></div>`;
+  }).join('');
+}
+function saveScore(s) {
+  lb.push({score:s,date:new Date().toLocaleDateString('tr-TR')});
+  lb.sort((a,b)=>b.score-a.score); lb=lb.slice(0,5);
+  localStorage.setItem('gw_lb',JSON.stringify(lb)); renderLB();
+}
+
 /* ══ SPAWN ══ */
-function randPiece() { return { shape: SHAPES[Math.floor(Math.random()*SHAPES.length)], color: Math.floor(Math.random()*COLORS.length) }; }
+const randPiece = () => ({shape:SHAPES[Math.floor(Math.random()*SHAPES.length)],color:Math.floor(Math.random()*COLORS.length)});
 function spawnPieces() {
   for (let i = 0; i < 3; i++) if (!pieces[i]) pieces[i] = randPiece();
   renderTray(); checkGameOver();
@@ -441,7 +561,7 @@ function renderTray() {
       const mc = document.createElement('div'); mc.className = 'mc';
       mc.style.width = MC+'px'; mc.style.height = MC+'px';
       if (p.shape[r][c]) {
-        const col = COLORS[p.color]; mc.style.background = col.bg; mc.style.boxShadow = `0 0 4px ${col.sh}`;
+        const col = COLORS[p.color]; mc.style.background = col.bg; mc.style.boxShadow = `0 0 5px ${col.sh}`;
       } else mc.style.background = 'transparent';
       cv.appendChild(mc);
     }
@@ -452,21 +572,25 @@ function renderTray() {
 }
 
 /* ══ DRAG ══ */
-let anch = {r:0,c:0};
+function activeGrid() { return window._gameMode === 'solo' ? soloGrid : myGrid; }
+function activeCells() { return window._gameMode === 'solo' ? soloCells : myCells; }
+function activeGridId() { return window._gameMode === 'solo' ? 'solo-grid' : 'my-grid'; }
+
 function onMouseDown(e, idx) {
-  if (!pieces[idx] || e.button !== 0) return; e.preventDefault(); getAC();
+  if (!pieces[idx]||e.button!==0) return; e.preventDefault(); getAC();
   drag = {idx};
-  const p = pieces[idx]; const slot = document.getElementById('s'+idx);
-  const sr = slot.getBoundingClientRect(); const stepM = MC+3;
-  anch = { r: Math.max(0,Math.min(p.shape.length-1,Math.floor((e.clientY-sr.top)/stepM))),
-           c: Math.max(0,Math.min(p.shape[0].length-1,Math.floor((e.clientX-sr.left)/stepM))) };
-  startDrag(p, e.clientX, e.clientY);
+  const p = pieces[idx], slot = document.getElementById('s'+idx);
+  const sr = slot.getBoundingClientRect(), stepM = MC+3;
+  anch = {
+    r: Math.max(0,Math.min(p.shape.length-1,Math.floor((e.clientY-sr.top)/stepM))),
+    c: Math.max(0,Math.min(p.shape[0].length-1,Math.floor((e.clientX-sr.left)/stepM)))
+  };
+  startDragGhost(p, e.clientX, e.clientY);
   const move = ev => { moveGhost(ev.clientX,ev.clientY,p); showPreview(xyToCell(ev.clientX,ev.clientY,p)); };
   const up = ev => {
     document.getElementById('ghost').style.display='none'; clearPreview();
-    const pos = xyToCell(ev.clientX,ev.clientY,p);
-    tryPlace(idx, pos.r, pos.c);
-    drag = null; document.querySelectorAll('.slot').forEach(s=>s.classList.remove('dragging'));
+    tryPlace(idx, xyToCell(ev.clientX,ev.clientY,p));
+    drag=null; document.querySelectorAll('.slot').forEach(s=>s.classList.remove('dragging'));
     document.removeEventListener('mousemove',move); document.removeEventListener('mouseup',up);
   };
   document.addEventListener('mousemove',move); document.addEventListener('mouseup',up);
@@ -475,29 +599,30 @@ function onMouseDown(e, idx) {
 function onTouchStart(e, idx) {
   if (!pieces[idx]) return; e.preventDefault(); getAC();
   drag = {idx};
-  const p = pieces[idx]; const slot = document.getElementById('s'+idx);
-  const sr = slot.getBoundingClientRect(); const stepM = MC+3;
-  anch = { r: Math.max(0,Math.min(p.shape.length-1,Math.floor((e.touches[0].clientY-sr.top)/stepM))),
-           c: Math.max(0,Math.min(p.shape[0].length-1,Math.floor((e.touches[0].clientX-sr.left)/stepM))) };
-  startDrag(p, e.touches[0].clientX, e.touches[0].clientY);
+  const p = pieces[idx], slot = document.getElementById('s'+idx);
+  const sr = slot.getBoundingClientRect(), stepM = MC+3;
+  anch = {
+    r: Math.max(0,Math.min(p.shape.length-1,Math.floor((e.touches[0].clientY-sr.top)/stepM))),
+    c: Math.max(0,Math.min(p.shape[0].length-1,Math.floor((e.touches[0].clientX-sr.left)/stepM)))
+  };
+  startDragGhost(p, e.touches[0].clientX, e.touches[0].clientY);
   const move = ev => { ev.preventDefault(); const t=ev.touches[0]; moveGhost(t.clientX,t.clientY,p); showPreview(xyToCell(t.clientX,t.clientY,p)); };
   const end = ev => {
     ev.preventDefault(); document.getElementById('ghost').style.display='none'; clearPreview();
-    const t=ev.changedTouches[0]; const pos=xyToCell(t.clientX,t.clientY,p);
-    tryPlace(idx,pos.r,pos.c);
+    const t=ev.changedTouches[0]; tryPlace(idx, xyToCell(t.clientX,t.clientY,p));
     drag=null; document.querySelectorAll('.slot').forEach(s=>s.classList.remove('dragging'));
     document.removeEventListener('touchmove',move); document.removeEventListener('touchend',end);
   };
   document.addEventListener('touchmove',move,{passive:false}); document.addEventListener('touchend',end,{passive:false});
   slot.classList.add('dragging');
 }
-function startDrag(p, cx, cy) {
+function startDragGhost(p, cx, cy) {
   const ghost = document.getElementById('ghost'); ghost.innerHTML='';
   const rows=p.shape.length,cols=p.shape[0].length;
-  ghost.style.cssText=`display:grid;grid-template-columns:repeat(${cols},22px);grid-template-rows:repeat(${rows},22px);gap:2px;opacity:0.82;`;
-  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+  ghost.style.cssText=`display:grid;grid-template-columns:repeat(${cols},22px);grid-template-rows:repeat(${rows},22px);gap:2px;opacity:0.82;position:fixed;pointer-events:none;z-index:999;`;
+  for (let r=0;r<rows;r++) for (let c=0;c<cols;c++) {
     const mc=document.createElement('div'); mc.style.cssText=`width:22px;height:22px;border-radius:4px;`;
-    if(p.shape[r][c]){const col=COLORS[p.color];mc.style.background=col.bg;mc.style.boxShadow=`0 0 8px ${col.sh}`;}
+    if (p.shape[r][c]) { const col=COLORS[p.color]; mc.style.background=col.bg; mc.style.boxShadow=`0 0 8px ${col.sh}`; }
     ghost.appendChild(mc);
   }
   moveGhost(cx,cy,p);
@@ -507,37 +632,42 @@ function moveGhost(cx,cy,p){
   g.style.left=(cx-(p.shape[0].length*12))+'px'; g.style.top=(cy-(p.shape.length*12))+'px';
 }
 function xyToCell(cx,cy,p){
-  const step=CS+2; const gr=document.getElementById('my-grid').getBoundingClientRect();
-  return { r:Math.round((cy-gr.top-anch.r*step)/step), c:Math.round((cx-gr.left-anch.c*step)/step) };
+  const step=CS+2;
+  const gr=document.getElementById(activeGridId()).getBoundingClientRect();
+  return {r:Math.round((cy-gr.top-anch.r*step)/step), c:Math.round((cx-gr.left-anch.c*step)/step)};
 }
 
 /* ══ PREVIEW ══ */
 function showPreview(pos){
   clearPreview();
   const p=pieces[drag?.idx]; if(!p) return;
-  const {r,c}=pos; const ok=canPlace(r,c,p);
-  const col=COLORS[p.color];
+  const {r,c}=pos, ok=canPlace(r,c,p), col=COLORS[p.color];
+  const g=activeGrid(), cells=activeCells();
   for(let pr=0;pr<p.shape.length;pr++) for(let pc=0;pc<p.shape[0].length;pc++){
     if(!p.shape[pr][pc]) continue;
     const nr=r+pr,nc=c+pc;
-    if(nr<0||nr>=N||nc<0||nc>=N||myGrid[nr][nc]!==null) continue;
-    const el=myCells[nr][nc];
+    if(nr<0||nr>=N||nc<0||nc>=N||g[nr][nc]!==null) continue;
+    const el=cells[nr][nc];
     if(ok){el.style.background=`radial-gradient(circle at 30% 30%,${col.inner},${col.bg})`;el.classList.add('prev-ok');}
     else el.classList.add('prev-bad');
     prevCells.push(el);
   }
 }
 function clearPreview(){
-  prevCells.forEach(el=>{el.classList.remove('prev-ok','prev-bad');paintCell(el,myGrid[+el.dataset.r][+el.dataset.c]);});
-  prevCells=[];
+  const g=activeGrid();
+  prevCells.forEach(el=>{
+    el.classList.remove('prev-ok','prev-bad');
+    paintCell(el,g[+el.dataset.r][+el.dataset.c]);
+  }); prevCells=[];
 }
 
 /* ══ PLACE ══ */
 function canPlace(r,c,piece){
+  const g=activeGrid();
   for(let pr=0;pr<piece.shape.length;pr++) for(let pc=0;pc<piece.shape[0].length;pc++){
     if(!piece.shape[pr][pc]) continue;
     const nr=r+pr,nc=c+pc;
-    if(nr<0||nr>=N||nc<0||nc>=N||myGrid[nr][nc]!==null) return false;
+    if(nr<0||nr>=N||nc<0||nc>=N||g[nr][nc]!==null) return false;
   } return true;
 }
 function snapPlace(piece,baseR,baseC){
@@ -547,15 +677,15 @@ function snapPlace(piece,baseR,baseC){
     if(canPlace(baseR+dr,baseC+dc,piece)) return{r:baseR+dr,c:baseC+dc};
   } return null;
 }
-function tryPlace(idx,r,c){
+function tryPlace(idx, pos){
   const p=pieces[idx]; if(!p) return;
-  const pos=snapPlace(p,r,c); if(!pos) return;
+  const snap=snapPlace(p,pos.r,pos.c); if(!snap) return;
   sfxPlace();
-  const rows=p.shape.length,cols=p.shape[0].length;
-  for(let pr=0;pr<rows;pr++) for(let pc=0;pc<cols;pc++){
+  const g=activeGrid(), cells=activeCells();
+  for(let pr=0;pr<p.shape.length;pr++) for(let pc=0;pc<p.shape[0].length;pc++){
     if(!p.shape[pr][pc]) continue;
-    myGrid[pos.r+pr][pos.c+pc]=p.color;
-    paintCell(myCells[pos.r+pr][pos.c+pc],p.color);
+    g[snap.r+pr][snap.c+pc]=p.color;
+    paintCell(cells[snap.r+pr][snap.c+pc],p.color);
   }
   pieces[idx]=null; renderTray();
   setTimeout(()=>checkClears(),80);
@@ -563,34 +693,83 @@ function tryPlace(idx,r,c){
 
 /* ══ CLEARS ══ */
 function checkClears(){
+  const g=activeGrid(), cells=activeCells();
   const FR=[],FC=[];
-  for(let r=0;r<N;r++) if(myGrid[r].every(v=>v!==null)) FR.push(r);
-  for(let c=0;c<N;c++){let ok=true;for(let r=0;r<N;r++)if(myGrid[r][c]===null){ok=false;break;}if(ok)FC.push(c);}
+  for(let r=0;r<N;r++) if(g[r].every(v=>v!==null)) FR.push(r);
+  for(let c=0;c<N;c++){let ok=true;for(let r=0;r<N;r++)if(g[r][c]===null){ok=false;break;}if(ok)FC.push(c);}
   const total=FR.length+FC.length;
-  if(!total){if(pieces.every(p=>!p))spawnPieces();else checkGameOver();
-    window.pushMyState(myGrid,myScore); return;}
+  if(!total){
+    if(isOnline) window.pushMyState(myGrid,myScore);
+    combo=1;
+    if(pieces.every(p=>!p))spawnPieces();else checkGameOver(); return;
+  }
   const toClear=new Set();
   FR.forEach(r=>{for(let c=0;c<N;c++)toClear.add(r*N+c);});
   FC.forEach(c=>{for(let r=0;r<N;r++)toClear.add(r*N+c);});
-  toClear.forEach(k=>{myCells[Math.floor(k/N)][k%N].classList.add('clearing');});
-  sfxClear(total);
-  const pts=toClear.size*10*total;
+  toClear.forEach(k=>{cells[Math.floor(k/N)][k%N].classList.add('flash');});
   setTimeout(()=>{
-    toClear.forEach(k=>{const r=Math.floor(k/N),c=k%N;myCells[r][c].classList.remove('clearing');myGrid[r][c]=null;paintCell(myCells[r][c],null);});
-    myScore+=pts; document.getElementById('my-score').textContent=myScore;
-    window.pushMyState(myGrid,myScore);
-    if(pieces.every(p=>!p))spawnPieces();else checkGameOver();
-  },330);
+    toClear.forEach(k=>{cells[Math.floor(k/N)][k%N].classList.remove('flash');cells[Math.floor(k/N)][k%N].classList.add('clearing');});
+    sfxClear(total);
+    const pts=toClear.size*10*total*combo;
+    combo=Math.min(combo+total,8);
+    // parçacık efekti
+    toClear.forEach(k=>{
+      const r=Math.floor(k/N),c=k%N;
+      const cr=cells[r][c].getBoundingClientRect();
+      spawnParticles(cr.left+cr.width/2,cr.top+cr.height/2,g[r][c]);
+    });
+    spawnScorePop(pts);
+    setTimeout(()=>{
+      toClear.forEach(k=>{const r=Math.floor(k/N),c=k%N;cells[r][c].classList.remove('clearing');g[r][c]=null;paintCell(cells[r][c],null);});
+      if(isOnline){myScore+=pts;document.getElementById('my-score').textContent=myScore;window.pushMyState(myGrid,myScore);}
+      else{
+        soloScore+=pts;document.getElementById('solo-score').textContent=soloScore;
+        if(soloScore>best){best=soloScore;localStorage.setItem('gw_best',best);document.getElementById('solo-best').textContent=best;sfxRecord();}
+      }
+      if(pieces.every(p=>!p))spawnPieces();else checkGameOver();
+    },320);
+  },150);
 }
 
 /* ══ GAME OVER ══ */
 function checkGameOver(){
+  const g=activeGrid();
   for(let i=0;i<3;i++){
     if(!pieces[i]) continue;
     for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(canPlace(r,c,pieces[i])) return;
   }
-  document.getElementById('ov-final').textContent=myScore;
-  document.getElementById('ov').classList.add('show');
+  sfxOver();
+  const finalScore = isOnline ? myScore : soloScore;
+  setTimeout(()=>{
+    document.getElementById('ov-final').textContent=finalScore;
+    document.getElementById('ov').classList.add('show');
+    if(!isOnline) saveScore(soloScore);
+  },400);
+}
+function replayGame(){
+  document.getElementById('ov').classList.remove('show');
+  if(isOnline) window.startGame(true); else initSolo();
+}
+
+/* ══ FX ══ */
+function spawnParticles(x,y,ci){
+  const col=ci!==null?COLORS[ci%COLORS.length].bg:'#fff';
+  for(let i=0;i<7;i++){
+    const p=document.createElement('div'); p.className='ptcl';
+    const angle=(i/7)*Math.PI*2,dist=28+Math.random()*40;
+    p.style.setProperty('--dx',Math.cos(angle)*dist+'px');
+    p.style.setProperty('--dy',Math.sin(angle)*dist+'px');
+    p.style.background=col; p.style.left=x+'px'; p.style.top=y+'px';
+    p.style.boxShadow=`0 0 5px ${col}`;
+    document.body.appendChild(p); setTimeout(()=>p.remove(),720);
+  }
+}
+function spawnScorePop(pts){
+  const el=document.createElement('div'); el.className='spop';
+  el.textContent='+'+pts;
+  const gid=document.getElementById(activeGridId()).getBoundingClientRect();
+  el.style.left=(gid.left+gid.width/2)+'px'; el.style.top=(gid.top+gid.height/2)+'px';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),900);
 }
 </script>
 </body>
