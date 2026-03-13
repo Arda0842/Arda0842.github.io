@@ -24,93 +24,115 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
+  // ODA OLUŞTURMA
   window.createOnlineRoom = async () => {
     const code = Math.random().toString(36).substr(2,4).toUpperCase();
     window.currentRoom = code;
     window.myRole = 'p1';
     document.getElementById('room-code-display').textContent = code;
-    await set(ref(db, 'rooms/' + code), { status: 'waiting', p1_score: 0, p2_score: 0 });
+    
+    await set(ref(db, 'rooms/' + code), { 
+        status: 'waiting', 
+        p1_score: 0, p2_score: 0,
+        grid_data: Array(8).fill(null).map(() => Array(8).fill(null)) 
+    });
+    
     showScreen('scr-create');
+
     onValue(ref(db, 'rooms/' + code), (snapshot) => {
         const data = snapshot.val();
         if (data && data.status === 'playing' && !window.gameStarted) {
             window.gameStarted = true;
             startSolo();
-            listenOpponent(code);
+            listenRoomUpdates(code);
         }
     });
   };
 
+  // ODAYA KATILMA
   window.joinOnlineRoom = async () => {
     const code = document.getElementById('join-input').value.toUpperCase();
     if (code.length !== 4) return alert("4 haneli kod gir!");
     window.currentRoom = code;
     window.myRole = 'p2';
+    
     await update(ref(db, 'rooms/' + code), { status: 'playing' });
     window.gameStarted = true;
     startSolo();
-    listenOpponent(code);
+    listenRoomUpdates(code);
   };
 
-  function listenOpponent(code) {
-    const oppRole = window.myRole === 'p1' ? 'p2_score' : 'p1_score';
-    onValue(ref(db, `rooms/${code}/${oppRole}`), (snapshot) => {
-        document.getElementById('ov-score').textContent = snapshot.val() || 0;
+  // ODA GÜNCELLEMELERİNİ DİNLE (Grid ve Skor)
+  function listenRoomUpdates(code) {
+    onValue(ref(db, 'rooms/' + code), (snapshot) => {
+        const data = snapshot.val();
+        if(!data) return;
+
+        // Skoru güncelle
+        const oppScore = window.myRole === 'p1' ? data.p2_score : data.p1_score;
+        document.getElementById('ov-score').textContent = oppScore || 0;
+
+        // Grid'i senkronize et (Eğer değişmişse)
+        if(data.grid_data) {
+            syncGridFromDatabase(data.grid_data);
+        }
     });
   }
 
-  window.syncMyScore = (newScore) => {
+  // FIREBASE'E VERİ GÖNDER
+  window.syncGameToFirebase = (newScore, newGrid) => {
     if (!window.currentRoom) return;
-    const myScoreKey = window.myRole === 'p1' ? 'p1_score' : 'p2_score';
-    update(ref(db, 'rooms/' + window.currentRoom), { [myScoreKey]: newScore });
+    const scoreKey = window.myRole === 'p1' ? 'p1_score' : 'p2_score';
+    update(ref(db, 'rooms/' + window.currentRoom), { 
+        [scoreKey]: newScore,
+        grid_data: newGrid
+    });
   };
 </script>
 
 <style>
-/* --- SENİN ORİJİNAL TASARIMIN --- */
-:root{--bg:#060612;--bg2:#0d0d20;--surface:#111128;--surface2:#181835;--border:#1e1e45;--border2:#2a2a60;--A:#00e5ff;--B:#ff3864;--C:#ffe600;--D:#39ff14;--E:#bf5af2;--F:#ff9500;--text:#dde4ff;--dim:#4a4a80;--glowA:rgba(0,229,255,0.5);}
+/* Tasarım CSS'leri */
+:root{--bg:#060612;--bg2:#0d0d20;--surface:#111128;--surface2:#181835;--border:#1e1e45;--border2:#2a2a60;--A:#00e5ff;--B:#ff3864;--C:#ffe600;--D:#39ff14;--E:#bf5af2;--text:#dde4ff;--dim:#4a4a80;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);display:flex;flex-direction:column;align-items:center;height:100vh;overflow:hidden;}
 .screen{display:none;position:fixed;inset:0;z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);}
 .screen.active{display:flex;}
-.game-logo{font-family:'Orbitron';font-weight:900;font-size:3rem;letter-spacing:4px;background:linear-gradient(135deg,var(--A),var(--E),var(--B));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;}
-.menu-btn{width:240px;padding:14px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron';font-weight:700;text-transform:uppercase;transition:0.15s;}
-.primary{background:linear-gradient(135deg,var(--A),#0099bb);color:#000;box-shadow:0 0 20px var(--glowA);}
-.secondary{background:linear-gradient(135deg,var(--E),#8822cc);color:#fff;}
-.room-code{font-family:'Orbitron';font-size:3rem;color:var(--C);margin:15px 0;}
-.topbar{width:100%;max-width:440px;padding:10px;display:none;justify-content:space-between;align-items:center;}
-.grid-outer{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:7px;display:none;position:relative;}
+.game-logo{font-family:'Orbitron';font-weight:900;font-size:3rem;background:linear-gradient(135deg,var(--A),var(--E));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.menu-btn{width:220px;padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:'Orbitron';text-transform:uppercase;}
+.primary{background:var(--A);color:#000;box-shadow:0 0 15px rgba(0,229,255,0.4);}
+.secondary{background:var(--surface2);color:#fff;}
+.topbar{width:100%;max-width:400px;padding:15px;display:none;justify-content:space-between;}
+.grid-outer{background:var(--surface);padding:8px;border-radius:12px;display:none;border:1px solid var(--border2);}
 #grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;}
-.cell{width:38px;height:38px;background:var(--surface2);border-radius:4px;transition:0.1s;}
-.tray{width:100%;max-width:440px;display:none;justify-content:space-around;padding:15px;gap:10px;}
-.slot{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:12px;height:90px;display:flex;align-items:center;justify-content:center;cursor:grab;}
+.cell{width:40px;height:40px;background:var(--surface2);border-radius:4px;}
+.tray{display:none;gap:10px;margin-top:15px;}
+.slot{width:100px;height:100px;background:var(--surface);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:grab;}
 #ghost{position:fixed;pointer-events:none;z-index:999;display:none;}
-.cell.filled{border:1px solid rgba(255,255,255,0.2);}
 </style>
 </head>
 <body>
 
 <div class="screen active" id="scr-menu">
-  <div class="game-logo">GRID<br>WAR</div>
-  <button class="menu-btn primary" onclick="createOnlineRoom()">🌐 ODA OLUŞTUR</button>
-  <button class="menu-btn secondary" onclick="showScreen('scr-join')">🔗 ODAYA KATIL</button>
+  <div class="game-logo">GRIDWAR</div>
+  <button class="menu-btn primary" onclick="createOnlineRoom()">ODA OLUŞTUR</button>
+  <button class="menu-btn secondary" onclick="showScreen('scr-join')">ODAYA KATIL</button>
 </div>
 
 <div class="screen" id="scr-create">
-  <div class="game-logo">KODUNUZ</div>
-  <div class="room-code" id="room-code-display">----</div>
-  <div style="color:var(--dim);letter-spacing:2px;">RAKİP BEKLENİYOR...</div>
+  <h2>KODUN:</h2>
+  <div class="room-code" id="room-code-display" style="font-size:3rem; color:var(--C); font-family:'Orbitron'">----</div>
+  <p>Rakip bekleniyor...</p>
 </div>
 
 <div class="screen" id="scr-join">
-  <div class="game-logo">KATIL</div>
-  <input type="text" id="join-input" maxlength="4" style="background:var(--surface2); border:2px solid var(--A); color:#fff; font-size:2rem; text-align:center; width:150px; outline:none; font-family:'Orbitron';">
+  <h2>KODU GİR:</h2>
+  <input type="text" id="join-input" maxlength="4" style="background:#222; color:#fff; font-size:2rem; text-align:center; width:150px;">
   <button class="menu-btn primary" onclick="joinOnlineRoom()">KATIL</button>
 </div>
 
 <div class="topbar" id="topbar">
-  <div style="font-family:'Orbitron'; font-size:0.9rem;">SKOR: <span id="sv" style="color:var(--A)">0</span></div>
-  <div style="font-family:'Orbitron'; font-size:0.9rem;">RAKİP: <span id="ov-score" style="color:var(--B)">0</span></div>
+  <div>BEN: <span id="sv" style="color:var(--A)">0</span></div>
+  <div>RAKİP: <span id="ov-score" style="color:var(--B)">0</span></div>
 </div>
 
 <div class="grid-outer" id="gout"><div id="grid"></div></div>
@@ -121,20 +143,12 @@ body{background:var(--bg);font-family:'Rajdhani',sans-serif;color:var(--text);di
 <div id="ghost"></div>
 
 <script>
-// --- OYUN DEĞİŞKENLERİ ---
 const N = 8;
 let grid = Array.from({length:N},()=>Array(N).fill(null));
 let cells = [], pieces = [null,null,null], score = 0;
-const COLORS = [
-  {bg:'#00e5ff', inner:'#66f0ff'}, {bg:'#ff3864', inner:'#ff6d8a'}, 
-  {bg:'#ffe600', inner:'#fff066'}, {bg:'#39ff14', inner:'#88ff66'}, {bg:'#bf5af2', inner:'#d488ff'}
-];
-const SHAPES = [
-  [[1]], [[1,1]], [[1],[1]], [[1,1],[1,1]], [[1,1,1]], [[1],[1],[1]], 
-  [[1,1,1],[0,1,0]], [[1,1,1],[1,0,0]], [[1,1,0],[0,1,1]]
-];
+const COLORS = ['#00e5ff', '#ff3864', '#ffe600', '#39ff14', '#bf5af2'];
+const SHAPES = [[[1]], [[1,1]], [[1,1],[1,1]], [[1,1,1]], [[1,1,1],[0,1,0]]];
 
-// --- CORE FONKSİYONLAR ---
 function buildGrid(){
   const g = document.getElementById('grid'); g.innerHTML = ''; cells = [];
   for(let r=0; r<N; r++){
@@ -144,6 +158,19 @@ function buildGrid(){
       g.appendChild(el); cells[r][c] = el;
     }
   }
+}
+
+function syncGridFromDatabase(dbGrid) {
+    grid = dbGrid;
+    for(let r=0; r<N; r++){
+        for(let c=0; c<N; c++){
+            if(grid[r][c] !== null) {
+                cells[r][c].style.background = COLORS[grid[r][c]];
+            } else {
+                cells[r][c].style.background = '';
+            }
+        }
+    }
 }
 
 function startSolo(){
@@ -156,7 +183,7 @@ function startSolo(){
 }
 
 function spawnPieces(){
-  for(let i=0; i<3; i++){
+  for(let i=0; i<3; i++) {
     pieces[i] = { shape: SHAPES[Math.floor(Math.random()*SHAPES.length)], color: Math.floor(Math.random()*COLORS.length) };
     renderSlot(i);
   }
@@ -166,47 +193,45 @@ function renderSlot(i){
   const slot = document.getElementById('s'+i); slot.innerHTML = '';
   if(!pieces[i]) return;
   const p = pieces[i], cv = document.createElement('div');
-  cv.style.display = 'grid'; cv.style.gap = '2px';
-  cv.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 15px)`;
+  cv.style.display = 'grid'; cv.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 15px)`;
   p.shape.forEach(row => row.forEach(cell => {
-    const c = document.createElement('div'); c.style.width = '15px'; c.style.height = '15px'; c.style.borderRadius = '2px';
-    if(cell) c.style.background = COLORS[p.color].bg;
+    const c = document.createElement('div'); c.style.width = '15px'; c.style.height = '15px';
+    if(cell) c.style.background = COLORS[p.color];
     cv.appendChild(c);
   }));
   slot.appendChild(cv);
   slot.onmousedown = (e) => handleDrag(e, i);
-  slot.ontouchstart = (e) => handleDrag(e.touches[0], i);
 }
 
 function handleDrag(e, idx){
   const p = pieces[idx]; if(!p) return;
   const ghost = document.getElementById('ghost'); ghost.innerHTML = '';
-  ghost.style.display = 'grid'; ghost.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 38px)`;
+  ghost.style.display = 'grid'; ghost.style.gridTemplateColumns = `repeat(${p.shape[0].length}, 40px)`;
   p.shape.forEach(row => row.forEach(cell => {
-    const c = document.createElement('div'); c.style.width = '38px'; c.style.height = '38px';
-    if(cell) { c.style.background = COLORS[p.color].bg; c.style.borderRadius = '4px'; }
+    const c = document.createElement('div'); c.style.width = '40px'; c.style.height = '40px';
+    if(cell) c.style.background = COLORS[p.color];
     ghost.appendChild(c);
   }));
 
   const move = (ev) => {
-    const touch = ev.touches ? ev.touches[0] : ev;
-    ghost.style.left = (touch.clientX - 20) + 'px';
-    ghost.style.top = (touch.clientY - 60) + 'px';
+    ghost.style.left = (ev.clientX - 20) + 'px';
+    ghost.style.top = (ev.clientY - 20) + 'px';
   };
 
   const end = (ev) => {
-    const touch = ev.changedTouches ? ev.changedTouches[0] : ev;
     ghost.style.display = 'none';
     const rect = document.getElementById('grid').getBoundingClientRect();
-    const r = Math.floor((touch.clientY - rect.top) / 40);
-    const c = Math.floor((touch.clientX - rect.left) / 40);
-    if(tryPlace(idx, r, c)) checkClears();
+    const r = Math.floor((ev.clientY - rect.top) / 42);
+    const c = Math.floor((ev.clientX - rect.left) / 42);
+    if(tryPlace(idx, r, c)) {
+        checkClears();
+        // Hamleden sonra veriyi gönder
+        window.syncGameToFirebase(score, grid);
+    }
     window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', end);
-    window.removeEventListener('touchmove', move); window.removeEventListener('touchend', end);
   };
 
   window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
-  window.addEventListener('touchmove', move); window.addEventListener('touchend', end);
 }
 
 function tryPlace(idx, r, c){
@@ -219,8 +244,7 @@ function tryPlace(idx, r, c){
     for(let pc=0; pc<p.shape[0].length; pc++)
       if(p.shape[pr][pc]){
         grid[r+pr][c+pc] = p.color;
-        cells[r+pr][c+pc].style.background = COLORS[p.color].bg;
-        cells[r+pr][c+pc].classList.add('filled');
+        cells[r+pr][c+pc].style.background = COLORS[p.color];
       }
   pieces[idx] = null; renderSlot(idx);
   if(pieces.every(x => x === null)) spawnPieces();
@@ -228,19 +252,14 @@ function tryPlace(idx, r, c){
 }
 
 function checkClears(){
-  let cleared = 0;
-  let rowsToClear = [], colsToClear = [];
-  for(let r=0; r<N; r++) if(grid[r].every(x => x!==null)) rowsToClear.push(r);
-  for(let c=0; c<N; c++) { let ok = true; for(let r=0; r<N; r++) if(grid[r][c]===null) ok=false; if(ok) colsToClear.push(c); }
+  let rows = [], cols = [];
+  for(let r=0; r<N; r++) if(grid[r].every(x => x!==null)) rows.push(r);
+  for(let c=0; c<N; c++) { let ok = true; for(let r=0; r<N; r++) if(grid[r][c]===null) ok=false; if(ok) cols.push(c); }
   
-  rowsToClear.forEach(r => { for(let c=0; c<N; c++) { grid[r][c]=null; cells[r][c].style.background=''; cells[r][c].classList.remove('filled'); cleared++; } });
-  colsToClear.forEach(c => { for(let r=0; r<N; r++) { if(grid[r][c]!==null) { grid[r][c]=null; cells[r][c].style.background=''; cells[r][c].classList.remove('filled'); cleared++; } } });
+  rows.forEach(r => { for(let c=0; c<N; c++) { grid[r][c]=null; score += 10; } });
+  cols.forEach(c => { for(let r=0; r<N; r++) { if(grid[r][c]!==null) { grid[r][c]=null; score += 10; } } });
   
-  if(cleared > 0) {
-    score += cleared * 10;
-    document.getElementById('sv').textContent = score;
-    window.syncMyScore(score);
-  }
+  document.getElementById('sv').textContent = score;
 }
 
 function showScreen(id){
