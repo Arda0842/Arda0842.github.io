@@ -37,11 +37,11 @@
 
         html { scroll-behavior: smooth; }
         
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            margin: 0; padding: 0; 
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 0;
             min-height: 100vh; overflow-x: hidden;
         }
 
@@ -73,6 +73,7 @@
         .delay-9 { animation-delay: 1.7s; }
         .delay-10 { animation-delay: 1.9s; }
         .delay-11 { animation-delay: 2.1s; }
+        .delay-12 { animation-delay: 2.3s; }
 
         .theme-switch-wrapper {
             position: fixed; top: 15px; right: 20px; z-index: 10001;
@@ -211,6 +212,42 @@
         .snake-card { border-color: #1a4a1a !important; }
         .snake-card:hover { border-color: #50dd50 !important; box-shadow: 0 10px 30px rgba(80,221,80,0.25) !important; }
 
+        /* ── Block Blast kartı ── */
+        .blast-card-image {
+            width: 100%; height: 160px;
+            background: linear-gradient(135deg, #0a0a1a, #12122a, #0a0a1a);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .blast-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 13px);
+            grid-template-rows: repeat(6, 13px);
+            gap: 2px;
+        }
+        .bm { width: 13px; height: 13px; border-radius: 2px; background: #1a1a3a; }
+        .bm.c1 { background: #ff4d6d; box-shadow: 0 0 4px rgba(255,77,109,0.7); }
+        .bm.c2 { background: #c77dff; box-shadow: 0 0 4px rgba(199,125,255,0.7); }
+        .bm.c3 { background: #00f5d4; box-shadow: 0 0 4px rgba(0,245,212,0.7); }
+        .bm.c4 { background: #ffd60a; box-shadow: 0 0 4px rgba(255,214,10,0.7); }
+        .blast-float {
+            position: absolute; font-size: 3.2rem; right: 20px;
+            filter: drop-shadow(0 0 16px rgba(199,125,255,0.8));
+            animation: blastPulse 2s ease-in-out infinite;
+        }
+        @keyframes blastPulse {
+            0%,100%{ transform: translateY(0) scale(1); filter: drop-shadow(0 0 16px rgba(199,125,255,0.8)); }
+            50%{ transform: translateY(-8px) scale(1.1); filter: drop-shadow(0 0 28px rgba(255,77,109,0.9)); }
+        }
+        .btn-blast {
+            background: linear-gradient(135deg, #ff4d6d, #c77dff);
+            color: #fff; text-decoration: none; padding: 10px; border-radius: 8px;
+            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
+        }
+        .btn-blast:hover { background: linear-gradient(135deg, #c77dff, #00f5d4); transform: scale(1.02); }
+        .blast-card { border-color: #2a1a4a !important; }
+        .blast-card:hover { border-color: #c77dff !important; box-shadow: 0 10px 30px rgba(199,125,255,0.3) !important; }
+
         .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
 
@@ -341,11 +378,26 @@
                     </div>
                 </div>
 
+                <!-- ✨ YENİ: Block Blast -->
+                <div class="project-card blast-card animate-on-load delay-11">
+                    <div class="blast-card-image">
+                        <div class="blast-mini-grid" id="blastGrid"></div>
+                        <span class="blast-float">🧊</span>
+                    </div>
+                    <div class="card-content">
+                        <h3 style="color: #c77dff;">Block Blast</h3>
+                        <p>Blokları ızgaraya yerleştir, satır ve sütunları doldur, temizle! Kombo sistemi, ses efektleri ve skor tablosuyla tarayıcıda oyna.</p>
+                        <a href="block-blast.html" class="btn-blast">
+                            <i class="fas fa-th"></i> Hemen Oyna
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div> 
+    </div>
 
-    <div id="contact" class="contact-section animate-on-load delay-11">
+    <div id="contact" class="contact-section animate-on-load delay-12">
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         <div class="social-links">
@@ -387,6 +439,19 @@
             sg.appendChild(d);
         }
 
+        // --- Mini Block Blast ızgarası ---
+        const bg = document.getElementById('blastGrid');
+        // 8x6 = 48 hücre, bazıları renkli
+        const blastColors = {
+            2:'c1', 3:'c1', 10:'c2', 11:'c2', 18:'c3', 19:'c3', 20:'c3',
+            26:'c4', 34:'c4', 35:'c1', 36:'c1', 40:'c2', 41:'c3', 42:'c3'
+        };
+        for (let i = 0; i < 48; i++) {
+            const d = document.createElement('div');
+            d.className = 'bm' + (blastColors[i] ? ' ' + blastColors[i] : '');
+            bg.appendChild(d);
+        }
+
         // --- YUKARI ÇIK ---
         const scrollTopBtn = document.getElementById("scrollTopBtn");
         window.onscroll = function() {
@@ -421,7 +486,7 @@
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ (RIPPLE EFFECT) ---
+        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ ---
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
         const rippleLayer = document.getElementById('ripple-layer');
@@ -451,7 +516,7 @@
                 const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
                 
                 rippleLayer.style.left = `${centerX}px`;
-                rippleLayer.style.top = `${window.innerHeight}px`; 
+                rippleLayer.style.top = `${window.innerHeight}px`;
                 rippleLayer.style.backgroundColor = nextBg;
                 rippleLayer.style.transition = 'transform 1s ease-in-out';
                 
@@ -489,12 +554,12 @@
             }, 800);
         });
 
-        // --- CANVAS (AĞ ANİMASYONU) ---
+        // --- CANVAS ---
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
         let particlesArray;
-        let particleColor = '#00d4ff'; 
-        let lineColor = '0, 212, 255'; 
+        let particleColor = '#00d4ff';
+        let lineColor = '0, 212, 255';
 
         function updateCanvasColors() {
             if (document.body.classList.contains('light-mode')) {
