@@ -114,11 +114,50 @@
         #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
 
-        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-color); padding: 15px 0; z-index: 1000; display: flex; justify-content: center; gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        /* ── NAVBAR — sadece ARD FİNANS linki eklendi ── */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: var(--nav-bg); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0; z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            gap: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
         .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 1.05rem; transition: 0.3s; position: relative; }
         .nav-link:hover { color: var(--accent-color); }
         .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-color); transition: width 0.3s; }
         .nav-link:hover::after { width: 100%; }
+
+        /* ARD FİNANS nav butonu — özel stil */
+        .nav-finans {
+            display: inline-flex; align-items: center; gap: 0;
+            text-decoration: none; font-weight: 900;
+            font-size: 1.05rem; letter-spacing: -0.5px;
+            padding: 5px 14px;
+            border: 1.5px solid #e0202033;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(224,32,32,0.08), rgba(0,0,0,0.0));
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-finans:hover {
+            border-color: #e02020;
+            background: linear-gradient(135deg, rgba(224,32,32,0.15), rgba(0,0,0,0.05));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(224,32,32,0.25);
+        }
+        .nav-finans:hover::after { display: none; }
+        .nav-finans .nf-ard  { color: #e02020; }
+        .nav-finans .nf-rest { color: var(--text-color); }
+        /* İ harfinin özel noktası */
+        .nf-i-wrap {
+            display: inline-flex; flex-direction: column;
+            align-items: center; line-height: 1;
+            margin: 0 0px; position: relative; top: 1px;
+        }
+        .nf-i-dot  { width: 5px; height: 5px; background: var(--text-color); border-radius: 50%; margin-bottom: 1px; }
+        .nf-i-stem { font-weight: 900; line-height: 1; display: inline-block; }
+        /* ──────────────────────────────── */
 
         .main-wrapper { display: flex; flex-direction: column; align-items: center; padding-top: 100px; width: 100%; position: relative; z-index: 1; }
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
@@ -148,117 +187,85 @@
         .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
 
         /* ── Satranç kartı ── */
-        .chess-card-image {
-            width: 100%; height: 160px;
-            background: linear-gradient(135deg, #1a0f07, #2d1a0a, #1a0f07);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-        }
-        .chess-board-mini {
-            display: grid;
-            grid-template-columns: repeat(8, 14px);
-            grid-template-rows: repeat(5, 14px);
-            border: 2px solid #5a3a1a;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-        }
+        .chess-card-image { width: 100%; height: 160px; background: linear-gradient(135deg, #1a0f07, #2d1a0a, #1a0f07); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .chess-board-mini { display: grid; grid-template-columns: repeat(8, 14px); grid-template-rows: repeat(5, 14px); border: 2px solid #5a3a1a; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
         .ms { width: 14px; height: 14px; }
         .ms.l { background: #f0d9b5; }
         .ms.d { background: #b58863; }
-        .chess-float {
-            position: absolute; font-size: 3.8rem; right: 24px;
-            color: #d4a843;
-            text-shadow: 0 0 24px rgba(212,168,67,0.7);
-            animation: floatPiece 3s ease-in-out infinite;
-        }
+        .chess-float { position: absolute; font-size: 3.8rem; right: 24px; color: #d4a843; text-shadow: 0 0 24px rgba(212,168,67,0.7); animation: floatPiece 3s ease-in-out infinite; }
         @keyframes floatPiece { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .btn-chess {
-            background: linear-gradient(135deg, #b58863, #d4a843);
-            color: #1a0f07; text-decoration: none; padding: 10px; border-radius: 8px;
-            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
-        }
+        .btn-chess { background: linear-gradient(135deg, #b58863, #d4a843); color: #1a0f07; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-chess:hover { background: linear-gradient(135deg, #d4a843, #f0c060); transform: scale(1.02); }
         .chess-card { border-color: #7a4a20 !important; }
         .chess-card:hover { border-color: #d4a843 !important; box-shadow: 0 10px 30px rgba(212,168,67,0.3) !important; }
 
         /* ── Yılan kartı ── */
-        .snake-card-image {
-            width: 100%; height: 160px;
-            background: linear-gradient(135deg, #0a150a, #0f2a0f, #0a150a);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-        }
-        .snake-grid-mini {
-            display: grid;
-            grid-template-columns: repeat(10, 12px);
-            grid-template-rows: repeat(6, 12px);
-            gap: 1px; opacity: 0.7;
-        }
+        .snake-card-image { width: 100%; height: 160px; background: linear-gradient(135deg, #0a150a, #0f2a0f, #0a150a); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .snake-grid-mini { display: grid; grid-template-columns: repeat(10, 12px); grid-template-rows: repeat(6, 12px); gap: 1px; opacity: 0.7; }
         .sg { width: 12px; height: 12px; background: #0f2a0f; border-radius: 1px; }
         .sg.sn { background: #32aa32; border-radius: 2px; }
         .sg.sh { background: #50dd50; border-radius: 3px; }
         .sg.fd { background: #ff5050; border-radius: 50%; }
-        .snake-float {
-            position: absolute; font-size: 3.5rem; right: 22px;
-            filter: drop-shadow(0 0 14px rgba(80,221,80,0.7));
-            animation: snakeWiggle 1.8s ease-in-out infinite;
-        }
+        .snake-float { position: absolute; font-size: 3.5rem; right: 22px; filter: drop-shadow(0 0 14px rgba(80,221,80,0.7)); animation: snakeWiggle 1.8s ease-in-out infinite; }
         @keyframes snakeWiggle { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-8px) rotate(5deg)} }
-        .btn-snake {
-            background: linear-gradient(135deg, #1a6a1a, #32aa32);
-            color: #e0ffe0; text-decoration: none; padding: 10px; border-radius: 8px;
-            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
-        }
+        .btn-snake { background: linear-gradient(135deg, #1a6a1a, #32aa32); color: #e0ffe0; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-snake:hover { background: linear-gradient(135deg, #32aa32, #50dd50); color: #0a150a; transform: scale(1.02); }
         .snake-card { border-color: #1a4a1a !important; }
         .snake-card:hover { border-color: #50dd50 !important; box-shadow: 0 10px 30px rgba(80,221,80,0.25) !important; }
 
-        /* ── GridWar kartı (YENİ) ── */
-        .gridwar-card-image {
-            width: 100%; height: 160px;
-            background: linear-gradient(135deg, #060612, #0d0d20, #060612);
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-        }
-        .gridwar-mini {
-            display: grid;
-            grid-template-columns: repeat(8, 12px);
-            grid-template-rows: repeat(5, 12px);
-            gap: 2px; opacity: 0.85;
-        }
+        /* ── GridWar kartı ── */
+        .gridwar-card-image { width: 100%; height: 160px; background: linear-gradient(135deg, #060612, #0d0d20, #060612); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .gridwar-mini { display: grid; grid-template-columns: repeat(8, 12px); grid-template-rows: repeat(5, 12px); gap: 2px; opacity: 0.85; }
         .gm { width: 12px; height: 12px; border-radius: 2px; background: #111128; }
         .gm.c1 { background: #00e5ff; box-shadow: 0 0 4px rgba(0,229,255,0.8); }
         .gm.c2 { background: #ff3864; box-shadow: 0 0 4px rgba(255,56,100,0.8); }
         .gm.c3 { background: #ffe600; box-shadow: 0 0 4px rgba(255,230,0,0.8); }
         .gm.c4 { background: #bf5af2; box-shadow: 0 0 4px rgba(191,90,242,0.8); }
-        .gridwar-float {
-            position: absolute; font-size: 3.2rem; right: 20px;
-            filter: drop-shadow(0 0 16px rgba(0,229,255,0.9));
-            animation: floatPiece 2.2s ease-in-out infinite;
-        }
-        .btn-gridwar {
-            background: linear-gradient(135deg, #00e5ff, #0099bb);
-            color: #000; text-decoration: none; padding: 10px; border-radius: 8px;
-            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
-        }
+        .gridwar-float { position: absolute; font-size: 3.2rem; right: 20px; filter: drop-shadow(0 0 16px rgba(0,229,255,0.9)); animation: floatPiece 2.2s ease-in-out infinite; }
+        .btn-gridwar { background: linear-gradient(135deg, #00e5ff, #0099bb); color: #000; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-gridwar:hover { background: linear-gradient(135deg, #0099bb, #bf5af2); color: #fff; transform: scale(1.02); }
         .gridwar-card { border-color: #1a1a4a !important; }
         .gridwar-card:hover { border-color: #00e5ff !important; box-shadow: 0 10px 30px rgba(0,229,255,0.25) !important; }
 
+        /* ── ARD FİNANS kartı ── */
+        .finans-card-image {
+            width: 100%; height: 160px;
+            background: linear-gradient(135deg, #0a0e1a, #111827, #0a0e1a);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .finans-logo-big {
+            font-size: 2.2rem; font-weight: 900; letter-spacing: -1px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .flb-ard  { color: #e02020; text-shadow: 0 0 20px rgba(224,32,32,0.5); }
+        .flb-rest { color: #e0e6f0; }
+        .flb-i-wrap {
+            display: inline-flex; flex-direction: column;
+            align-items: center; line-height: 1;
+            position: relative; top: 1px;
+        }
+        .flb-i-dot  { width: 6px; height: 6px; background: #e0e6f0; border-radius: 50%; margin-bottom: 2px; }
+        .flb-i-stem { font-weight: 900; line-height: 1; }
+        .finans-chart-bg {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; opacity: 0.15;
+        }
+        .btn-finans {
+            background: linear-gradient(135deg, #e02020, #b00000);
+            color: #fff; text-decoration: none; padding: 10px; border-radius: 8px;
+            font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer;
+        }
+        .btn-finans:hover { background: linear-gradient(135deg, #ff3333, #e02020); transform: scale(1.02); box-shadow: 0 4px 16px rgba(224,32,32,0.4); }
+        .finans-card { border-color: #e0202033 !important; }
+        .finans-card:hover { border-color: #e02020 !important; box-shadow: 0 10px 30px rgba(224,32,32,0.25) !important; }
+
         .contact-section { background: var(--card-bg); width: 100%; padding: 50px 20px; text-align: center; border-top: 1px solid var(--border-color); margin-top: auto; position: relative; z-index: 1; }
         .social-links { display: flex; gap: 25px; justify-content: center; margin-top: 20px; }
-
-        .social-btn {
-            color: var(--text-muted);
-            font-size: 2rem;
-            transition: color 0.3s, transform 0.3s, filter 0.3s;
-            opacity: 0.7;
-            text-decoration: none;
-        }
+        .social-btn { color: var(--text-muted); font-size: 2rem; transition: color 0.3s, transform 0.3s, filter 0.3s; opacity: 0.7; text-decoration: none; }
         .social-btn:hover { opacity: 1; transform: translateY(-6px) scale(1.15); }
-        .social-btn.github:hover { color: #ffffff; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
-        .social-btn.linkedin:hover { color: #0077b5; filter: drop-shadow(0 0 10px rgba(0, 119, 181, 0.9)); }
-        .social-btn.email:hover { color: #ea4335; filter: drop-shadow(0 0 10px rgba(234, 67, 53, 0.9)); }
-
+        .social-btn.github:hover { color: #ffffff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+        .social-btn.linkedin:hover { color: #0077b5; filter: drop-shadow(0 0 10px rgba(0,119,181,0.9)); }
+        .social-btn.email:hover { color: #ea4335; filter: drop-shadow(0 0 10px rgba(234,67,53,0.9)); }
         footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
 </head>
@@ -282,8 +289,14 @@
     </div>
 
     <nav class="navbar">
-        <a href="#home" class="nav-link">Ana Sayfa</a>
-        <a href="#about" class="nav-link">Hakkında</a>
+        <a href="#home"    class="nav-link">Ana Sayfa</a>
+        <a href="#about"   class="nav-link">Hakkında</a>
+        <!-- ── YENİ: ARD FİNANS sekmesi ── -->
+        <a href="https://ardfinanss8.streamlit.app" target="_blank" class="nav-finans">
+            <span class="nf-ard">ARD</span>&nbsp;
+            <span class="nf-rest">F</span><span class="nf-i-wrap"><span class="nf-i-dot"></span><span class="nf-i-stem">İ</span></span><span class="nf-rest">NANS</span>
+        </a>
+        <!-- ─────────────────────────────── -->
         <a href="#contact" class="nav-link">İletişim</a>
     </nav>
 
@@ -291,8 +304,7 @@
         <header id="home">
             <h1 class="animate-on-load delay-1">Hoşgeldiniz</h1>
             <span class="role animate-on-load delay-2">Ben bir <span id="typewriter"></span></span>
-            <div class="skills animate-on-load delay-3">
-            </div>
+            <div class="skills animate-on-load delay-3"></div>
         </header>
 
         <div id="about" class="about-section animate-on-load delay-4">
@@ -305,7 +317,6 @@
 
         <div class="container">
             <h2 class="section-title animate-on-load delay-5">🎮 Oyun Projelerim</h2>
-                         
             <div class="projects-grid">
 
                 <!-- Kayseri Boğası -->
@@ -331,7 +342,7 @@
                         </a>
                     </div>
                 </div>
-                                 
+
                 <!-- Dağ Yarışı -->
                 <div class="project-card animate-on-load delay-8" style="border-color: #ffe600;">
                     <div class="card-image"><i class="fas fa-car-side" style="color: #ffe600;"></i></div>
@@ -353,9 +364,7 @@
                     <div class="card-content">
                         <h3 style="color: #d4a843;">Satranç</h3>
                         <p>Tarayıcıda oynanabilen tam özellikli satranç oyunu. Şah, mat, pat, en passant ve piyon terfisi destekli.</p>
-                        <a href="satranc.html" class="btn-chess">
-                            <i class="fas fa-chess"></i> Hemen Oyna
-                        </a>
+                        <a href="satranc.html" class="btn-chess"><i class="fas fa-chess"></i> Hemen Oyna</a>
                     </div>
                 </div>
 
@@ -368,13 +377,11 @@
                     <div class="card-content">
                         <h3 style="color: #50dd50;">Yılan Oyunu</h3>
                         <p>Klasik yılan oyununun modern versiyonu. Seviye sistemi, hız artışı ve yüksek skor takibiyle tarayıcıda oyna.</p>
-                        <a href="yilan.html" class="btn-snake">
-                            <i class="fas fa-gamepad"></i> Hemen Oyna
-                        </a>
+                        <a href="yilan.html" class="btn-snake"><i class="fas fa-gamepad"></i> Hemen Oyna</a>
                     </div>
                 </div>
 
-                <!-- ── GridWar (YENİ EKLENEN) ── -->
+                <!-- GridWar -->
                 <div class="project-card gridwar-card animate-on-load delay-11">
                     <div class="gridwar-card-image">
                         <div class="gridwar-mini" id="gridwarMini"></div>
@@ -383,11 +390,32 @@
                     <div class="card-content">
                         <h3 style="color: #00e5ff;">GridWar</h3>
                         <p>Blokları ızgaraya yerleştir, satır ve sütunları doldur, temizle! 28 parça çeşidi, kombo sistemi ve online multiplayer (yakında).</p>
-                        <a href="gridwar.html" class="btn-gridwar">
-                            <i class="fas fa-th"></i> Hemen Oyna
+                        <a href="gridwar.html" class="btn-gridwar"><i class="fas fa-th"></i> Hemen Oyna</a>
+                    </div>
+                </div>
+
+                <!-- ── YENİ: ARD FİNANS kartı ── -->
+                <div class="project-card finans-card animate-on-load delay-12">
+                    <div class="finans-card-image">
+                        <!-- Mini borsa grafik arka plan -->
+                        <svg class="finans-chart-bg" viewBox="0 0 300 60" preserveAspectRatio="none">
+                            <polyline points="0,50 30,40 60,45 90,20 120,30 150,15 180,25 210,10 240,20 270,5 300,15"
+                                fill="none" stroke="#e02020" stroke-width="2"/>
+                        </svg>
+                        <div class="finans-logo-big">
+                            <span class="flb-ard">ARD</span>
+                            <span class="flb-rest">F<span class="flb-i-wrap"><span class="flb-i-dot"></span><span class="flb-i-stem">İ</span></span>NANS</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 style="color:#e02020;">ARD FİNANS</h3>
+                        <p>AI destekli borsa analiz platformu. 25+ teknik indikatör, Groq Llama 3.3 ile Türkçe analiz, portföy takibi ve fiyat alarmları.</p>
+                        <a href="https://ardfinanss8.streamlit.app" target="_blank" class="btn-finans">
+                            <i class="fas fa-chart-line"></i> Platforma Git
                         </a>
                     </div>
                 </div>
+                <!-- ──────────────────────────── -->
 
             </div>
         </div>
@@ -397,21 +425,15 @@
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.</p>
         <div class="social-links">
-            <a href="https://github.com/Arda0842" target="_blank" class="social-btn github">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email">
-                <i class="fas fa-envelope"></i>
-            </a>
+            <a href="https://github.com/Arda0842" target="_blank" class="social-btn github"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/arda-akçay/" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin"></i></a>
+            <a href="mailto:ardaakcay591@gmail.com" class="social-btn email"><i class="fas fa-envelope"></i></a>
         </div>
         <footer>&copy; 2026 Arda | Tüm hakları saklıdır.</footer>
     </div>
 
     <script>
-        // --- Mini satranç tahtası ---
+        // Mini satranç tahtası
         const mb = document.getElementById('miniBoard');
         for (let r = 0; r < 5; r++)
             for (let c = 0; c < 8; c++) {
@@ -420,216 +442,139 @@
                 mb.appendChild(s);
             }
 
-        // --- Mini yılan ızgarası ---
+        // Mini yılan ızgarası
         const sg = document.getElementById('snakeGrid');
-        const snakeBody = new Set([8, 9, 10, 11, 12]);
-        const snakeHead = 13;
-        const foodCell = 47;
+        const snakeBody = new Set([8,9,10,11,12]); const snakeHead = 13; const foodCell = 47;
         for (let i = 0; i < 60; i++) {
             const d = document.createElement('div');
             let cls = 'sg';
             if (i === snakeHead) cls += ' sh';
             else if (snakeBody.has(i)) cls += ' sn';
             else if (i === foodCell) cls += ' fd';
-            d.className = cls;
-            sg.appendChild(d);
+            d.className = cls; sg.appendChild(d);
         }
 
-        // --- Mini GridWar ızgarası (YENİ) ---
+        // Mini GridWar ızgarası
         const gwMini = document.getElementById('gridwarMini');
-        const gwColors = { 2:'c1', 3:'c1', 9:'c2', 10:'c2', 16:'c3', 17:'c3', 18:'c3', 24:'c4', 25:'c4', 32:'c1', 33:'c2', 34:'c2' };
+        const gwColors = {2:'c1',3:'c1',9:'c2',10:'c2',16:'c3',17:'c3',18:'c3',24:'c4',25:'c4',32:'c1',33:'c2',34:'c2'};
         for (let i = 0; i < 40; i++) {
             const d = document.createElement('div');
-            d.className = 'gm' + (gwColors[i] ? ' ' + gwColors[i] : '');
+            d.className = 'gm' + (gwColors[i] ? ' '+gwColors[i] : '');
             gwMini.appendChild(d);
         }
 
-        // --- YUKARI ÇIK ---
+        // Yukarı çık
         const scrollTopBtn = document.getElementById("scrollTopBtn");
         window.onscroll = function() {
-            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300)
                 scrollTopBtn.classList.add("active");
-            } else {
-                scrollTopBtn.classList.remove("active");
-            }
+            else scrollTopBtn.classList.remove("active");
         };
-        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function scrollToTop() { window.scrollTo({top:0, behavior:'smooth'}); }
 
-        // --- DAKTİLO ---
+        // Daktilo
         const textElement = document.getElementById('typewriter');
         const phrases = ["Bilgisayar Müh. Öğrencisiyim."];
         let phraseIndex = 0, charIndex = 0, isDeleting = false;
         function type() {
-            const currentPhrase = phrases[phraseIndex];
-            if (isDeleting) {
-                textElement.textContent = currentPhrase.substring(0, charIndex - 1);
-                charIndex--;
-            } else {
-                textElement.textContent = currentPhrase.substring(0, charIndex + 1);
-                charIndex++;
-            }
-            let typeSpeed = isDeleting ? 50 : 100;
-            if (!isDeleting && charIndex === currentPhrase.length) {
-                isDeleting = true; typeSpeed = 2000;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500;
-            }
-            setTimeout(type, typeSpeed);
+            const cur = phrases[phraseIndex];
+            textElement.textContent = isDeleting ? cur.substring(0,charIndex-1) : cur.substring(0,charIndex+1);
+            isDeleting ? charIndex-- : charIndex++;
+            let sp = isDeleting ? 50 : 100;
+            if (!isDeleting && charIndex === cur.length) { isDeleting=true; sp=2000; }
+            else if (isDeleting && charIndex===0) { isDeleting=false; phraseIndex=(phraseIndex+1)%phrases.length; sp=500; }
+            setTimeout(type, sp);
         }
         document.addEventListener('DOMContentLoaded', type);
 
-        // --- NOKTASAL YAYILMALI TEMA GEÇİŞİ (RIPPLE EFFECT) ---
+        // Tema geçişi
         const toggleSwitch = document.querySelector('#checkbox');
         const themeWrapper = document.getElementById('themeWrapper');
-        const rippleLayer = document.getElementById('ripple-layer');
+        const rippleLayer  = document.getElementById('ripple-layer');
         const body = document.body;
         let isAnimating = false;
-
         const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            body.classList.add(currentTheme);
-            if (currentTheme === 'light-mode') toggleSwitch.checked = true;
-        }
+        if (currentTheme) { body.classList.add(currentTheme); if (currentTheme==='light-mode') toggleSwitch.checked=true; }
 
         themeWrapper.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (isAnimating) return;
-            isAnimating = true;
-
-            const isCurrentlyLight = body.classList.contains('light-mode');
-            const targetIsLight = !isCurrentlyLight;
-
+            e.preventDefault(); if (isAnimating) return; isAnimating = true;
+            const targetIsLight = !body.classList.contains('light-mode');
             themeWrapper.classList.add('falling');
-
             const rect = themeWrapper.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-
             setTimeout(() => {
                 const nextBg = targetIsLight ? '#f0f2f5' : '#0f0f0f';
-                                 
-                rippleLayer.style.left = `${centerX}px`;
-                rippleLayer.style.top = `${window.innerHeight}px`;
+                rippleLayer.style.left = `${rect.left+rect.width/2}px`;
+                rippleLayer.style.top  = `${window.innerHeight}px`;
                 rippleLayer.style.backgroundColor = nextBg;
                 rippleLayer.style.transition = 'transform 1s ease-in-out';
-                                 
-                const maxDim = Math.max(window.innerWidth, window.innerHeight);
-                const scale = (maxDim / 1) * 2.5;
-                                 
-                rippleLayer.style.transform = `translate(-50%, -50%) scale(${scale})`;
-
+                rippleLayer.style.transform = `translate(-50%,-50%) scale(${Math.max(window.innerWidth,window.innerHeight)*2.5})`;
                 setTimeout(() => {
-                    if (targetIsLight) {
-                        body.classList.add('light-mode');
-                        localStorage.setItem('theme', 'light-mode');
-                        toggleSwitch.checked = true;
-                    } else {
-                        body.classList.remove('light-mode');
-                        localStorage.setItem('theme', 'dark-mode');
-                        toggleSwitch.checked = false;
-                    }
+                    if (targetIsLight) { body.classList.add('light-mode'); localStorage.setItem('theme','light-mode'); toggleSwitch.checked=true; }
+                    else { body.classList.remove('light-mode'); localStorage.setItem('theme','dark-mode'); toggleSwitch.checked=false; }
                     updateCanvasColors();
-
-                    rippleLayer.style.transition = 'opacity 0.5s ease';
-                    rippleLayer.style.opacity = '0';
-
+                    rippleLayer.style.transition='opacity 0.5s ease'; rippleLayer.style.opacity='0';
                     setTimeout(() => {
-                        rippleLayer.style.transition = 'none';
-                        rippleLayer.style.transform = 'translate(-50%, -50%) scale(0)';
-                        rippleLayer.style.opacity = '1';
-                                                 
-                        themeWrapper.classList.remove('falling');
-                        isAnimating = false;
+                        rippleLayer.style.transition='none'; rippleLayer.style.transform='translate(-50%,-50%) scale(0)'; rippleLayer.style.opacity='1';
+                        themeWrapper.classList.remove('falling'); isAnimating=false;
                     }, 500);
-
                 }, 1000);
-
             }, 800);
         });
 
-        // --- CANVAS (AĞ ANİMASYONU) ---
+        // Canvas ağ animasyonu
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
         let particlesArray;
-        let particleColor = '#00d4ff';
-        let lineColor = '0, 212, 255'; 
-
+        let particleColor='#00d4ff', lineColor='0, 212, 255';
         function updateCanvasColors() {
-            if (document.body.classList.contains('light-mode')) {
-                particleColor = '#0077b6'; lineColor = '0, 119, 182';
-            } else {
-                particleColor = '#00d4ff'; lineColor = '0, 212, 255';
-            }
+            if (document.body.classList.contains('light-mode')) { particleColor='#0077b6'; lineColor='0, 119, 182'; }
+            else { particleColor='#00d4ff'; lineColor='0, 212, 255'; }
         }
         updateCanvasColors();
-
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let mouse = { x: null, y: null, radius: (canvas.height / 80) * (canvas.width / 80) };
-        window.addEventListener('mousemove', function(event) { mouse.x = event.x; mouse.y = event.y; });
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            mouse.radius = (canvas.height / 80) * (canvas.width / 80);
-            init();
-        });
-
+        canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+        let mouse={x:null,y:null,radius:(canvas.height/80)*(canvas.width/80)};
+        window.addEventListener('mousemove',e=>{mouse.x=e.x;mouse.y=e.y;});
+        window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;mouse.radius=(canvas.height/80)*(canvas.width/80);init();});
         class Particle {
-            constructor(x, y, dX, dY, size, color) {
-                this.x = x; this.y = y; this.dX = dX; this.dY = dY; this.size = size; this.color = color;
-            }
-            draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = particleColor; ctx.fill();
-            }
-            update() {
-                if (this.x > canvas.width || this.x < 0) this.dX = -this.dX;
-                if (this.y > canvas.height || this.y < 0) this.dY = -this.dY;
-                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-                if (distance < mouse.radius + this.size){
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 10;
-                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 10;
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 10;
-                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 10;
+            constructor(x,y,dX,dY,size){this.x=x;this.y=y;this.dX=dX;this.dY=dY;this.size=size;}
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2,false);ctx.fillStyle=particleColor;ctx.fill();}
+            update(){
+                if(this.x>canvas.width||this.x<0)this.dX=-this.dX;
+                if(this.y>canvas.height||this.y<0)this.dY=-this.dY;
+                let dx=mouse.x-this.x,dy=mouse.y-this.y,dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<mouse.radius+this.size){
+                    if(mouse.x<this.x&&this.x<canvas.width-this.size*10)this.x+=10;
+                    if(mouse.x>this.x&&this.x>this.size*10)this.x-=10;
+                    if(mouse.y<this.y&&this.y<canvas.height-this.size*10)this.y+=10;
+                    if(mouse.y>this.y&&this.y>this.size*10)this.y-=10;
                 }
-                this.x += this.dX; this.y += this.dY; this.draw();
+                this.x+=this.dX;this.y+=this.dY;this.draw();
             }
         }
-
-        function init() {
-            particlesArray = [];
-            let n = (canvas.height * canvas.width) / 9000;
-            for (let i = 0; i < n; i++) {
-                let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let dX = (Math.random() * 2) - 1; let dY = (Math.random() * 2) - 1;
-                particlesArray.push(new Particle(x, y, dX, dY, size, particleColor));
+        function init(){
+            particlesArray=[];
+            let n=(canvas.height*canvas.width)/9000;
+            for(let i=0;i<n;i++){
+                let size=(Math.random()*2)+1;
+                let x=Math.random()*((innerWidth-size*2)-(size*2))+size*2;
+                let y=Math.random()*((innerHeight-size*2)-(size*2))+size*2;
+                particlesArray.push(new Particle(x,y,(Math.random()*2)-1,(Math.random()*2)-1,size));
             }
         }
-
-        function connect() {
-            let opacity = 1;
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    let d = ((particlesArray[a].x - particlesArray[b].x) ** 2) + ((particlesArray[a].y - particlesArray[b].y) ** 2);
-                    if (d < (canvas.width/7) * (canvas.height/7)) {
-                        opacity = 1 - (d/20000);
-                        ctx.strokeStyle = 'rgba(' + lineColor + ',' + opacity + ')';
-                        ctx.lineWidth = 1; ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
+        function connect(){
+            for(let a=0;a<particlesArray.length;a++)
+                for(let b=a;b<particlesArray.length;b++){
+                    let d=((particlesArray[a].x-particlesArray[b].x)**2)+((particlesArray[a].y-particlesArray[b].y)**2);
+                    if(d<(canvas.width/7)*(canvas.height/7)){
+                        ctx.strokeStyle=`rgba(${lineColor},${1-d/20000})`;
+                        ctx.lineWidth=1;ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x,particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x,particlesArray[b].y);ctx.stroke();
                     }
                 }
-            }
         }
-
-        function animate() {
-            requestAnimationFrame(animate); ctx.clearRect(0, 0, innerWidth, innerHeight);
-            for (let i = 0; i < particlesArray.length; i++) particlesArray[i].update();
-            connect();
-        }
-
-        init(); animate();
+        function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,innerWidth,innerHeight);for(let i=0;i<particlesArray.length;i++)particlesArray[i].update();connect();}
+        init();animate();
     </script>
 </body>
 </html>
