@@ -114,7 +114,7 @@
         #scrollTopBtn.active { opacity: 1; pointer-events: all; transform: translateY(0); }
         #scrollTopBtn:hover { transform: translateY(-5px); background: var(--secondary-accent); }
 
-        /* ── NAVBAR — sadece ARD FİNANS linki eklendi ── */
+        /* ── NAVBAR ── */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%;
             background: var(--nav-bg); backdrop-filter: blur(10px);
@@ -128,7 +128,7 @@
         .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-color); transition: width 0.3s; }
         .nav-link:hover::after { width: 100%; }
 
-        /* ARD FİNANS nav butonu — özel stil */
+        /* ARD FİNANS nav butonu */
         .nav-finans {
             display: inline-flex; align-items: center; gap: 0;
             text-decoration: none; font-weight: 900;
@@ -149,7 +149,6 @@
         .nav-finans:hover::after { display: none; }
         .nav-finans .nf-ard  { color: #e02020; }
         .nav-finans .nf-rest { color: var(--text-color); }
-        /* İ harfinin özel noktası */
         .nf-i-wrap {
             display: inline-flex; flex-direction: column;
             align-items: center; line-height: 1;
@@ -157,7 +156,6 @@
         }
         .nf-i-dot  { width: 5px; height: 5px; background: var(--text-color); border-radius: 50%; margin-bottom: 1px; }
         .nf-i-stem { font-weight: 900; line-height: 1; display: inline-block; }
-        /* ──────────────────────────────── */
 
         .main-wrapper { display: flex; flex-direction: column; align-items: center; padding-top: 100px; width: 100%; position: relative; z-index: 1; }
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
@@ -185,6 +183,23 @@
         .card-content p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
         .btn-download { background: var(--accent-color); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; border: none; cursor: pointer; }
         .btn-download:hover { background: var(--accent-hover); transform: scale(1.02); }
+
+        /* ── Sertifika Kartı ── */
+        .certificate-card {
+            background: var(--card-bg); border-radius: 12px; padding: 20px;
+            border: 1px solid var(--border-color); transition: 0.3s;
+            display: flex; flex-direction: column; backdrop-filter: blur(5px);
+            text-align: center;
+        }
+        .certificate-card:hover {
+            transform: translateY(-5px); box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent-color);
+        }
+        .cert-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .certificate-card h3 { margin: 10px 0; color: var(--text-color); font-size: 1.1rem; }
+        .certificate-card p { color: var(--text-muted); font-size: 0.85rem; margin: 5px 0; }
+        .cert-issuer { color: var(--accent-color); font-weight: 600; font-size: 0.9rem; margin-top: 10px; }
+        .cert-date { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
 
         /* ── Satranç kartı ── */
         .chess-card-image { width: 100%; height: 160px; background: linear-gradient(135deg, #1a0f07, #2d1a0a, #1a0f07); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
@@ -291,7 +306,8 @@
     <nav class="navbar">
         <a href="#home"    class="nav-link">Ana Sayfa</a>
         <a href="#about"   class="nav-link">Hakkında</a>
-        <!-- ── YENİ: ARD FİNANS sekmesi ── -->
+        <a href="#certificates" class="nav-link">Sertifikalarım</a>
+        <!-- ── ARD FİNANS sekmesi ── -->
         <a href="https://ardfinanss8.streamlit.app" target="_blank" class="nav-finans">
             <span class="nf-ard">ARD</span>&nbsp;
             <span class="nf-rest">F</span><span class="nf-i-wrap"><span class="nf-i-dot"></span><span class="nf-i-stem">İ</span></span><span class="nf-rest">NANS</span>
@@ -314,6 +330,37 @@
                 Oyun geliştirme, .NET teknolojileri ve algoritmik ticaret sistemleri üzerine çalışıyorum.
             </p>
         </div>
+
+        <!-- ── SERTIFIKALAR BÖLÜMÜ ── -->
+        <div id="certificates" class="container">
+            <h2 class="section-title animate-on-load delay-5">🏆 Sertifikalarım</h2>
+            <div class="projects-grid">
+                <!-- Sertifika 1 - Buraya kendi sertifikalarını ekle -->
+                <div class="certificate-card animate-on-load delay-6">
+                    <div class="cert-icon">📜</div>
+                    <h3>Sertifika Adı</h3>
+                    <p class="cert-issuer">Veren Kuruluş</p>
+                    <p class="cert-date">Tarih: Ay Yıl</p>
+                </div>
+
+                <!-- Sertifika 2 -->
+                <div class="certificate-card animate-on-load delay-7">
+                    <div class="cert-icon">🎓</div>
+                    <h3>Sertifika Adı</h3>
+                    <p class="cert-issuer">Veren Kuruluş</p>
+                    <p class="cert-date">Tarih: Ay Yıl</p>
+                </div>
+
+                <!-- Sertifika 3 -->
+                <div class="certificate-card animate-on-load delay-8">
+                    <div class="cert-icon">⭐</div>
+                    <h3>Sertifika Adı</h3>
+                    <p class="cert-issuer">Veren Kuruluş</p>
+                    <p class="cert-date">Tarih: Ay Yıl</p>
+                </div>
+            </div>
+        </div>
+        <!-- ────────────────────────────── -->
 
         <div class="container">
             <h2 class="section-title animate-on-load delay-5">🎮 Oyun Projelerim</h2>
@@ -394,10 +441,9 @@
                     </div>
                 </div>
 
-                <!-- ── YENİ: ARD FİNANS kartı ── -->
+                <!-- ARD FİNANS -->
                 <div class="project-card finans-card animate-on-load delay-12">
                     <div class="finans-card-image">
-                        <!-- Mini borsa grafik arka plan -->
                         <svg class="finans-chart-bg" viewBox="0 0 300 60" preserveAspectRatio="none">
                             <polyline points="0,50 30,40 60,45 90,20 120,30 150,15 180,25 210,10 240,20 270,5 300,15"
                                 fill="none" stroke="#e02020" stroke-width="2"/>
@@ -415,7 +461,6 @@
                         </a>
                     </div>
                 </div>
-                <!-- ──────────────────────────── -->
 
             </div>
         </div>
