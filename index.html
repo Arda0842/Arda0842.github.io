@@ -545,122 +545,230 @@
             transform: scale(1.02);
         }
 
-        /* ── Sertifika Modal ── */
-        .cert-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+        /* ══ SERTIFIKA MODAL ══ */
+        .cert-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.82);
+            backdrop-filter: blur(8px);
+            z-index: 9000;
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
         }
-
-        .certificate-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 24px 20px 20px;
-            border: 1px solid var(--border-color);
-            transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        .cert-modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .cert-modal-panel {
+            width: min(940px, 100vw);
+            height: 100vh;
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            backdrop-filter: blur(5px);
+            transform: translateX(100%);
+            transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        .cert-modal-overlay.open .cert-modal-panel {
+            transform: translateX(0);
+        }
+        .cert-modal-header {
+            padding: 20px 28px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+        }
+        .cert-modal-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cert-modal-title span { color: var(--accent-color); }
+        .cert-modal-close {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .cert-modal-close:hover {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-color);
+            border-color: var(--accent-color);
+            transform: scale(1.1) rotate(90deg);
+        }
+        .cert-stats-bar {
+            display: flex;
+            gap: 10px;
+            padding: 12px 28px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .cert-stat {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 18px;
+            text-align: center;
+            flex: 1;
+            min-width: 80px;
+        }
+        .cert-stat-val {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            font-family: monospace;
+            display: block;
+        }
+        .cert-stat-lbl {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 2px;
+        }
+        .cert-filter-bar {
+            display: flex;
+            gap: 7px;
+            padding: 10px 28px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .cert-filter-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 20px;
+            padding: 4px 13px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .cert-filter-btn:hover,
+        .cert-filter-btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000;
+        }
+        .cert-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 28px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+        .cert-modal-body::-webkit-scrollbar { width: 5px; }
+        .cert-modal-body::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 14px;
+        }
+        .certificate-card {
+            background: var(--card-bg);
+            border-radius: 13px;
+            padding: 20px 16px 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
             text-align: center;
             position: relative;
             overflow: hidden;
         }
-
         .certificate-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 3px;
             background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
-            opacity: 0.7;
+            opacity: 0.55;
+            transition: opacity 0.2s;
         }
-
         .certificate-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 14px 36px var(--shadow);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px var(--shadow);
             border-color: var(--accent-color);
         }
-
         .certificate-card:hover::before { opacity: 1; }
-
-        .cert-icon {
-            font-size: 2.8rem;
-            margin-bottom: 12px;
-            display: block;
-        }
-
+        .cert-card-hidden { display: none !important; }
+        .cert-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
         .certificate-card h3 {
-            margin: 8px 0 4px;
+            margin: 6px 0 2px;
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 0.88rem;
             font-weight: 700;
             line-height: 1.4;
         }
-
         .cert-issuer {
             color: var(--accent-color);
             font-weight: 600;
-            font-size: 0.85rem;
-            margin: 6px 0 4px;
+            font-size: 0.76rem;
+            margin: 4px 0 2px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
         }
-
         .cert-date {
             color: var(--text-muted);
-            font-size: 0.78rem;
-            margin: 2px 0 10px;
+            font-size: 0.72rem;
+            margin: 2px 0 7px;
         }
-
         .cert-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 5px;
             justify-content: center;
-            margin: 8px 0;
+            margin: 5px 0;
         }
-
         .cert-tag {
-            background: rgba(0, 212, 255, 0.1);
+            background: rgba(0,212,255,0.1);
             color: var(--accent-color);
-            border: 1px solid rgba(0, 212, 255, 0.25);
+            border: 1px solid rgba(0,212,255,0.25);
             border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 0.72rem;
+            padding: 2px 9px;
+            font-size: 0.67rem;
             font-weight: 600;
         }
-
         .cert-verify-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(0, 212, 255, 0.08);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 8px;
-            padding: 7px 14px;
-            font-size: 0.8rem;
+            gap: 5px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 7px;
+            padding: 6px 11px;
+            font-size: 0.73rem;
             font-weight: 600;
             color: var(--accent-color);
             text-decoration: none;
-            margin-top: 10px;
+            margin-top: 8px;
             transition: 0.2s;
         }
-
         .cert-verify-btn:hover {
-            background: rgba(0, 212, 255, 0.18);
+            background: rgba(0,212,255,0.18);
             border-color: var(--accent-color);
-            transform: scale(1.03);
         }
-
-        .cert-empty {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-muted);
-            font-size: 1rem;
-            opacity: 0.6;
-        }
-        .cert-empty span { font-size: 3rem; display: block; margin-bottom: 12px; }
 
         /* ── Satranç kartı ── */
         .chess-card-image {
@@ -1444,14 +1552,25 @@
                 card.dataset.tags = (cert.tags || []).join(',');
                 card.innerHTML = `
                     <span class="cert-icon">${cert.icon || '📜'}</span>
-                        <h3>${cert.title}</h3>
-                        <p class="cert-issuer">${cert.issuer}</p>
-                        <p class="cert-date">📅 ${cert.date}</p>
-                        ${tagsHtml ? `<div class="cert-tags">${tagsHtml}</div>` : ''}
-                        ${btnHtml}
-                    </div>`;
+                    <h3>${cert.title}</h3>
+                    <p class="cert-issuer">${cert.issuer}</p>
+                    <p class="cert-date">📅 ${cert.date}</p>
+                    ${tagsHtml ? `<div class="cert-tags">${tagsHtml}</div>` : ''}
+                    ${btnHtml}`;
+                grid.appendChild(card);
             });
-        })();
+        }
+
+        // ── Kategori filtrele ──
+        function filterCerts(tag, btn) {
+            document.querySelectorAll('.cert-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.certificate-card').forEach(card => {
+                if (tag === 'Tümü') { card.classList.remove('cert-card-hidden'); }
+                else { card.classList.toggle('cert-card-hidden', !(card.dataset.tags || '').includes(tag)); }
+            });
+        }
+
         // Mini satranç tahtası
         const mb = document.getElementById('miniBoard');
         for (let r = 0; r < 5; r++)
