@@ -1163,6 +1163,186 @@
             filter: drop-shadow(0 0 10px rgba(234, 67, 53, 0.9));
         }
 
+        /* ── SERTİFİKA SEKMESİ ── */
+        .cert-tab {
+            display: none;
+            min-height: calc(100vh - 70px);
+            padding-top: 90px;
+            padding-bottom: 60px;
+            animation: fadeInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        .cert-tab.active { display: block; }
+
+        .cert-tab-header {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .cert-tab-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            border-left: 4px solid var(--secondary-accent);
+            padding-left: 18px;
+        }
+        .cert-tab-title span { color: var(--accent-color); }
+
+        .cert-stats-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .cert-stat {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 18px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .cert-stat-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            font-family: monospace;
+            display: block;
+        }
+        .cert-stat-lbl {
+            font-size: 0.66rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .cert-filter-bar {
+            max-width: 1200px;
+            margin: 0 auto 22px;
+            padding: 0 28px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .cert-filter-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .cert-filter-btn:hover,
+        .cert-filter-btn.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #000;
+        }
+
+        .cert-grid-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .certificate-card {
+            background: var(--card-bg);
+            border-radius: 13px;
+            padding: 22px 16px 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .certificate-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), var(--secondary-accent));
+            opacity: 0.55;
+            transition: opacity 0.2s;
+        }
+        .certificate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 32px var(--shadow);
+            border-color: var(--accent-color);
+        }
+        .certificate-card:hover::before { opacity: 1; }
+        .cert-card-hidden { display: none !important; }
+        .cert-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+        .certificate-card h3 {
+            margin: 6px 0 2px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        .cert-issuer {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.77rem;
+            margin: 4px 0 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .cert-date {
+            color: var(--text-muted);
+            font-size: 0.73rem;
+            margin: 2px 0 8px;
+        }
+        .cert-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            margin: 5px 0;
+        }
+        .cert-tag {
+            background: rgba(0,212,255,0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(0,212,255,0.25);
+            border-radius: 20px;
+            padding: 2px 9px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+        .cert-verify-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0,212,255,0.08);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 7px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-top: 8px;
+            transition: 0.2s;
+        }
+        .cert-verify-btn:hover { background: rgba(0,212,255,0.18); border-color: var(--accent-color); }
+
+        /* nav active state */
+        .nav-link.tab-active { color: var(--accent-color) !important; }
+
         footer {
             margin-top: 30px;
             color: var(--text-muted);
@@ -1190,10 +1370,10 @@
         </label>
     </div>
 
-    <nav class="navbar">
-        <a href="#home" class="nav-link">Ana Sayfa</a>
-        <a href="#about" class="nav-link">Hakkında</a>
-        <button onclick="openCertModal()" class="nav-link cert-nav-btn" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:1.05rem;font-weight:600;">🏆 Sertifikalarım</button>
+    <nav class="navbar" id="mainNav">
+        <a href="#home" class="nav-link" onclick="showMain(event,'#home')">Ana Sayfa</a>
+        <a href="#about" class="nav-link" onclick="showMain(event,'#about')">Hakkında</a>
+        <a href="#" id="certNavBtn" class="nav-link" onclick="showCerts(event)">🏆 Sertifikalarım</a>
         <!-- ── ARD FİNANS sekmesi ── -->
         <a href="https://ardfinanss8.streamlit.app" target="_blank" class="nav-finans">
             <span class="nf-ard">ARD</span>&nbsp;
@@ -1201,7 +1381,7 @@
                     class="nf-i-stem">İ</span></span><span class="nf-rest">NANS</span>
         </a>
         <!-- ─────────────────────────────── -->
-        <a href="#contact" class="nav-link">İletişim</a>
+        <a href="#contact" class="nav-link" onclick="showMain(event,'#contact')">İletişim</a>
     </nav>
 
     <div class="main-wrapper">
@@ -1332,18 +1512,15 @@
         </div>
     </div>
 
-    <!-- ══ SERTİFİKA MODAL OVERLAY ══ -->
-    <div class="cert-modal-overlay" id="certModal" onclick="closeCertModalOutside(event)">
-        <div class="cert-modal-panel">
-            <div class="cert-modal-header">
-                <div class="cert-modal-title">🏆 <span>Sertifikalarım</span></div>
-                <button class="cert-modal-close" onclick="closeCertModal()"><i class="fas fa-times"></i></button>
-            </div>
+    <!-- ══ SERTİFİKA TAB ══ -->
+    <div id="certTab" class="cert-tab">
+        <div class="cert-tab-header">
+            <div class="cert-tab-title">🏆 <span>Sertifikalarım</span></div>
             <div class="cert-stats-bar" id="certStatsBar"></div>
-            <div class="cert-filter-bar" id="certFilterBar"></div>
-            <div class="cert-modal-body">
-                <div class="cert-grid" id="certGrid"></div>
-            </div>
+        </div>
+        <div class="cert-filter-bar" id="certFilterBar"></div>
+        <div class="cert-grid-wrap">
+            <div class="cert-grid" id="certGrid"></div>
         </div>
     </div>
 
@@ -1500,33 +1677,47 @@
         ];
         /* ════════════════════════════════════════════════════════════ */
 
-        // ── Modal aç/kapat ──
-        function openCertModal() {
-            document.getElementById('certModal').classList.add('open');
-            document.body.style.overflow = 'hidden';
+        // ── Sekme geçişi ──
+        const mainWrapper   = document.querySelector('.main-wrapper');
+        const contactSect   = document.getElementById('contact');
+        const certTab       = document.getElementById('certTab');
+        const certNavBtn    = document.getElementById('certNavBtn');
+
+        function showCerts(e) {
+            if (e) e.preventDefault();
+            mainWrapper.style.display  = 'none';
+            contactSect.style.display  = 'none';
+            certTab.classList.add('active');
+            certNavBtn.classList.add('tab-active');
+            window.scrollTo(0, 0);
             renderCerts();
         }
-        function closeCertModal() {
-            document.getElementById('certModal').classList.remove('open');
-            document.body.style.overflow = '';
+        function showMain(e, target) {
+            if (e) e.preventDefault();
+            mainWrapper.style.display  = '';
+            contactSect.style.display  = '';
+            certTab.classList.remove('active');
+            certNavBtn.classList.remove('tab-active');
+            if (target) {
+                setTimeout(() => {
+                    const el = document.querySelector(target);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 50);
+            }
         }
-        function closeCertModalOutside(e) {
-            if (e.target === document.getElementById('certModal')) closeCertModal();
-        }
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCertModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && certTab.classList.contains('active')) showMain(null, null); });
 
         // ── Sertifika kartlarını oluştur ──
         let certsRendered = false;
         function renderCerts() {
             if (certsRendered) return;
             certsRendered = true;
-            const grid = document.getElementById('certGrid');
+            const grid     = document.getElementById('certGrid');
             const statsBar = document.getElementById('certStatsBar');
-            const filterBar = document.getElementById('certFilterBar');
+            const filterBar= document.getElementById('certFilterBar');
 
-            // İstatistik
             const institutions = [...new Set(SERTIFIKALARIM.map(c => c.issuer))];
-            const allTags = [...new Set(SERTIFIKALARIM.flatMap(c => c.tags || []))];
+            const allTags      = [...new Set(SERTIFIKALARIM.flatMap(c => c.tags || []))];
             statsBar.innerHTML = `
                 <div class="cert-stat"><span class="cert-stat-val">${SERTIFIKALARIM.length}</span><span class="cert-stat-lbl">Sertifika</span></div>
                 <div class="cert-stat"><span class="cert-stat-val">${institutions.length}</span><span class="cert-stat-lbl">Kurum</span></div>
@@ -1534,17 +1725,15 @@
                 <div class="cert-stat"><span class="cert-stat-val">${SERTIFIKALARIM.filter(c=>c.link).length}</span><span class="cert-stat-lbl">Doğrulanabilir</span></div>
             `;
 
-            // Filtre butonları
             filterBar.innerHTML = `<button class="cert-filter-btn active" onclick="filterCerts('Tümü',this)">Tümü</button>`;
             allTags.forEach(tag => {
                 filterBar.innerHTML += `<button class="cert-filter-btn" onclick="filterCerts('${tag}',this)">${tag}</button>`;
             });
 
-            // Kartlar
             grid.innerHTML = '';
             SERTIFIKALARIM.forEach((cert) => {
                 const tagsHtml = (cert.tags || []).map(t => `<span class="cert-tag">${t}</span>`).join('');
-                const btnHtml = cert.link
+                const btnHtml  = cert.link
                     ? `<a href="${cert.link}" target="_blank" class="cert-verify-btn"><i class="fas fa-external-link-alt"></i> Doğrula</a>`
                     : '';
                 const card = document.createElement('div');
@@ -1570,6 +1759,7 @@
                 else { card.classList.toggle('cert-card-hidden', !(card.dataset.tags || '').includes(tag)); }
             });
         }
+
 
         // Mini satranç tahtası
         const mb = document.getElementById('miniBoard');
