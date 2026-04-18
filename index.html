@@ -545,7 +545,7 @@
             transform: scale(1.02);
         }
 
-        /* ── Sertifika Bölümü ── */
+        /* ── Sertifika Modal ── */
         .cert-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1085,7 +1085,7 @@
     <nav class="navbar">
         <a href="#home" class="nav-link">Ana Sayfa</a>
         <a href="#about" class="nav-link">Hakkında</a>
-        <a href="#certificates" class="nav-link">Sertifikalarım</a>
+        <button onclick="openCertModal()" class="nav-link cert-nav-btn" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:1.05rem;font-weight:600;">🏆 Sertifikalarım</button>
         <!-- ── ARD FİNANS sekmesi ── -->
         <a href="https://ardfinanss8.streamlit.app" target="_blank" class="nav-finans">
             <span class="nf-ard">ARD</span>&nbsp;
@@ -1111,16 +1111,7 @@
             </p>
         </div>
 
-        <!-- ══════════════════════════════════════════════════════════
-             SERTİFİKALAR BÖLÜMÜ
-             Sertifika eklemek için aşağıdaki SERTIFIKALARIM dizisine
-             yeni bir obje eklemen yeterli! (sayfanın sonunda)
-        ══════════════════════════════════════════════════════════ -->
-        <div id="certificates" class="container">
-            <h2 class="section-title animate-on-load delay-5">🏆 Sertifikalarım</h2>
-            <div class="cert-grid" id="certGrid"></div>
-        </div>
-        <!-- ────────────────────────────── -->
+
 
         <div class="container">
             <h2 class="section-title animate-on-load delay-5">🎮 Oyun Projelerim</h2>
@@ -1233,6 +1224,21 @@
         </div>
     </div>
 
+    <!-- ══ SERTİFİKA MODAL OVERLAY ══ -->
+    <div class="cert-modal-overlay" id="certModal" onclick="closeCertModalOutside(event)">
+        <div class="cert-modal-panel">
+            <div class="cert-modal-header">
+                <div class="cert-modal-title">🏆 <span>Sertifikalarım</span></div>
+                <button class="cert-modal-close" onclick="closeCertModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cert-stats-bar" id="certStatsBar"></div>
+            <div class="cert-filter-bar" id="certFilterBar"></div>
+            <div class="cert-modal-body">
+                <div class="cert-grid" id="certGrid"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="contact" class="contact-section animate-on-load delay-11">
         <h2 style="color: var(--text-color);">İletişim</h2>
         <p style="color: var(--text-muted);">Projelerim hakkında konuşmak veya iş birliği yapmak için ulaşabilirsiniz.
@@ -1248,46 +1254,196 @@
     </div>
 
     <script>
-        /* ═══════════════════════════════════════════════════════════════
+        /* ══════════════════════════════════════════════════════════════
            SERTİFİKALARIM — Buraya kendi sertifikalarını ekle!
-           Her sertifika için bir obje ekle, alanlar:
-             icon    : Emoji (örn. "🏅", "📜", "🎓", "⭐", "🔐")
+           Her sertifika için bir nesne ekle:
+             icon    : Emoji  (örn. "🏅" "📜" "🎓" "⭐" "🔐" "💻")
              title   : Sertifika adı
-             issuer  : Veren kurum (örn. "Udemy", "Coursera", "BTK Akademi")
-             date    : Tarih (örn. "Mart 2025")
-             tags    : Konu etiketleri — boş bırakabilirsin: []
-             link    : Doğrulama linki — yoksa: ""
-           ─────────────────────────────────────────────────────────── */
+             issuer  : Veren kurum  (örn. "Udemy", "BTK Akademi")
+             date    : Tarih  (örn. "Mart 2025")
+             tags    : Konu etiketleri  — [] boş bırakabilirsin
+             link    : Doğrulama linki — "" yoksa
+           ════════════════════════════════════════════════════════════ */
         const SERTIFIKALARIM = [
-            // ─ ÖRNEK — Silip kendi sertifikanla değiştir ─
-            // {
-            //     icon: "🏅",
-            //     title: "Python ile Veri Bilimi",
-            //     issuer: "Udemy",
-            //     date: "Ocak 2025",
-            //     tags: ["Python", "Veri Bilimi"],
-            //     link: "https://udemy.com/certificate/..."
-            // },
+            // ─────────────────────────────────────────────
+            // Aşağıdaki örnekleri kendi sertifikaklarınla
+            // değiştir veya yenilerini ekle:
+            // ─────────────────────────────────────────────
+            {
+                icon: "📜",
+                title: "Sertifika 1",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🎓",
+                title: "Sertifika 2",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "⭐",
+                title: "Sertifika 3",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🏅",
+                title: "Sertifika 4",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "💻",
+                title: "Sertifika 5",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🔐",
+                title: "Sertifika 6",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "📊",
+                title: "Sertifika 7",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🌐",
+                title: "Sertifika 8",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🤖",
+                title: "Sertifika 9",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "📱",
+                title: "Sertifika 10",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🗄️",
+                title: "Sertifika 11",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "☁️",
+                title: "Sertifika 12",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🎮",
+                title: "Sertifika 13",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "📈",
+                title: "Sertifika 14",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
+            {
+                icon: "🛡️",
+                title: "Sertifika 15",
+                issuer: "Kurum Adı",
+                date: "Ay Yıl",
+                tags: ["Konu"],
+                link: ""
+            },
         ];
-        /* ═══════════════════════════════════════════════════════════════ */
+        /* ════════════════════════════════════════════════════════════ */
 
-        // Sertifika kartlarını otomatik oluştur
-        (function renderCerts() {
+        // ── Modal aç/kapat ──
+        function openCertModal() {
+            document.getElementById('certModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            renderCerts();
+        }
+        function closeCertModal() {
+            document.getElementById('certModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        function closeCertModalOutside(e) {
+            if (e.target === document.getElementById('certModal')) closeCertModal();
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCertModal(); });
+
+        // ── Sertifika kartlarını oluştur ──
+        let certsRendered = false;
+        function renderCerts() {
+            if (certsRendered) return;
+            certsRendered = true;
             const grid = document.getElementById('certGrid');
-            if (!SERTIFIKALARIM || SERTIFIKALARIM.length === 0) {
-                grid.innerHTML = `<div class="cert-empty"><span>🏆</span>Henüz sertifika eklenmedi.<br><small>SERTIFIKALARIM dizisine ekleyebilirsin.</small></div>`;
-                return;
-            }
-            SERTIFIKALARIM.forEach((cert, i) => {
-                const delay = Math.min(i + 6, 12);
-                const tagsHtml = (cert.tags || []).map(t =>
-                    `<span class="cert-tag">${t}</span>`).join('');
+            const statsBar = document.getElementById('certStatsBar');
+            const filterBar = document.getElementById('certFilterBar');
+
+            // İstatistik
+            const institutions = [...new Set(SERTIFIKALARIM.map(c => c.issuer))];
+            const allTags = [...new Set(SERTIFIKALARIM.flatMap(c => c.tags || []))];
+            statsBar.innerHTML = `
+                <div class="cert-stat"><span class="cert-stat-val">${SERTIFIKALARIM.length}</span><span class="cert-stat-lbl">Sertifika</span></div>
+                <div class="cert-stat"><span class="cert-stat-val">${institutions.length}</span><span class="cert-stat-lbl">Kurum</span></div>
+                <div class="cert-stat"><span class="cert-stat-val">${allTags.length}</span><span class="cert-stat-lbl">Kategori</span></div>
+                <div class="cert-stat"><span class="cert-stat-val">${SERTIFIKALARIM.filter(c=>c.link).length}</span><span class="cert-stat-lbl">Doğrulanabilir</span></div>
+            `;
+
+            // Filtre butonları
+            filterBar.innerHTML = `<button class="cert-filter-btn active" onclick="filterCerts('Tümü',this)">Tümü</button>`;
+            allTags.forEach(tag => {
+                filterBar.innerHTML += `<button class="cert-filter-btn" onclick="filterCerts('${tag}',this)">${tag}</button>`;
+            });
+
+            // Kartlar
+            grid.innerHTML = '';
+            SERTIFIKALARIM.forEach((cert) => {
+                const tagsHtml = (cert.tags || []).map(t => `<span class="cert-tag">${t}</span>`).join('');
                 const btnHtml = cert.link
                     ? `<a href="${cert.link}" target="_blank" class="cert-verify-btn"><i class="fas fa-external-link-alt"></i> Doğrula</a>`
                     : '';
-                grid.innerHTML += `
-                    <div class="certificate-card animate-on-load delay-${delay}">
-                        <span class="cert-icon">${cert.icon || '📜'}</span>
+                const card = document.createElement('div');
+                card.className = 'certificate-card';
+                card.dataset.tags = (cert.tags || []).join(',');
+                card.innerHTML = `
+                    <span class="cert-icon">${cert.icon || '📜'}</span>
                         <h3>${cert.title}</h3>
                         <p class="cert-issuer">${cert.issuer}</p>
                         <p class="cert-date">📅 ${cert.date}</p>
