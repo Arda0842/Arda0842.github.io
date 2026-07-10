@@ -98,16 +98,6 @@
         .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--accent-color); transition: width 0.3s; }
         .nav-link:hover::after { width: 100%; }
 
-        .nav-finans {
-            display: inline-flex; align-items: center; gap: 0; text-decoration: none; font-weight: 900; font-size: 1.05rem; letter-spacing: -0.5px;
-            padding: 5px 14px; border: 1.5px solid #e0202033; border-radius: 8px; background: linear-gradient(135deg, rgba(224,32,32,0.08), rgba(0,0,0,0.0)); transition: all 0.3s; position: relative;
-        }
-        .nav-finans:hover { border-color: #e02020; background: linear-gradient(135deg, rgba(224,32,32,0.15), rgba(0,0,0,0.05)); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(224,32,32,0.25); }
-        .nav-finans .nf-ard  { color: #e02020; } .nav-finans .nf-rest { color: var(--text-color); }
-        .nf-i-wrap { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; margin: 0; position: relative; top: 1px; }
-        .nf-i-dot  { width: 5px; height: 5px; background: var(--text-color); border-radius: 50%; margin-bottom: 1px; }
-        .nf-i-stem { font-weight: 900; line-height: 1; display: inline-block; }
-
         .main-wrapper { display: flex; flex-direction: column; align-items: center; padding-top: 100px; width: 100%; position: relative; z-index: 1; }
         header { text-align: center; padding: 40px 20px; max-width: 800px; }
         h1 { color: var(--accent-color); margin: 0; font-size: 3.5rem; letter-spacing: -1px; text-shadow: 0 0 20px rgba(0,212,255,0.3); }
@@ -156,16 +146,6 @@
         .gridwar-float { position: absolute; font-size: 3.2rem; right: 20px; filter: drop-shadow(0 0 16px rgba(0,229,255,0.9)); animation: floatPiece 2.2s ease-in-out infinite; }
         .btn-gridwar { background: linear-gradient(135deg, #00e5ff, #0099bb); color: #000; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; }
         .btn-gridwar:hover { background: linear-gradient(135deg, #0099bb, #bf5af2); color: #fff; transform: scale(1.02); }
-
-        .finans-card-image { width: 100%; height: 160px; background: linear-gradient(135deg, #0a0e1a, #111827, #0a0e1a); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .finans-logo-big { font-size: 2.2rem; font-weight: 900; letter-spacing: -1px; display: flex; align-items: center; gap: 6px; }
-        .flb-ard  { color: #e02020; text-shadow: 0 0 20px rgba(224,32,32,0.5); } .flb-rest { color: #e0e6f0; }
-        .flb-i-wrap { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; position: relative; top: 1px; }
-        .flb-i-dot  { width: 6px; height: 6px; background: #e0e6f0; border-radius: 50%; margin-bottom: 2px; }
-        .flb-i-stem { font-weight: 900; line-height: 1; }
-        .finans-chart-bg { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; opacity: 0.15; }
-        .btn-finans { background: linear-gradient(135deg, #e02020, #b00000); color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center; display: block; transition: 0.2s; }
-        .btn-finans:hover { background: linear-gradient(135deg, #ff3333, #e02020); transform: scale(1.02); box-shadow: 0 4px 16px rgba(224,32,32,0.4); }
 
         /* ── SERTİFİKA SEKME VE KARTLARI ── */
         .cert-tab { display: none; min-height: calc(100vh - 70px); padding-top: 90px; padding-bottom: 60px; animation: fadeInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
@@ -267,10 +247,6 @@
 
     <nav class="navbar" id="mainNav">
         <a href="#home"    class="nav-link" onclick="showMain(event,'#home')">Ana Sayfa</a>
-        <a href="https://ardfinanss8.streamlit.app" target="_blank" class="nav-finans">
-            <span class="nf-ard">ARD</span>&nbsp;
-            <span class="nf-rest">F</span><span class="nf-i-wrap"><span class="nf-i-dot"></span><span class="nf-i-stem">İ</span></span><span class="nf-rest">NANS</span>
-        </a>
         <a href="#" id="certNavBtn" class="nav-link" onclick="showCerts(event)">🏆 Sertifikalarım</a>
         <a href="#about"   class="nav-link" onclick="showMain(event,'#about')">Hakkında</a>
         <a href="#contact" class="nav-link" onclick="showMain(event,'#contact')">İletişim</a>
@@ -285,7 +261,7 @@
 
         <div id="about" class="about-section animate-on-load delay-4">
             <h2>Hakkımda</h2>
-            <p>Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. Oyun geliştirme, .NET teknolojileri ve algoritmik ticaret sistemleri üzerine çalışıyorum.</p>
+            <p>Merhaba, ben Arda. Kayseri Üniversitesi'nde Bilgisayar Mühendisliği öğrencisiyim. Siber Güvenlik üzerine çalışıyorum.</p>
         </div>
 
         <div class="container">
@@ -316,18 +292,6 @@
                         <h3 style="color: #00e5ff;">GridWar</h3>
                         <p>Blokları ızgaraya yerleştir, satır ve sütunları doldur, temizle! 28 parça çeşidi, kombo sistemi ve online multiplayer.</p>
                         <a href="gridwar.html" class="btn-gridwar"><i class="fas fa-th"></i> Hemen Oyna</a>
-                    </div>
-                </div>
-                <!-- ARD FİNANS -->
-                <div class="project-card finans-card animate-on-load delay-9">
-                    <div class="finans-card-image">
-                        <svg class="finans-chart-bg" viewBox="0 0 300 60" preserveAspectRatio="none"><polyline points="0,50 30,40 60,45 90,20 120,30 150,15 180,25 210,10 240,20 270,5 300,15" fill="none" stroke="#e02020" stroke-width="2" /></svg>
-                        <div class="finans-logo-big"><span class="flb-ard">ARD</span><span class="flb-rest">F<span class="flb-i-wrap"><span class="flb-i-dot"></span><span class="flb-i-stem">İ</span></span>NANS</span></div>
-                    </div>
-                    <div class="card-content">
-                        <h3 style="color:#e02020;">ARD FİNANS</h3>
-                        <p>AI destekli borsa analiz platformu. 25+ teknik indikatör, Groq Llama 3.3 ile Türkçe analiz, portföy takibi ve fiyat alarmları.</p>
-                        <a href="https://ardfinanss8.streamlit.app" target="_blank" class="btn-finans"><i class="fas fa-chart-line"></i> Platforma Git</a>
                     </div>
                 </div>
             </div>
@@ -405,7 +369,7 @@
            * "image" alanı belirtilmezse otomatik olarak "sertifikalar/{id}.png" denenir.
            ══════════════════════════════════════════════════════════════════ */
 
-        const SERTIFIKA_MAX_DENEME = 16; // 15'e kadar dediğin için burayı güncelledim
+        const SERTIFIKA_MAX_DENEME = 20;
         const SERTIFIKA_REPO_BASE  = 'sertifikalar';
 
         // ── Sekme Geçişi ──
