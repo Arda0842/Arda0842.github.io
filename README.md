@@ -1,4 +1,5 @@
 # Arda | Yazılım & Oyun Portfolyosu 🚀
+![Uploading image.png…]()
 
 Kişisel yazılım projelerimi, oyun geliştirme serüvenimi ve sahip olduğum sertifikaları sergilediğim, tamamen modern web standartlarıyla geliştirilmiş dinamik ve interaktif portfolyo web sitem. 
 
