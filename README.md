@@ -1,5 +1,5 @@
 # Arda | Yazılım & Oyun Portfolyosu 🚀
-![Uploading image.png…]()
+<img width="1919" height="970" alt="image" src="https://github.com/user-attachments/assets/7a856d04-a8f0-4a59-86c5-4748b248e805" />
 
 Kişisel yazılım projelerimi, oyun geliştirme serüvenimi ve sahip olduğum sertifikaları sergilediğim, tamamen modern web standartlarıyla geliştirilmiş dinamik ve interaktif portfolyo web sitem. 
 
